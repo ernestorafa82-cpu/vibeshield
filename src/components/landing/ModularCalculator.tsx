@@ -8,8 +8,9 @@ import React, {
   useState,
 } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { AlertCircle, Check, RotateCcw } from 'lucide-react';
+import { AlertCircle, ArrowRight, Check, RotateCcw, Sparkles } from 'lucide-react';
 import { RequestModal } from '@/components/landing/RequestModal';
+import { SilkReveal } from '@/components/motion/SilkReveal';
 import { useLocale } from '@/context/LocaleContext';
 import {
   DIAGNOSTIC_OFFER,
@@ -33,11 +34,11 @@ import {
 const STACK_OPTIONS: readonly StackType[] = ['web', 'mobile', 'both'];
 
 const MODULE_REF_CODES: Readonly<Record<ModuleId, string>> = {
-  auth_rls: 'MOD-01',
-  anti_regression_ci: 'MOD-02',
-  eaa_compliance: 'MOD-03',
-  flutter_mobile: 'MOD-04',
-  perf_sentry: 'MOD-05',
+  auth_rls: 'MOD · 01',
+  anti_regression_ci: 'MOD · 02',
+  eaa_compliance: 'MOD · 03',
+  flutter_mobile: 'MOD · 04',
+  perf_sentry: 'MOD · 05',
 };
 
 interface CalculatorUrlSyncProps {
@@ -57,7 +58,8 @@ function CalculatorUrlSync({ onSync }: CalculatorUrlSyncProps) {
 }
 
 /**
- * Editorial Swiss architectural fee schedule & live proposal configurator.
+ * Luxury editorial modular fee configurator on warm dotted silk cream
+ * with elevated pure-white module cards and a sticky Parisian-navy Proposal Folio.
  */
 export function ModularCalculator() {
   const { locale, currency, dict } = useLocale();
@@ -161,40 +163,40 @@ export function ModularCalculator() {
   return (
     <section
       id="calculator"
-      className="bg-[#FBF9F5] py-24 text-[#141311] lg:py-32"
+      className="scroll-mt-24 bg-cream-dotted py-20 text-[#0E2244] sm:py-28"
     >
       <Suspense fallback={null}>
         <CalculatorUrlSync onSync={handleUrlSync} />
       </Suspense>
 
-      <div className="mx-auto max-w-[1320px] px-5 sm:px-8 lg:px-10">
-        {/* Section Header */}
-        <div className="grid gap-8 border-b border-[#141311]/12 pb-12 lg:grid-cols-12 lg:items-end">
+      <div className="mx-auto max-w-[1360px] px-5 sm:px-8 lg:px-10">
+        {/* Editorial Header */}
+        <SilkReveal className="grid gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
-            <p className="font-mono text-[11px] font-medium tracking-[0.2em] text-[#C94A22] uppercase">
-              DOC. 02 · {locale === 'es' ? 'TARIFAS PÚBLICAS' : 'PUBLISHED FEES'}
-            </p>
-            <h2 className="mt-4 font-serif text-4xl leading-[1.04] tracking-[-0.02em] text-[#141311] sm:text-5xl">
+            <span className="eyebrow-rule text-[#7F6330]">
+              {locale === 'es' ? 'TARIFAS TRANSPARENTES' : 'PUBLISHED FEES'}
+            </span>
+            <h2 className="mt-4 font-serif text-4xl leading-[1.02] font-normal text-[#0E2244] sm:text-5xl lg:text-[58px]">
               {dict.calculator.sectionTitle}
             </h2>
           </div>
           <div className="lg:col-span-5">
-            <p className="text-base leading-relaxed text-[#57534C]">
+            <p className="text-base leading-relaxed text-[#5A6378]">
               {dict.calculator.sectionSubtitle}
             </p>
           </div>
-        </div>
+        </SilkReveal>
 
-        <div className="mt-12 grid gap-10 lg:grid-cols-12 lg:items-start">
-          {/* Left: Stack Selector + Specification Rows */}
-          <div className="space-y-8 lg:col-span-8">
-            {/* Stack Selector Bar */}
-            <div>
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <span className="font-mono text-[11px] font-medium tracking-[0.16em] text-[#857F75] uppercase">
+        <div className="mt-12 grid gap-8 lg:grid-cols-12 lg:items-start">
+          {/* Left: Stack Pill Switcher + Luxury Module Cards */}
+          <div className="space-y-6 lg:col-span-8">
+            {/* Stack Selector */}
+            <div className="rounded-[24px] border border-[#0E2244]/10 bg-white p-5 shadow-luxury">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-sans text-[11px] font-semibold tracking-[0.22em] text-[#7F6330] uppercase">
                   {dict.calculator.stackLabel}
                 </span>
-                <span className="text-xs text-[#57534C]">
+                <span className="text-xs text-[#5A6378]">
                   {dict.calculator.stacks[stack].hint}
                 </span>
               </div>
@@ -202,7 +204,7 @@ export function ModularCalculator() {
               <div
                 role="group"
                 aria-label={dict.calculator.stackLabel}
-                className="mt-3 grid grid-cols-1 border border-[#141311]/15 bg-white sm:grid-cols-3 sm:divide-x sm:divide-[#141311]/12"
+                className="mt-3.5 grid grid-cols-1 gap-2 sm:grid-cols-3"
               >
                 {STACK_OPTIONS.map((option) => {
                   const isActive = stack === option;
@@ -212,10 +214,10 @@ export function ModularCalculator() {
                       type="button"
                       aria-pressed={isActive}
                       onClick={() => handleStackChange(option)}
-                      className={`px-4 py-3.5 text-left text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#C94A22] ${
+                      className={`rounded-full border px-4 py-2.5 text-center text-xs font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878] sm:text-sm ${
                         isActive
-                          ? 'bg-[#141311] text-[#FBF9F5]'
-                          : 'bg-white text-[#57534C] hover:bg-[#F3EFE6]/60 hover:text-[#141311]'
+                          ? 'border-[#0E2244] bg-[#0E2244] text-[#F3EFE6] shadow-md'
+                          : 'border-[#0E2244]/15 bg-[#F3EFE6]/60 text-[#5A6378] hover:border-[#0E2244]/40 hover:text-[#0E2244]'
                       }`}
                     >
                       {dict.calculator.stacks[option].label}
@@ -225,8 +227,8 @@ export function ModularCalculator() {
               </div>
             </div>
 
-            {/* Specification Sheet Module Rows */}
-            <div className="border border-[#141311]/15 bg-white divide-y divide-[#141311]/12">
+            {/* Module Selection Cards */}
+            <div className="grid gap-4 sm:grid-cols-2">
               {RESCUE_MODULES.map((mod) => {
                 const isSelected = estimate.selectedModules.includes(mod.id);
                 const copy = dict.calculator.modules[mod.id];
@@ -245,137 +247,139 @@ export function ModularCalculator() {
                     role="checkbox"
                     aria-checked={isSelected}
                     onClick={() => handleToggleModule(mod)}
-                    className={`group flex w-full flex-col gap-4 p-6 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#C94A22] sm:p-7 ${
+                    className={`group flex flex-col justify-between rounded-[24px] border p-6 text-left transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878] ${
                       isSelected
-                        ? 'bg-[#F3EFE6]/75'
-                        : 'bg-white hover:bg-[#FBF9F5]'
+                        ? 'border-[#D6B878] bg-white shadow-luxury ring-1 ring-[#D6B878]/50'
+                        : 'border-[#0E2244]/10 bg-white/80 hover:-translate-y-0.5 hover:border-[#0E2244]/25 hover:bg-white'
                     }`}
                   >
-                    <div className="flex w-full items-start justify-between gap-4">
-                      <div className="flex items-start gap-4">
-                        <span
-                          aria-hidden="true"
-                          className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center border transition-colors ${
-                            isSelected
-                              ? 'border-[#C94A22] bg-[#C94A22] text-[#FBF9F5]'
-                              : 'border-[#141311]/35 bg-white text-transparent group-hover:border-[#141311]'
-                          }`}
-                        >
-                          <Check className="h-3.5 w-3.5 stroke-[2.75]" />
-                        </span>
+                    <div className="w-full space-y-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-start gap-3">
+                          <span
+                            aria-hidden="true"
+                            className={`mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border transition-colors ${
+                              isSelected
+                                ? 'border-[#0E2244] bg-[#0E2244] text-[#D6B878]'
+                                : 'border-[#0E2244]/25 bg-[#F3EFE6] text-transparent group-hover:border-[#0E2244]'
+                            }`}
+                          >
+                            <Check className="h-3.5 w-3.5 stroke-[2.75]" />
+                          </span>
 
-                        <div>
-                          <div className="flex flex-wrap items-center gap-2.5">
-                            <span className="font-mono text-[11px] tracking-[0.14em] text-[#857F75]">
+                          <div>
+                            <span className="font-mono text-[10px] font-semibold tracking-[0.2em] text-[#7F6330] uppercase">
                               {MODULE_REF_CODES[mod.id]}
                             </span>
-                            {isIncompatibleWithStack && (
-                              <span className="border border-[#141311]/15 bg-[#F3EFE6] px-2 py-0.5 font-mono text-[10px] text-[#57534C]">
-                                {locale === 'es'
-                                  ? 'Activa stack híbrido'
-                                  : 'Enables hybrid stack'}
-                              </span>
-                            )}
+                            <span className="mt-0.5 block font-serif text-xl leading-snug font-medium text-[#0E2244]">
+                              {copy.title}
+                            </span>
                           </div>
-                          <span className="mt-1 block text-base font-semibold tracking-tight text-[#141311]">
-                            {copy.title}
+                        </div>
+
+                        <div className="shrink-0 text-right">
+                          <span className="block font-serif text-2xl font-medium text-[#0E2244] tabular-nums">
+                            {priceFormatted}
+                          </span>
+                          <span className="block font-mono text-[11px] text-[#5A6378] tabular-nums">
+                            {mod.estimatedDays} {dict.calculator.summary.daysUnit}
                           </span>
                         </div>
                       </div>
 
-                      <div className="shrink-0 text-right">
-                        <span className="block font-mono text-base font-semibold text-[#141311] tabular-nums">
-                          {priceFormatted}
-                        </span>
-                        <span className="block font-mono text-[11px] text-[#857F75] tabular-nums">
-                          {mod.estimatedDays} {dict.calculator.summary.daysUnit}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="pl-9 space-y-3">
-                      <p className="text-sm leading-relaxed text-[#57534C]">
+                      <p className="text-xs leading-relaxed text-[#5A6378]">
                         {copy.description}
                       </p>
 
-                      <ul className="grid gap-1.5 border-t border-[#141311]/8 pt-3 sm:grid-cols-3">
+                      <ul className="space-y-1.5 border-t border-[#0E2244]/8 pt-3">
                         {copy.deliverables.map((item) => (
                           <li
                             key={item}
-                            className="flex items-start gap-2 text-xs leading-snug text-[#57534C]"
+                            className="flex items-start gap-2 text-xs text-[#0E2244]/85"
                           >
                             <span
                               aria-hidden="true"
-                              className="mt-1.5 h-1 w-1 shrink-0 bg-[#C94A22]"
+                              className="mt-1.5 h-1.5 w-1.5 shrink-0 rotate-45 bg-[#D6B878]"
                             />
                             <span>{item}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
+
+                    {isIncompatibleWithStack && (
+                      <div className="mt-4 w-full border-t border-[#0E2244]/8 pt-2.5">
+                        <span className="inline-block rounded-full bg-[#ECECE8] px-2.5 py-0.5 font-mono text-[10px] text-[#5A6378]">
+                          {locale === 'es'
+                            ? 'Activa stack híbrido'
+                            : 'Enables hybrid stack'}
+                        </span>
+                      </div>
+                    )}
                   </button>
                 );
               })}
             </div>
 
-            {/* Optional 48h Diagnostic Addon Row */}
+            {/* Optional 48h Diagnostic Addon */}
             <button
               type="button"
               role="checkbox"
               aria-checked={includeDiagnostic}
               onClick={() => setIncludeDiagnostic((prev) => !prev)}
-              className={`group flex w-full flex-col gap-3 border p-6 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22] sm:flex-row sm:items-center sm:justify-between sm:p-7 ${
+              className={`group flex w-full flex-col gap-4 rounded-[24px] border p-6 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878] sm:flex-row sm:items-center sm:justify-between ${
                 includeDiagnostic
-                  ? 'border-[#1A6340] bg-[#EDF5F0]'
-                  : 'border-[#141311]/15 bg-[#F3EFE6]/60 hover:border-[#141311]/35'
+                  ? 'bg-gold-metallic border-white/60 text-[#0E2244] shadow-luxury'
+                  : 'border-[#D6B878]/50 bg-[#FAF6EC] text-[#0E2244] hover:border-[#D6B878]'
               }`}
             >
-              <div className="flex items-start gap-4">
+              <div className="flex items-start gap-3.5">
                 <span
                   aria-hidden="true"
-                  className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center border transition-colors ${
+                  className={`mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border transition-colors ${
                     includeDiagnostic
-                      ? 'border-[#1A6340] bg-[#1A6340] text-[#FBF9F5]'
-                      : 'border-[#141311]/35 bg-white text-transparent group-hover:border-[#141311]'
+                      ? 'border-[#0E2244] bg-[#0E2244] text-[#D6B878]'
+                      : 'border-[#0E2244]/35 bg-white text-transparent'
                   }`}
                 >
                   <Check className="h-3.5 w-3.5 stroke-[2.75]" />
                 </span>
 
-                <div className="space-y-1.5">
-                  <div className="flex flex-wrap items-center gap-2.5">
-                    <span className="text-base font-semibold text-[#141311]">
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-serif text-xl font-medium text-[#0E2244]">
                       {dict.calculator.diagnosticAddon.title}
                     </span>
-                    <span className="border border-[#1A6340]/35 bg-white/80 px-2 py-0.5 font-mono text-[10px] font-medium tracking-wider text-[#1A6340] uppercase">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[#0E2244] px-2.5 py-0.5 text-[10px] font-semibold tracking-wider text-[#D6B878] uppercase">
+                      <Sparkles className="h-3 w-3" aria-hidden="true" />
                       {dict.calculator.diagnosticAddon.badge}
                     </span>
                   </div>
-                  <p className="text-sm leading-relaxed text-[#57534C]">
+                  <p className="text-xs leading-relaxed text-[#0E2244]/80">
                     {dict.calculator.diagnosticAddon.subtitle}
                   </p>
                 </div>
               </div>
 
               <div className="shrink-0 pl-9 text-left sm:pl-4 sm:text-right">
-                <span className="block font-mono text-base font-semibold text-[#141311] tabular-nums">
+                <span className="block font-serif text-2xl font-medium text-[#0E2244] tabular-nums">
                   {diagnosticPriceFormatted}
                 </span>
-                <span className="block font-mono text-[11px] text-[#857F75]">
+                <span className="block font-mono text-[11px] text-[#0E2244]/70">
                   48h
                 </span>
               </div>
             </button>
           </div>
 
-          {/* Right: Floating Pure-White Proposal Folio */}
-          <aside className="border border-[#141311]/18 bg-white p-7 editorial-shadow sm:p-8 lg:sticky lg:top-24 lg:col-span-4">
-            <div className="flex items-center justify-between border-b border-[#141311] pb-4">
-              <h3 className="font-mono text-xs font-medium tracking-[0.16em] text-[#141311] uppercase">
+          {/* Right: Sticky Deep Parisian-Navy Luxury Proposal Folio */}
+          <aside className="bg-navy-pinstripe gold-shimmer-top rounded-[28px] border border-[#D6B878]/35 p-7 text-[#F3EFE6] shadow-luxury-dark sm:p-8 lg:sticky lg:top-28 lg:col-span-4">
+            <div className="flex items-center justify-between border-b border-[#D6B878]/25 pb-4">
+              <h3 className="font-sans text-[11px] font-semibold tracking-[0.26em] text-[#D6B878] uppercase">
                 {dict.calculator.summary.heading}
               </h3>
               {estimate.isDiagnosticOnly && (
-                <span className="border border-[#1A6340]/35 bg-[#EDF5F0] px-2 py-0.5 font-mono text-[10px] font-medium text-[#1A6340]">
+                <span className="rounded-full border border-[#D6B878]/45 bg-[#D6B878]/15 px-2.5 py-0.5 font-mono text-[10px] text-[#D6B878]">
                   {dict.calculator.summary.diagnosticOnlyBadge}
                 </span>
               )}
@@ -384,51 +388,51 @@ export function ModularCalculator() {
             <div className="mt-6">
               <div
                 data-testid="calculator-total-price"
-                className="font-serif text-5xl tracking-tight text-[#141311] tabular-nums sm:text-6xl"
+                className="font-serif text-6xl leading-none font-normal tracking-tight text-[#F3EFE6] tabular-nums"
               >
                 {totalFormatted}
               </div>
 
               <div
                 data-testid="calculator-timeline"
-                className="mt-2.5 font-mono text-xs tracking-wider text-[#57534C] uppercase tabular-nums"
+                className="mt-3 font-mono text-xs tracking-wider text-[#D6B878] uppercase tabular-nums"
               >
                 {dict.calculator.summary.timelineLabel}:{' '}
-                <strong className="font-semibold text-[#141311]">
+                <strong className="font-semibold text-[#F3EFE6]">
                   {estimate.estimatedDays} {dict.calculator.summary.daysUnit}
                 </strong>
               </div>
             </div>
 
-            <div className="mt-6 space-y-3 border-t border-[#141311]/12 pt-5 text-sm">
-              <div className="flex items-center justify-between gap-2 text-xs">
-                <span className="font-mono tracking-wider text-[#857F75] uppercase">
+            <div className="mt-6 space-y-3 border-t border-white/12 pt-5 text-xs">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[#F3EFE6]/60">
                   {dict.calculator.summary.stackSummaryLabel}
                 </span>
-                <span className="font-medium text-[#141311]">
+                <span className="font-medium text-[#F3EFE6]">
                   {dict.calculator.stacks[estimate.stack].label}
                 </span>
               </div>
 
               {estimate.selectedModules.length > 0 && (
-                <div className="space-y-2 border-t border-[#141311]/10 pt-3">
-                  <div className="font-mono text-[11px] tracking-wider text-[#857F75] uppercase">
+                <div className="space-y-2 border-t border-white/12 pt-3">
+                  <div className="font-mono text-[10px] tracking-[0.2em] text-[#D6B878] uppercase">
                     {dict.calculator.summary.modulesCountLabel} (
                     {estimate.selectedModules.length})
                   </div>
-                  <ul className="space-y-1.5">
+                  <ul className="space-y-2">
                     {estimate.selectedModules.map((moduleId) => {
                       const mod = RESCUE_MODULES.find((m) => m.id === moduleId);
                       if (!mod) return null;
                       return (
                         <li
                           key={moduleId}
-                          className="flex items-baseline justify-between gap-3 text-xs"
+                          className="flex items-baseline justify-between gap-3"
                         >
-                          <span className="text-[#57534C]">
+                          <span className="text-[#F3EFE6]/78">
                             {dict.calculator.modules[moduleId].title}
                           </span>
-                          <span className="shrink-0 font-mono text-[#141311] tabular-nums">
+                          <span className="shrink-0 font-mono text-[#F3EFE6] tabular-nums">
                             {formatCurrency(
                               mod.price[currency],
                               currency,
@@ -439,11 +443,11 @@ export function ModularCalculator() {
                       );
                     })}
                   </ul>
-                  <div className="flex items-center justify-between border-t border-[#141311]/10 pt-2.5 text-xs">
-                    <span className="text-[#57534C]">
+                  <div className="flex items-center justify-between border-t border-white/12 pt-2.5">
+                    <span className="text-[#F3EFE6]/65">
                       {dict.calculator.summary.subtotalLabel}
                     </span>
-                    <span className="font-mono font-medium text-[#141311] tabular-nums">
+                    <span className="font-mono font-medium text-[#F3EFE6] tabular-nums">
                       {subtotalFormatted}
                     </span>
                   </div>
@@ -451,17 +455,17 @@ export function ModularCalculator() {
               )}
 
               {estimate.includeDiagnostic && (
-                <div className="space-y-1.5 border-t border-[#141311]/10 pt-3 text-xs">
+                <div className="space-y-1.5 border-t border-white/12 pt-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-[#57534C]">
+                    <span className="text-[#F3EFE6]/70">
                       {dict.calculator.summary.diagnosticFeeLabel}
                     </span>
-                    <span className="font-mono text-[#141311] tabular-nums">
+                    <span className="font-mono text-[#F3EFE6] tabular-nums">
                       {diagnosticFeeFormatted}
                     </span>
                   </div>
                   {estimate.diagnosticDiscount > 0 && (
-                    <div className="flex items-center justify-between font-medium text-[#1A6340]">
+                    <div className="flex items-center justify-between font-medium text-[#D6B878]">
                       <span>
                         {dict.calculator.summary.diagnosticCreditLabel}
                       </span>
@@ -477,10 +481,10 @@ export function ModularCalculator() {
             {!estimate.hasSelection && (
               <div
                 role="alert"
-                className="mt-5 flex items-start gap-2.5 border border-[#C94A22]/40 bg-[#FDF3EF] p-3.5 text-xs text-[#9C3515]"
+                className="mt-5 flex items-start gap-2.5 rounded-2xl border border-[#D6B878]/45 bg-[#D6B878]/12 p-3.5 text-xs text-[#F3EFE6]"
               >
                 <AlertCircle
-                  className="mt-0.5 h-4 w-4 shrink-0"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-[#D6B878]"
                   aria-hidden="true"
                 />
                 <span>{dict.calculator.summary.emptyWarning}</span>
@@ -492,15 +496,16 @@ export function ModularCalculator() {
                 type="button"
                 disabled={!estimate.hasSelection}
                 onClick={() => setIsModalOpen(true)}
-                className="inline-flex w-full items-center justify-center bg-[#141311] px-5 py-4 font-mono text-xs font-medium tracking-[0.1em] text-[#FBF9F5] uppercase transition-colors hover:bg-[#C94A22] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22] disabled:cursor-not-allowed disabled:bg-[#D8D3C8] disabled:text-[#857F75]"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#D6B878] px-6 py-4 text-sm font-semibold text-[#0E2244] transition-all hover:bg-[#E4CB93] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878] disabled:cursor-not-allowed disabled:bg-white/15 disabled:text-white/40"
               >
-                {dict.calculator.summary.requestCta}
+                <span>{dict.calculator.summary.requestCta}</span>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </button>
 
               <button
                 type="button"
                 onClick={handleReset}
-                className="inline-flex w-full items-center justify-center gap-2 border border-[#141311]/15 bg-transparent px-4 py-2.5 font-mono text-[11px] tracking-wider text-[#57534C] uppercase transition-colors hover:border-[#141311] hover:text-[#141311] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22]"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/18 bg-transparent px-4 py-2.5 text-xs font-medium text-[#F3EFE6]/72 transition-colors hover:border-[#D6B878]/60 hover:text-[#F3EFE6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
               >
                 <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>{dict.calculator.summary.resetCta}</span>

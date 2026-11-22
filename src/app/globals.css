@@ -1,86 +1,204 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-paper: #fbf9f5;
-  --color-paper-warm: #f3efe6;
-  --color-paper-stone: #e8e2d5;
-  --color-ink: #141311;
-  --color-ink-muted: #57534c;
-  --color-ink-subtle: #857f75;
-  --color-forensic: #161514;
-  --color-vermilion: #c94a22;
-  --color-forest: #1a6340;
-  --font-sans: var(--font-dm-sans), "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-instrument-serif), Georgia, "Iowan Old Style", serif;
+  --color-navy: #0e2244;
+  --color-navy-deep: #08152b;
+  --color-navy-royal: #1d3a6e;
+  --color-cream: #f3efe6;
+  --color-cream-light: #faf8f3;
+  --color-stone: #ecece8;
+  --color-muted: #5a6378;
+  --color-gold: #d6b878;
+  --color-gold-deep: #b8975a;
+  --color-bronze: #7f6330;
+  --color-danger: #c94a22;
+  --color-ok: #1a6340;
+  --font-sans: var(--font-inter), Arial, ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), "Times New Roman", Georgia, serif;
   --font-mono: var(--font-ibm-plex-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
 :root {
+  --ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
   color-scheme: light;
 }
 
 html {
   scroll-behavior: smooth;
-  background-color: #fbf9f5;
-  color: #141311;
+  background-color: #f3efe6;
+  color: #0e2244;
 }
 
 body {
-  background-color: #fbf9f5;
-  color: #141311;
+  background-color: #f3efe6;
+  color: #0e2244;
   font-family: var(--font-sans);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Warm Daylight atmospheric wash — subtle sunlit editorial warmth, zero neon */
-.bg-daylight-wash {
+/* Signature warm silk cream dotted background (inspired by biologique.es .fondo-crema) */
+.bg-cream-dotted {
+  background-color: #f3efe6;
   background-image:
+    radial-gradient(rgba(14, 34, 68, 0.11) 1px, transparent 1px),
     radial-gradient(
-      900px 520px at 78% -4%,
-      rgba(232, 185, 134, 0.28) 0%,
-      rgba(232, 185, 134, 0.08) 45%,
-      transparent 72%
+      900px 460px at 85% 6%,
+      rgba(214, 184, 120, 0.16) 0%,
+      transparent 70%
+    );
+  background-size: 22px 22px, 100% 100%;
+}
+
+/* Luxury deep Parisian navy surface with 115deg stationery pinstripes */
+.bg-navy-pinstripe {
+  background-color: #0e2244;
+  background-image:
+    repeating-linear-gradient(
+      115deg,
+      rgba(255, 255, 255, 0.028) 0 1px,
+      transparent 1px 14px
     ),
     radial-gradient(
-      680px 420px at 12% 18%,
-      rgba(201, 74, 34, 0.055) 0%,
-      transparent 68%
+      110% 90% at 80% 0%,
+      rgba(29, 58, 110, 0.92) 0%,
+      rgba(14, 34, 68, 0.98) 55%,
+      rgba(8, 21, 43, 1) 100%
     );
 }
 
-/* Tactile fine architectural drafting lines */
-.bg-architect-grid {
+/* Moody full-bleed Hero stage */
+.bg-hero-stage {
+  background-color: #071222;
   background-image:
-    linear-gradient(to right, rgba(20, 19, 17, 0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(20, 19, 17, 0.045) 1px, transparent 1px);
-  background-size: 64px 64px;
+    radial-gradient(
+      70% 60% at 50% 42%,
+      rgba(29, 58, 110, 0.58) 0%,
+      rgba(14, 34, 68, 0.84) 48%,
+      rgba(7, 18, 34, 1) 100%
+    ),
+    radial-gradient(
+      44% 38% at 50% 44%,
+      rgba(214, 184, 120, 0.14) 0%,
+      transparent 70%
+    );
 }
 
-/* Subtle organic paper grain overlay */
-.paper-grain::before {
+/* Centered champagne-gold shimmer top hairline */
+.gold-shimmer-top {
+  position: relative;
+}
+
+.gold-shimmer-top::before {
   content: "";
-  position: fixed;
-  inset: 0;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(68%, 420px);
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(214, 184, 120, 0.78),
+    transparent
+  );
   pointer-events: none;
-  z-index: 50;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Signature eyebrow prefix rule */
+.eyebrow-rule {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.eyebrow-rule::before {
+  content: "";
+  display: inline-block;
+  width: 2rem;
+  height: 1px;
+  background-color: currentColor;
+  opacity: 0.7;
+}
+
+/* Champagne-gold metallic card gradient */
+.bg-gold-metallic {
+  background: linear-gradient(135deg, #e2ca94 0%, #d6b878 48%, #bc9957 100%);
+}
+
+/* Soft tinted Parisian navy shadows */
+.shadow-luxury {
+  box-shadow:
+    0 2px 6px rgba(14, 34, 68, 0.05),
+    0 24px 54px -26px rgba(14, 34, 68, 0.28);
+}
+
+.shadow-luxury-dark {
+  box-shadow:
+    0 22px 54px -22px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
 
-.editorial-shadow {
-  box-shadow:
-    0 1px 2px rgba(20, 19, 17, 0.04),
-    0 24px 60px -28px rgba(20, 19, 17, 0.16);
+@keyframes velnea-float-a {
+  0%, 100% { transform: translateY(0px) rotate(-5deg); }
+  50% { transform: translateY(-9px) rotate(-3.5deg); }
+}
+
+@keyframes velnea-float-b {
+  0%, 100% { transform: translateY(0px) rotate(4.5deg); }
+  50% { transform: translateY(-11px) rotate(6deg); }
+}
+
+@keyframes velnea-float-c {
+  0%, 100% { transform: translateY(0px) rotate(3deg); }
+  50% { transform: translateY(-8px) rotate(1.5deg); }
+}
+
+@keyframes velnea-float-d {
+  0%, 100% { transform: translateY(0px) rotate(-3.5deg); }
+  50% { transform: translateY(-10px) rotate(-5deg); }
+}
+
+@keyframes velnea-sparkle {
+  0%, 100% { opacity: 0.45; transform: scale(0.92); }
+  50% { opacity: 1; transform: scale(1.12); }
+}
+
+.animate-float-a {
+  animation: velnea-float-a 7.5s ease-in-out infinite;
+}
+.animate-float-b {
+  animation: velnea-float-b 8.2s ease-in-out infinite;
+}
+.animate-float-c {
+  animation: velnea-float-c 6.8s ease-in-out infinite;
+}
+.animate-float-d {
+  animation: velnea-float-d 7.9s ease-in-out infinite;
+}
+.animate-sparkle {
+  animation: velnea-sparkle 3.6s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  .animate-float-a,
+  .animate-float-b,
+  .animate-float-c,
+  .animate-float-d,
+  .animate-sparkle {
+    animation: none;
   }
 }

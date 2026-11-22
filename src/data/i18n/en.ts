@@ -22,9 +22,9 @@ export const enDictionary: Dictionary = {
   },
   hero: {
     badge: 'VELNEA · AUDIT & RESCUE · WEB & FLUTTER',
-    title: 'Your AI-built app works in demos. We make it ready to charge for.',
+    title: 'Your AI app, ready to charge.',
     subtitle:
-      'We audit your repository in 48 hours. Within 7–10 days we close data leaks, wire automated regression tests, and hand back a codebase any engineer can maintain.',
+      'We audit your repository in 48 hours and within one week close data leaks, wire regression tests, and hand back maintainable production code.',
     primaryCta: '48h Diagnostic — $590',
     secondaryCta: 'Read sample dossier',
     pipelineCard: {

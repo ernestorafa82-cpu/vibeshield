@@ -13,7 +13,7 @@ import type { DemoTabId } from '@/types/vibeshield';
 const TAB_ORDER: readonly DemoTabId[] = ['security', 'telemetry', 'pr'];
 
 /**
- * Editorial forensic audit dossier orchestrator for the /demo PulseCRM case study.
+ * Luxury Parisian editorial audit dossier orchestrator for /demo (PulseCRM).
  */
 export function DemoRadiographyView() {
   const { locale, dict } = useLocale();
@@ -49,14 +49,14 @@ export function DemoRadiographyView() {
   };
 
   return (
-    <div className="mx-auto max-w-[1320px] space-y-8 px-5 py-12 sm:px-8 lg:px-10 lg:py-16">
+    <div className="mx-auto max-w-[1360px] space-y-8 px-5 py-8 sm:px-8 lg:px-10 lg:py-12">
       <DemoHeader demoCase={demoCase} />
 
       <div className="space-y-6">
         <div
           role="tablist"
           aria-label={dict.demo.kicker}
-          className="flex flex-wrap gap-2 border-b border-[#141311]/15"
+          className="inline-flex flex-wrap gap-2 rounded-full border border-[#0E2244]/12 bg-white p-1.5 shadow-luxury"
         >
           {TAB_ORDER.map((tabId, index) => {
             const isSelected = activeTab === tabId;
@@ -74,10 +74,10 @@ export function DemoRadiographyView() {
                 tabIndex={isSelected ? 0 : -1}
                 onClick={() => setActiveTab(tabId)}
                 onKeyDown={(event) => handleTabKeyDown(event, index)}
-                className={`-mb-px border-b-2 px-4 py-3 font-mono text-xs tracking-wider uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22] ${
+                className={`rounded-full px-5 py-2.5 text-xs font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878] sm:text-sm ${
                   isSelected
-                    ? 'border-[#C94A22] font-semibold text-[#141311]'
-                    : 'border-transparent text-[#857F75] hover:text-[#141311]'
+                    ? 'bg-[#0E2244] text-[#F3EFE6] shadow-sm'
+                    : 'text-[#5A6378] hover:text-[#0E2244]'
                 }`}
               >
                 {dict.demo.tabs[tabId]}
@@ -91,7 +91,7 @@ export function DemoRadiographyView() {
           id={`demo-panel-${activeTab}`}
           aria-labelledby={`demo-tab-${activeTab}`}
           tabIndex={0}
-          className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22]"
+          className="rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
         >
           {activeTab === 'security' && (
             <SecurityBeforeAfterTab demoCase={demoCase} />

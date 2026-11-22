@@ -22,9 +22,9 @@ export const esDictionary: Dictionary = {
   },
   hero: {
     badge: 'VELNEA · AUDITORÍA & RESCATE · WEB Y FLUTTER',
-    title: 'Tu app hecha con IA funciona en demo. Nosotros la dejamos lista para cobrar.',
+    title: 'Tu app de IA, lista para cobrar.',
     subtitle:
-      'Auditamos tu repositorio en 48 horas. En 7–10 días cerramos fugas de datos, fijamos tests de regresión y te entregamos un código que cualquier ingeniero puede mantener.',
+      'Auditamos tu repositorio en 48 horas y en una semana cerramos fugas de datos, fijamos tests de regresión y te entregamos código mantenible.',
     primaryCta: 'Diagnóstico 48h — 590 €',
     secondaryCta: 'Ver expediente demo',
     pipelineCard: {

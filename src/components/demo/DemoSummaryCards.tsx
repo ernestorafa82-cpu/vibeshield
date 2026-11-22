@@ -11,7 +11,7 @@ export interface DemoSummaryCardsProps {
 }
 
 /**
- * Persistent bottom printed telemetry summary strip for the /demo audit dossier.
+ * Persistent bottom luxury summary cards for the /demo audit dossier.
  */
 export function DemoSummaryCards({
   demoCase,
@@ -30,22 +30,22 @@ export function DemoSummaryCards({
           ? 'Resumen rápido de telemetría y PR'
           : 'Quick telemetry and PR summary'
       }
-      className="grid divide-y divide-[#141311]/12 border border-[#141311]/15 bg-[#F3EFE6]/70 md:grid-cols-3 md:divide-x md:divide-y-0"
+      className="grid gap-5 md:grid-cols-3"
     >
       <button
         type="button"
         onClick={() => onSelectTab?.('telemetry')}
-        className="p-6 text-left transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#C94A22]"
+        className="rounded-[24px] border border-[#0E2244]/10 bg-white p-6 text-left shadow-luxury transition-all hover:-translate-y-0.5 hover:border-[#D6B878] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
       >
         <div className="flex items-center justify-between gap-2">
-          <span className="font-mono text-[11px] font-medium tracking-[0.14em] text-[#857F75] uppercase">
+          <span className="font-sans text-[11px] font-semibold tracking-[0.2em] text-[#7F6330] uppercase">
             {dict.demo.summaryRow.sonarqubeLabel}
           </span>
           <span className="font-mono text-xs font-semibold">
             <span className="text-[#C94A22]">
               {demoCase.telemetry.sonarqubeGateBefore}
             </span>{' '}
-            <span className="text-[#857F75]" aria-hidden="true">
+            <span className="text-[#5A6378]" aria-hidden="true">
               →
             </span>{' '}
             <span className="text-[#1A6340]">
@@ -55,15 +55,15 @@ export function DemoSummaryCards({
         </div>
 
         <div className="mt-4 space-y-2">
-          <div className="flex items-center justify-between font-mono text-xs text-[#57534C]">
+          <div className="flex items-center justify-between font-mono text-xs text-[#5A6378]">
             <span>
               {demoCase.telemetry.duplicationBefore} →{' '}
               {demoCase.telemetry.duplicationAfter}
             </span>
             <span className="text-[#1A6340]">OK</span>
           </div>
-          <div className="h-1 w-full overflow-hidden bg-[#141311]/12">
-            <div className="h-full w-[92%] bg-[#1A6340]" />
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#0E2244]/10">
+            <div className="h-full w-[92%] rounded-full bg-[#0E2244]" />
           </div>
         </div>
       </button>
@@ -71,15 +71,15 @@ export function DemoSummaryCards({
       <button
         type="button"
         onClick={() => onSelectTab?.('telemetry')}
-        className="p-6 text-left transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#C94A22]"
+        className="rounded-[24px] border border-[#0E2244]/10 bg-white p-6 text-left shadow-luxury transition-all hover:-translate-y-0.5 hover:border-[#D6B878] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
       >
         <div className="flex items-center justify-between gap-2">
-          <span className="font-mono text-[11px] font-medium tracking-[0.14em] text-[#857F75] uppercase">
+          <span className="font-sans text-[11px] font-semibold tracking-[0.2em] text-[#7F6330] uppercase">
             {dict.demo.summaryRow.devtoolsLabel}
           </span>
           <span className="font-mono text-xs font-semibold">
             <span className="text-[#C94A22]">{demoCase.telemetry.lcpBefore}</span>{' '}
-            <span className="text-[#857F75]" aria-hidden="true">
+            <span className="text-[#5A6378]" aria-hidden="true">
               →
             </span>{' '}
             <span className="text-[#1A6340]">
@@ -96,7 +96,7 @@ export function DemoSummaryCards({
           >
             <polyline
               fill="none"
-              stroke="#1A6340"
+              stroke="#0E2244"
               strokeWidth="2.2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -114,10 +114,10 @@ export function DemoSummaryCards({
       <button
         type="button"
         onClick={() => onSelectTab?.('pr')}
-        className="p-6 text-left transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#C94A22]"
+        className="rounded-[24px] border border-[#0E2244]/10 bg-white p-6 text-left shadow-luxury transition-all hover:-translate-y-0.5 hover:border-[#D6B878] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
       >
         <div className="flex items-center justify-between gap-2">
-          <span className="font-mono text-[11px] font-medium tracking-[0.14em] text-[#857F75] uppercase">
+          <span className="font-sans text-[11px] font-semibold tracking-[0.2em] text-[#7F6330] uppercase">
             {dict.demo.summaryRow.prPreviewLabel}
           </span>
           <span className="font-mono text-xs font-semibold text-[#1A6340]">
@@ -129,7 +129,7 @@ export function DemoSummaryCards({
           <span className="font-mono text-sm font-semibold text-[#1A6340]">
             {passedChecks}/{totalChecks} {dict.demo.summaryRow.checksSuffix}
           </span>
-          <span className="border border-[#1A6340]/35 bg-[#EDF5F0] px-2 py-0.5 font-mono text-[10px] font-semibold text-[#1A6340]">
+          <span className="rounded-full bg-[#EDF5F0] px-2.5 py-0.5 font-mono text-[10px] font-semibold text-[#1A6340]">
             READY
           </span>
         </div>

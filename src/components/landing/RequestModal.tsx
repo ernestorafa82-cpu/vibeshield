@@ -27,7 +27,7 @@ const INITIAL_FORM_VALUES: QuoteModalFormValues = {
 type CopyStatus = 'idle' | 'copied' | 'error';
 
 /**
- * Editorial accessible proposal modal with WAI-ARIA focus trap, focus restoration,
+ * Luxury accessible proposal dialog with WAI-ARIA focus trap, focus restoration,
  * live plain-text summary, safe clipboard fallback, mailto link, and sanitized booking URL.
  */
 export function RequestModal({ isOpen, onClose, estimate }: RequestModalProps) {
@@ -168,7 +168,7 @@ export function RequestModal({ isOpen, onClose, estimate }: RequestModalProps) {
       <div
         aria-hidden="true"
         onClick={handleClose}
-        className="fixed inset-0 bg-[#141311]/60 backdrop-blur-xs"
+        className="fixed inset-0 bg-[#08152B]/72 backdrop-blur-sm"
       />
 
       <div
@@ -177,28 +177,30 @@ export function RequestModal({ isOpen, onClose, estimate }: RequestModalProps) {
         aria-modal="true"
         aria-labelledby="request-modal-title"
         tabIndex={-1}
-        className="relative z-10 flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden border border-[#141311]/20 bg-[#FBF9F5] text-[#141311] shadow-2xl focus:outline-none"
+        className="relative z-10 flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-[28px] border border-[#D6B878]/40 bg-[#F3EFE6] text-[#0E2244] shadow-luxury-dark focus:outline-none"
       >
-        <div className="flex items-start justify-between gap-4 border-b border-[#141311]/12 px-6 py-5 sm:px-8">
+        <div className="bg-navy-pinstripe flex items-start justify-between gap-4 border-b border-[#D6B878]/30 px-6 py-5 text-[#F3EFE6] sm:px-8">
           <div className="space-y-1">
-            <div className="font-mono text-xs font-medium tracking-[0.14em] text-[#C94A22] uppercase tabular-nums">
+            <div className="font-mono text-xs font-medium tracking-[0.18em] text-[#D6B878] uppercase tabular-nums">
               {totalFormatted} · {estimate.estimatedDays}{' '}
               {dict.calculator.summary.daysUnit}
             </div>
             <h2
               id="request-modal-title"
-              className="font-serif text-3xl tracking-tight text-[#141311]"
+              className="font-serif text-3xl font-normal text-[#F3EFE6]"
             >
               {dict.modal.title}
             </h2>
-            <p className="text-sm text-[#57534C]">{dict.modal.subtitle}</p>
+            <p className="text-xs text-[#F3EFE6]/72 sm:text-sm">
+              {dict.modal.subtitle}
+            </p>
           </div>
 
           <button
             type="button"
             onClick={handleClose}
             aria-label={dict.modal.closeLabel}
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center border border-[#141311]/15 bg-white text-[#57534C] transition-colors hover:border-[#141311] hover:text-[#141311] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22]"
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#D6B878]/35 bg-white/8 text-[#F3EFE6] transition-colors hover:bg-[#D6B878] hover:text-[#0E2244] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
@@ -209,7 +211,7 @@ export function RequestModal({ isOpen, onClose, estimate }: RequestModalProps) {
             <div className="space-y-1.5">
               <label
                 htmlFor={nameId}
-                className="block font-mono text-[11px] tracking-wider text-[#57534C] uppercase"
+                className="block font-sans text-[11px] font-semibold tracking-[0.16em] text-[#7F6330] uppercase"
               >
                 {dict.modal.fields.nameLabel}
               </label>
@@ -219,14 +221,14 @@ export function RequestModal({ isOpen, onClose, estimate }: RequestModalProps) {
                 value={formValues.clientName}
                 onChange={(e) => updateField('clientName', e.target.value)}
                 placeholder={dict.modal.fields.namePlaceholder}
-                className="w-full border border-[#141311]/18 bg-white px-3.5 py-2.5 text-sm text-[#141311] placeholder:text-[#857F75] focus:border-[#141311] focus:outline-none focus:ring-1 focus:ring-[#141311]"
+                className="w-full rounded-xl border border-[#0E2244]/15 bg-white px-4 py-2.5 text-sm text-[#0E2244] placeholder:text-[#5A6378]/65 focus:border-[#0E2244] focus:outline-none focus:ring-1 focus:ring-[#0E2244]"
               />
             </div>
 
             <div className="space-y-1.5">
               <label
                 htmlFor={emailId}
-                className="block font-mono text-[11px] tracking-wider text-[#57534C] uppercase"
+                className="block font-sans text-[11px] font-semibold tracking-[0.16em] text-[#7F6330] uppercase"
               >
                 {dict.modal.fields.emailLabel}
               </label>
@@ -236,7 +238,7 @@ export function RequestModal({ isOpen, onClose, estimate }: RequestModalProps) {
                 value={formValues.clientEmail}
                 onChange={(e) => updateField('clientEmail', e.target.value)}
                 placeholder={dict.modal.fields.emailPlaceholder}
-                className="w-full border border-[#141311]/18 bg-white px-3.5 py-2.5 text-sm text-[#141311] placeholder:text-[#857F75] focus:border-[#141311] focus:outline-none focus:ring-1 focus:ring-[#141311]"
+                className="w-full rounded-xl border border-[#0E2244]/15 bg-white px-4 py-2.5 text-sm text-[#0E2244] placeholder:text-[#5A6378]/65 focus:border-[#0E2244] focus:outline-none focus:ring-1 focus:ring-[#0E2244]"
               />
             </div>
           </div>
@@ -244,7 +246,7 @@ export function RequestModal({ isOpen, onClose, estimate }: RequestModalProps) {
           <div className="space-y-1.5">
             <label
               htmlFor={repoId}
-              className="block font-mono text-[11px] tracking-wider text-[#57534C] uppercase"
+              className="block font-sans text-[11px] font-semibold tracking-[0.16em] text-[#7F6330] uppercase"
             >
               {dict.modal.fields.repoLabel}
             </label>
@@ -254,14 +256,14 @@ export function RequestModal({ isOpen, onClose, estimate }: RequestModalProps) {
               value={formValues.repositoryUrl}
               onChange={(e) => updateField('repositoryUrl', e.target.value)}
               placeholder={dict.modal.fields.repoPlaceholder}
-              className="w-full border border-[#141311]/18 bg-white px-3.5 py-2.5 font-mono text-xs text-[#141311] placeholder:text-[#857F75] focus:border-[#141311] focus:outline-none focus:ring-1 focus:ring-[#141311]"
+              className="w-full rounded-xl border border-[#0E2244]/15 bg-white px-4 py-2.5 font-mono text-xs text-[#0E2244] placeholder:text-[#5A6378]/65 focus:border-[#0E2244] focus:outline-none focus:ring-1 focus:ring-[#0E2244]"
             />
           </div>
 
           <div className="space-y-1.5">
             <label
               htmlFor={notesId}
-              className="block font-mono text-[11px] tracking-wider text-[#57534C] uppercase"
+              className="block font-sans text-[11px] font-semibold tracking-[0.16em] text-[#7F6330] uppercase"
             >
               {dict.modal.fields.notesLabel}
             </label>
@@ -271,17 +273,17 @@ export function RequestModal({ isOpen, onClose, estimate }: RequestModalProps) {
               value={formValues.notes}
               onChange={(e) => updateField('notes', e.target.value)}
               placeholder={dict.modal.fields.notesPlaceholder}
-              className="w-full resize-none border border-[#141311]/18 bg-white px-3.5 py-2.5 text-sm text-[#141311] placeholder:text-[#857F75] focus:border-[#141311] focus:outline-none focus:ring-1 focus:ring-[#141311]"
+              className="w-full resize-none rounded-xl border border-[#0E2244]/15 bg-white px-4 py-2.5 text-sm text-[#0E2244] placeholder:text-[#5A6378]/65 focus:border-[#0E2244] focus:outline-none focus:ring-1 focus:ring-[#0E2244]"
             />
           </div>
 
           <div className="space-y-2">
-            <span className="block font-mono text-[11px] tracking-wider text-[#57534C] uppercase">
+            <span className="block font-sans text-[11px] font-semibold tracking-[0.16em] text-[#7F6330] uppercase">
               {dict.modal.summaryHeading}
             </span>
             <pre
               data-testid="modal-summary-preview"
-              className="max-h-52 overflow-y-auto whitespace-pre-wrap bg-[#161514] p-4 font-mono text-xs leading-relaxed text-[#E7E2D8]"
+              className="max-h-52 overflow-y-auto whitespace-pre-wrap rounded-2xl border border-[#D6B878]/25 bg-[#0E2244] p-4 font-mono text-xs leading-relaxed text-[#F3EFE6]"
             >
               {summaryText}
             </pre>
@@ -291,10 +293,10 @@ export function RequestModal({ isOpen, onClose, estimate }: RequestModalProps) {
             <div
               role="status"
               aria-live="polite"
-              className={`border px-3.5 py-2.5 font-mono text-xs ${
+              className={`rounded-xl border px-4 py-2.5 text-xs font-medium ${
                 copyStatus === 'copied'
-                  ? 'border-[#1A6340]/40 bg-[#EDF5F0] text-[#1A6340]'
-                  : 'border-[#C94A22]/40 bg-[#FDF3EF] text-[#9C3515]'
+                  ? 'border-[#1A6340]/35 bg-[#EDF5F0] text-[#1A6340]'
+                  : 'border-[#C94A22]/35 bg-[#FDF3EF] text-[#9C3515]'
               }`}
             >
               {copyStatus === 'copied'
@@ -304,12 +306,12 @@ export function RequestModal({ isOpen, onClose, estimate }: RequestModalProps) {
           )}
         </div>
 
-        <div className="space-y-3 border-t border-[#141311]/12 bg-[#F3EFE6] px-6 py-4 sm:px-8">
+        <div className="space-y-3 border-t border-[#0E2244]/10 bg-white px-6 py-4 sm:px-8">
           <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
               onClick={handleCopySummary}
-              className="inline-flex flex-1 items-center justify-center gap-2 border border-[#141311]/25 bg-white px-4 py-3 font-mono text-xs font-medium tracking-wider text-[#141311] uppercase transition-colors hover:border-[#141311] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22]"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-[#0E2244]/25 bg-white px-5 py-3 text-xs font-semibold text-[#0E2244] transition-colors hover:border-[#0E2244] hover:bg-[#F3EFE6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
             >
               {copyStatus === 'copied' ? (
                 <Check className="h-4 w-4 text-[#1A6340]" aria-hidden="true" />
@@ -321,7 +323,7 @@ export function RequestModal({ isOpen, onClose, estimate }: RequestModalProps) {
 
             <a
               href={mailtoHref}
-              className="inline-flex flex-1 items-center justify-center gap-2 bg-[#141311] px-4 py-3 font-mono text-xs font-medium tracking-wider text-[#FBF9F5] uppercase transition-colors hover:bg-[#C94A22] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22]"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#0E2244] px-5 py-3 text-xs font-semibold text-[#F3EFE6] transition-colors hover:bg-[#1D3A6E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
             >
               <Mail className="h-4 w-4" aria-hidden="true" />
               <span>{dict.modal.mailtoButton}</span>
@@ -332,7 +334,7 @@ export function RequestModal({ isOpen, onClose, estimate }: RequestModalProps) {
                 href={config.bookingUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-2 border border-[#C94A22] bg-[#C94A22] px-4 py-3 font-mono text-xs font-medium tracking-wider text-[#FBF9F5] uppercase transition-colors hover:bg-[#141311] hover:border-[#141311] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22] sm:w-auto"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#D6B878] px-5 py-3 text-xs font-semibold text-[#0E2244] transition-colors hover:bg-[#E4CB93] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878] sm:w-auto"
               >
                 <Calendar className="h-4 w-4" aria-hidden="true" />
                 <span>{dict.modal.bookingButton}</span>
@@ -340,7 +342,7 @@ export function RequestModal({ isOpen, onClose, estimate }: RequestModalProps) {
             )}
           </div>
 
-          <p className="text-center font-mono text-[11px] text-[#857F75]">
+          <p className="text-center text-[11px] text-[#5A6378]">
             {dict.modal.footerNote}
           </p>
         </div>

@@ -54,8 +54,13 @@ describe('Landing sections', () => {
       expect(screen.getByText(es.pipelineCard.statusLabel)).toBeInTheDocument();
       for (const check of es.pipelineCard.checks) {
         expect(screen.getByText(check.label)).toBeInTheDocument();
-        expect(screen.getByText(check.detail)).toBeInTheDocument();
       }
+
+      // Interactive before/after hero hotspot toggle
+      fireEvent.click(screen.getByRole('button', { name: 'Prototipo IA' }));
+      expect(screen.getByText('EXPUESTO')).toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', { name: 'Tras Velnea' }));
+      expect(screen.getByText(es.pipelineCard.statusLabel)).toBeInTheDocument();
 
       const demoLink = screen.getByRole('link', { name: es.secondaryCta });
       expect(demoLink).toHaveAttribute('href', '/demo?lang=es');
@@ -190,7 +195,7 @@ describe('Landing sections', () => {
       screen.getByRole('heading', { level: 1, name: en.hero.title }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: en.hero.secondaryCta }),
+      screen.getAllByRole('link', { name: en.hero.secondaryCta })[0],
     ).toHaveAttribute('href', '/demo?lang=en');
 
     expect(screen.getByText(en.problemSolution.problem.title)).toBeInTheDocument();

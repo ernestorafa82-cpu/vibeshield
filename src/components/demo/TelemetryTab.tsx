@@ -25,7 +25,7 @@ interface TelemetryGroupConfig {
 }
 
 /**
- * Editorial forensic telemetry tab grouping SonarQube, Chrome DevTools, and Sentry evidence.
+ * Luxury editorial telemetry tab grouping SonarQube, Chrome DevTools, and Sentry evidence.
  */
 export function TelemetryTab({ demoCase }: TelemetryTabProps) {
   const { locale, dict } = useLocale();
@@ -38,7 +38,7 @@ export function TelemetryTab({ demoCase }: TelemetryTabProps) {
 
   return (
     <div className="space-y-6">
-      <h2 className="font-serif text-2xl text-[#141311]">
+      <h2 className="font-serif text-3xl text-[#0E2244]">
         {dict.demo.telemetryTab.sectionTitle}
       </h2>
 
@@ -55,13 +55,13 @@ export function TelemetryTab({ demoCase }: TelemetryTabProps) {
           return (
             <section
               key={group.tool}
-              className="border border-[#141311]/15 bg-white p-6"
+              className="rounded-[26px] border border-[#0E2244]/10 bg-white p-6 shadow-luxury sm:p-7"
             >
-              <div className="mb-5 flex items-center justify-between border-b border-[#141311]/10 pb-3">
-                <h3 className="font-mono text-xs font-semibold tracking-[0.16em] text-[#141311] uppercase">
+              <div className="mb-5 flex items-center justify-between border-b border-[#0E2244]/8 pb-3">
+                <h3 className="font-sans text-xs font-semibold tracking-[0.22em] text-[#7F6330] uppercase">
                   {group.title}
                 </h3>
-                <span className="font-mono text-[11px] text-[#857F75]">
+                <span className="font-mono text-[11px] text-[#5A6378]">
                   {metrics.length}{' '}
                   {locale === 'es' ? 'mediciones' : 'measurements'}
                 </span>
@@ -75,20 +75,20 @@ export function TelemetryTab({ demoCase }: TelemetryTabProps) {
                   return (
                     <div
                       key={metric.id}
-                      className="flex flex-col justify-between gap-4 border border-[#141311]/12 bg-[#FBF9F5] p-5"
+                      className="flex flex-col justify-between gap-4 rounded-2xl border border-[#0E2244]/10 bg-[#F3EFE6]/55 p-5"
                     >
                       <div className="flex items-start justify-between gap-2">
-                        <p className="text-sm font-medium text-[#141311]">
+                        <p className="font-serif text-lg font-medium text-[#0E2244]">
                           {metric.label}
                         </p>
-                        <span className="shrink-0 border border-[#1A6340]/30 bg-[#EDF5F0] px-2 py-0.5 font-mono text-[11px] font-medium text-[#1A6340]">
+                        <span className="shrink-0 rounded-full bg-[#EDF5F0] px-2.5 py-0.5 font-mono text-[11px] font-medium text-[#1A6340]">
                           {metric.improvementBadge}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-3 font-mono text-sm">
-                        <div className="flex-1 border border-[#141311]/10 bg-white px-3 py-2">
-                          <span className="block text-[10px] tracking-wider text-[#857F75] uppercase">
+                      <div className="flex items-center gap-2.5 font-mono text-sm">
+                        <div className="flex-1 rounded-xl border border-[#0E2244]/10 bg-white px-3 py-2">
+                          <span className="block text-[10px] tracking-wider text-[#5A6378] uppercase">
                             {dict.demo.telemetryTab.beforeLabel}
                           </span>
                           <span className="font-semibold text-[#C94A22]">
@@ -97,12 +97,12 @@ export function TelemetryTab({ demoCase }: TelemetryTabProps) {
                         </div>
 
                         <ArrowRight
-                          className="h-4 w-4 shrink-0 text-[#857F75]"
+                          className="h-4 w-4 shrink-0 text-[#B8975A]"
                           aria-hidden="true"
                         />
 
-                        <div className="flex-1 border border-[#1A6340]/30 bg-[#EDF5F0]/60 px-3 py-2">
-                          <span className="block text-[10px] tracking-wider text-[#57534C] uppercase">
+                        <div className="flex-1 rounded-xl border border-[#1A6340]/25 bg-[#EDF5F0]/70 px-3 py-2">
+                          <span className="block text-[10px] tracking-wider text-[#5A6378] uppercase">
                             {dict.demo.telemetryTab.afterLabel}
                           </span>
                           <span className="font-semibold text-[#1A6340]">
@@ -112,16 +112,16 @@ export function TelemetryTab({ demoCase }: TelemetryTabProps) {
                       </div>
 
                       <div className="space-y-3">
-                        <div className="h-1 w-full overflow-hidden bg-[#141311]/10">
+                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#0E2244]/10">
                           <div
-                            className="h-full bg-[#1A6340]"
+                            className="h-full rounded-full bg-[#0E2244]"
                             style={{ width: `${progressWidth}%` }}
                           />
                         </div>
 
                         {metric.sparklinePoints &&
                           metric.sparklinePoints.length > 1 && (
-                            <div className="border border-[#141311]/10 bg-white p-2.5">
+                            <div className="rounded-xl border border-[#0E2244]/10 bg-white p-2.5">
                               <svg
                                 viewBox="0 0 180 44"
                                 role="img"
@@ -134,8 +134,8 @@ export function TelemetryTab({ demoCase }: TelemetryTabProps) {
                               >
                                 <polyline
                                   fill="none"
-                                  stroke="#1A6340"
-                                  strokeWidth="2.2"
+                                  stroke="#0E2244"
+                                  strokeWidth="2.4"
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
                                   points={buildSparklinePoints(

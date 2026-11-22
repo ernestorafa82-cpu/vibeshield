@@ -1,16 +1,20 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Minus, Plus } from 'lucide-react';
+import { ArrowRight, Plus, X } from 'lucide-react';
+import { SilkReveal } from '@/components/motion/SilkReveal';
 import { useLocale } from '@/context/LocaleContext';
+import { getSiteConfig } from '@/lib/config';
 
 /**
- * Asymmetric editorial terms column paired with a WAI-ARIA hairline FAQ accordion.
+ * Sticky-left editorial header + pure-white rounded FAQ accordion cards
+ * with champagne-gold numerals, directly inspired by biologique.es .faqs.
  */
 export function GuaranteesFaqSection() {
-  const { dict } = useLocale();
+  const { locale, dict } = useLocale();
   const { guaranteesTitle, guarantees, faqTitle, faqSubtitle, faqs } =
     dict.guaranteesFaq;
+  const config = getSiteConfig();
 
   const [openFaqIds, setOpenFaqIds] = useState<Record<string, boolean>>(() =>
     faqs[0] ? { [faqs[0].id]: true } : {},
@@ -24,92 +28,133 @@ export function GuaranteesFaqSection() {
   };
 
   return (
-    <section className="border-t border-[#141311]/10 bg-[#FBF9F5] py-24 lg:py-32">
-      <div className="mx-auto max-w-[1320px] px-5 sm:px-8 lg:px-10">
-        <div className="grid gap-16 lg:grid-cols-12">
-          {/* Left: Contractual Working Terms */}
-          <div className="lg:col-span-5">
-            <p className="font-mono text-[11px] font-medium tracking-[0.2em] text-[#857F75] uppercase">
-              DOC. 03 · COMPROMISO
-            </p>
-            <h2 className="mt-4 font-serif text-4xl leading-[1.06] tracking-[-0.02em] text-[#141311]">
-              {guaranteesTitle}
-            </h2>
-
-            <div className="mt-10 divide-y divide-[#141311]/12 border-t border-b border-[#141311]/12">
-              {guarantees.map((item, idx) => (
-                <article key={item.id} className="py-6">
-                  <div className="flex items-baseline gap-4">
-                    <span className="font-mono text-xs text-[#C94A22]">
-                      0{idx + 1}
-                    </span>
-                    <div>
-                      <h3 className="text-base font-semibold text-[#141311]">
-                        {item.title}
-                      </h3>
-                      <p className="mt-2 text-sm leading-relaxed text-[#57534C]">
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
-                </article>
-              ))}
+    <section className="bg-cream-dotted py-20 text-[#0E2244] sm:py-28">
+      <div className="mx-auto max-w-[1360px] px-5 sm:px-8 lg:px-10">
+        {/* Top 3 Contractual Guarantees Strip */}
+        <SilkReveal className="mb-20">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <span className="eyebrow-rule text-[#7F6330]">
+                {locale === 'es' ? 'GARANTÍAS' : 'TERMS'}
+              </span>
+              <h2 className="mt-3 font-serif text-4xl leading-[1.04] font-normal text-[#0E2244] sm:text-5xl">
+                {guaranteesTitle}
+              </h2>
             </div>
           </div>
 
-          {/* Right: Editorial Hairline FAQ Accordion */}
-          <div className="lg:col-span-7">
-            <p className="font-mono text-[11px] font-medium tracking-[0.2em] text-[#857F75] uppercase">
-              FAQ
-            </p>
-            <h2 className="mt-4 font-serif text-4xl leading-[1.06] tracking-[-0.02em] text-[#141311]">
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            {guarantees.map((item, idx) => (
+              <article
+                key={item.id}
+                className="rounded-[24px] border border-[#0E2244]/10 bg-white p-7 shadow-luxury transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-[#D6B878]/65"
+              >
+                <span className="font-serif text-3xl text-[#B8975A]">
+                  0{idx + 1}
+                </span>
+                <h3 className="mt-3 font-serif text-2xl font-medium text-[#0E2244]">
+                  {item.title}
+                </h3>
+                <p className="mt-2.5 text-sm leading-relaxed text-[#5A6378]">
+                  {item.description}
+                </p>
+              </article>
+            ))}
+          </div>
+        </SilkReveal>
+
+        {/* Sticky-Left / Rounded-Card FAQ Layout */}
+        <div className="grid gap-12 lg:grid-cols-12 lg:items-start">
+          <SilkReveal className="space-y-5 lg:sticky lg:top-28 lg:col-span-4">
+            <span className="eyebrow-rule text-[#7F6330]">
+              {locale === 'es' ? 'TE AYUDAMOS' : 'QUESTIONS'}
+            </span>
+            <h2 className="font-serif text-5xl leading-[0.98] font-normal text-[#0E2244] sm:text-[56px]">
               {faqTitle}
             </h2>
-            <p className="mt-3 text-base text-[#57534C]">{faqSubtitle}</p>
+            <p className="text-base leading-relaxed text-[#5A6378]">
+              {faqSubtitle}
+            </p>
+            <div className="pt-2">
+              <a
+                href={`mailto:${config.contactEmail}`}
+                className="inline-flex items-center gap-2 rounded-full bg-[#0E2244] px-6 py-3.5 text-sm font-semibold text-[#F3EFE6] transition-all hover:bg-[#1D3A6E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
+              >
+                <span>
+                  {locale === 'es'
+                    ? '¿Otra duda? Escríbenos'
+                    : 'Another question? Write us'}
+                </span>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </a>
+            </div>
+          </SilkReveal>
 
-            <div className="mt-10 divide-y divide-[#141311]/12 border-t border-b border-[#141311]/12">
-              {faqs.map((faq) => {
-                const isOpen = Boolean(openFaqIds[faq.id]);
-                const triggerId = `faq-trigger-${faq.id}`;
-                const panelId = `faq-panel-${faq.id}`;
+          <div className="space-y-4 lg:col-span-8">
+            {faqs.map((faq, idx) => {
+              const isOpen = Boolean(openFaqIds[faq.id]);
+              const triggerId = `faq-trigger-${faq.id}`;
+              const panelId = `faq-panel-${faq.id}`;
 
-                return (
-                  <div key={faq.id}>
-                    <h3>
-                      <button
-                        type="button"
-                        id={triggerId}
-                        aria-expanded={isOpen}
-                        aria-controls={panelId}
-                        onClick={() => toggleFaq(faq.id)}
-                        className="flex w-full items-center justify-between gap-6 py-5 text-left text-base font-medium text-[#141311] transition-colors hover:text-[#C94A22] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22]"
-                      >
-                        <span>{faq.question}</span>
+              return (
+                <div
+                  key={faq.id}
+                  className={`rounded-[24px] border bg-white transition-all duration-300 ${
+                    isOpen
+                      ? 'border-[#D6B878] shadow-luxury'
+                      : 'border-[#0E2244]/10 hover:border-[#0E2244]/25'
+                  }`}
+                >
+                  <h3>
+                    <button
+                      type="button"
+                      id={triggerId}
+                      aria-expanded={isOpen}
+                      aria-controls={panelId}
+                      onClick={() => toggleFaq(faq.id)}
+                      className="flex w-full items-center justify-between gap-5 px-6 py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D6B878] sm:px-7 sm:py-6"
+                    >
+                      <span className="flex items-baseline gap-4">
                         <span
                           aria-hidden="true"
-                          className="inline-flex h-7 w-7 shrink-0 items-center justify-center border border-[#141311]/15 text-[#57534C]"
+                          className="font-serif text-xl font-medium text-[#B8975A]"
                         >
-                          {isOpen ? (
-                            <Minus className="h-3.5 w-3.5" />
-                          ) : (
-                            <Plus className="h-3.5 w-3.5" />
-                          )}
+                          0{idx + 1}
                         </span>
-                      </button>
-                    </h3>
-                    <div
-                      id={panelId}
-                      role="region"
-                      aria-labelledby={triggerId}
-                      hidden={!isOpen}
-                      className="pb-6 pr-10 text-sm leading-relaxed text-[#57534C]"
-                    >
-                      {faq.answer}
-                    </div>
+                        <span className="font-serif text-xl font-medium text-[#0E2244] sm:text-2xl">
+                          {faq.question}
+                        </span>
+                      </span>
+
+                      <span
+                        aria-hidden="true"
+                        className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-colors ${
+                          isOpen
+                            ? 'border-[#0E2244] bg-[#0E2244] text-[#F3EFE6]'
+                            : 'border-[#0E2244]/20 bg-[#F3EFE6] text-[#0E2244]'
+                        }`}
+                      >
+                        {isOpen ? (
+                          <X className="h-4 w-4" />
+                        ) : (
+                          <Plus className="h-4 w-4" />
+                        )}
+                      </span>
+                    </button>
+                  </h3>
+
+                  <div
+                    id={panelId}
+                    role="region"
+                    aria-labelledby={triggerId}
+                    hidden={!isOpen}
+                    className="px-6 pb-6 pl-16 text-sm leading-relaxed text-[#5A6378] sm:px-7 sm:pb-7 sm:pl-[70px]"
+                  >
+                    {faq.answer}
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

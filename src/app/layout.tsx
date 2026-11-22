@@ -1,23 +1,23 @@
 import type { Metadata } from 'next';
-import { DM_Sans, IBM_Plex_Mono, Instrument_Serif } from 'next/font/google';
+import { Cormorant_Garamond, IBM_Plex_Mono, Inter } from 'next/font/google';
 import { Footer } from '@/components/layout/Footer';
 import { Navbar } from '@/components/layout/Navbar';
 import { LocaleProvider } from '@/context/LocaleContext';
 import { DEFAULT_LOCALE, dictionaries } from '@/data/i18n';
 import './globals.css';
 
-const dmSans = DM_Sans({
+const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
-  variable: '--font-dm-sans',
+  style: ['normal', 'italic'],
+  variable: '--font-cormorant',
   display: 'swap',
 });
 
-const instrumentSerif = Instrument_Serif({
+const inter = Inter({
   subsets: ['latin'],
-  weight: ['400'],
-  style: ['normal', 'italic'],
-  variable: '--font-instrument-serif',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-inter',
   display: 'swap',
 });
 
@@ -41,9 +41,9 @@ export default function RootLayout({
   return (
     <html
       lang={DEFAULT_LOCALE}
-      className={`${dmSans.variable} ${instrumentSerif.variable} ${ibmPlexMono.variable}`}
+      className={`${cormorant.variable} ${inter.variable} ${ibmPlexMono.variable}`}
     >
-      <body className="paper-grain flex min-h-screen flex-col bg-[#FBF9F5] font-sans text-[#141311] antialiased selection:bg-[#C94A22]/15 selection:text-[#141311]">
+      <body className="flex min-h-screen flex-col bg-[#F3EFE6] font-sans text-[#0E2244] antialiased selection:bg-[#D6B878]/35 selection:text-[#0E2244]">
         <LocaleProvider
           dictionaries={dictionaries}
           initialLocale={DEFAULT_LOCALE}

@@ -13,6 +13,68 @@ export interface HeroCanvasSceneProps {
   mouseY: number;
 }
 
+// Exact physical half-extents of extruded VSH wordmark including bevels + alert drift
+export const VSH_PROJECTION_BOUNDS = {
+  halfW: 2.6,
+  halfH: 1.02,
+  halfD: 0.42,
+  maxRx: 0.24,
+  maxRy: 0.68,
+  maxPosX: 0.12,
+  maxPosY: 0.11,
+  cameraFov: 22,
+  cameraZ: 13.5,
+  margin: 0.92,
+} as const;
+
+/**
+ * Computes the largest uniform scale for the rotating 3D VSH wordmark such that
+ * all 8 corners of its rotated + drifted bounding box stay strictly inside the
+ * perspective frustum (|NDC_x| <= margin, |NDC_y| <= margin) at every swing angle
+ * and pointer position.
+ */
+export function computeVshFitScale(
+  aspect: number,
+  cameraFov: number = VSH_PROJECTION_BOUNDS.cameraFov,
+  cameraZ: number = VSH_PROJECTION_BOUNDS.cameraZ,
+): number {
+  const safeAspect = Math.max(aspect, 0.25);
+  const { halfW, halfH, halfD, maxRx, maxRy, maxPosX, maxPosY, margin } =
+    VSH_PROJECTION_BOUNDS;
+
+  const tanHalf = Math.tan(THREE.MathUtils.degToRad(cameraFov * 0.5));
+  const tanY = tanHalf * margin;
+  const tanX = tanHalf * safeAspect * margin;
+
+  // Worst-case Y/Z envelope after X pitch rotation (Euler XYZ / YXZ safe upper bound)
+  const yAfterRx = halfH * Math.cos(maxRx) + halfD * Math.sin(maxRx);
+  const zAfterRx = halfH * Math.sin(maxRx) + halfD * Math.cos(maxRx);
+
+  let fitScale = Infinity;
+  // Evaluate across the full yaw range [0, maxRy] to cover both wide-face and corner-peak Z advance
+  for (const ry of [0, maxRy * 0.5, maxRy]) {
+    const xRot = halfW * Math.cos(ry) + zAfterRx * Math.sin(ry);
+    const zNear = halfW * Math.sin(ry) + zAfterRx * Math.cos(ry);
+    // Conservative Y upper bound accounting for X rotation after Y rotation (Euler XYZ order)
+    const yWorst =
+      halfH * Math.cos(maxRx) +
+      (halfW * Math.sin(ry) + halfD * Math.cos(ry)) * Math.sin(maxRx);
+    const zWorst =
+      halfH * Math.sin(maxRx) +
+      (halfW * Math.sin(ry) + halfD * Math.cos(ry)) * Math.cos(maxRx);
+
+    const maxXExtent = Math.max(xRot, halfW * Math.cos(ry) + halfD * Math.sin(ry));
+    const maxYExtent = Math.max(yAfterRx, yWorst);
+    const maxZAdvance = Math.max(zNear, zWorst);
+
+    const scaleX = (cameraZ * tanX - maxPosX) / (maxXExtent + maxZAdvance * tanX);
+    const scaleY = (cameraZ * tanY - maxPosY) / (maxYExtent + maxZAdvance * tanY);
+    fitScale = Math.min(fitScale, scaleX, scaleY);
+  }
+
+  return Math.max(0.1, fitScale);
+}
+
 /**
  * Converts TrueType quadratic Bezier contour points ([x, y, onCurve]) into a
  * lossless THREE.Shape ready for smooth beveled 3D extrusion.
@@ -71,11 +133,13 @@ function buildShapeFromTrueType(
 }
 
 /**
- * Builds a high-contrast luxury watch/jewelry studio reflection dome (PMREM)
- * with bright diagonal front-hemisphere softbox bands + deep sapphire dark cards,
- * giving both the flat serif faces and curved bevels authentic liquid metallic-glass reflections.
+ * Builds a high-contrast luxury photography studio reflection dome (PMREM)
+ * with diagonal front-hemisphere softbox bands + deep sapphire dark cards,
+ * giving both serif faces and curved bevels liquid metallic-glass reflections.
  */
-function buildStudioEnvironment(renderer: THREE.WebGLRenderer): THREE.Texture {
+function buildStudioEnvironment(
+  renderer: THREE.WebGLRenderer,
+): THREE.WebGLRenderTarget {
   const pmrem = new THREE.PMREMGenerator(renderer);
   pmrem.compileEquirectangularShader();
 
@@ -108,30 +172,24 @@ function buildStudioEnvironment(renderer: THREE.WebGLRenderer): THREE.Texture {
     disposables.push(geo, mat);
   };
 
-  // FRONT-HEMISPHERE diagonal reflection strips (what the flat VSH glass faces reflect directly!)
+  // Front-hemisphere diagonal studio softboxes reflected across the sculpted serif faces
   addSoftbox(14, 2.2, '#ffffff', 3.4, [1.8, 3.2, 8.2], -0.42);
   addSoftbox(12, 1.3, '#bfdbfe', 2.4, [-2.4, -0.6, 8.4], -0.42);
   addSoftbox(10, 1.1, '#93c5fd', 2.0, [3.2, -3.4, 7.8], -0.42);
-
-  // Dark contrast card right between the front strips for razor-sharp chrome reflection bands
   addSoftbox(15, 1.5, '#07142b', 0.35, [0.0, 0.9, 7.6], -0.42);
 
-  // Side & overhead platinum rim softboxes for gleaming 3D curved bevels
+  // Side & overhead platinum rim softboxes illuminating curved 3D bevels
   addSoftbox(2.4, 11.0, '#eef5ff', 3.6, [7.6, 1.0, 2.5]);
   addSoftbox(2.8, 10.5, '#93c5fd', 2.9, [-7.4, 2.0, 1.6]);
   addSoftbox(11.0, 2.6, '#ffffff', 3.2, [0, 7.4, 1.8]);
   addSoftbox(11.5, 3.4, '#3b82f6', 1.8, [0, -6.8, 3.0]);
-
-  // Rear reflection strips (visible when VSH spins past 90 deg)
-  addSoftbox(13, 2.4, '#e0f2fe', 3.1, [-1.5, 2.8, -8.0], 0.4);
-  addSoftbox(11, 1.5, '#60a5fa', 2.2, [2.2, -1.8, -8.2], 0.4);
 
   const rt = pmrem.fromScene(envScene, 0.02);
   for (const d of disposables) {
     d.dispose();
   }
   pmrem.dispose();
-  return rt.texture;
+  return rt;
 }
 
 const COOL_FACE_COLOR = new THREE.Color('#9ec7ff');
@@ -145,9 +203,9 @@ const ALERT_KEY_COLOR = new THREE.Color('#fecaca');
 const ALERT_RIM_COLOR = new THREE.Color('#ef4444');
 
 /**
- * Interactive 60fps Three.js WebGL PBR scene rendering a sculpted liquid metallic-glass
- * 3D "VSH" monogram using genuine DM Serif Display foundry curves, dual-surface chrome/crystal
- * reflections, clearcoat iridescence, pointer parallax, and Prototipo IA / Tras VibeShield state.
+ * Self-contained Three.js WebGL PBR stage rendering the sculpted liquid metallic-glass
+ * "VSH" serif monogram (DM Serif Display) using exact perspective frustum fitting so
+ * all rotated/drifted vertices stay strictly inside the canvas across all viewports.
  */
 export function HeroCanvasScene({
   mode,
@@ -155,6 +213,7 @@ export function HeroCanvasScene({
   mouseY,
 }: HeroCanvasSceneProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const fallbackRef = useRef<HTMLDivElement | null>(null);
   const renderOnceRef = useRef<(() => void) | null>(null);
   const stateRef = useRef({
     mode,
@@ -176,7 +235,6 @@ export function HeroCanvasScene({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // Quietly verify WebGL availability before invoking Three.js (avoids noisy stderr in jsdom)
     let webglContext: RenderingContext | null = null;
     try {
       webglContext =
@@ -193,7 +251,9 @@ export function HeroCanvasScene({
     } catch {
       return;
     }
-    if (!webglContext) return;
+    if (!webglContext) {
+      return;
+    }
 
     let renderer: THREE.WebGLRenderer;
     try {
@@ -208,6 +268,10 @@ export function HeroCanvasScene({
       return;
     }
 
+    if (fallbackRef.current) {
+      fallbackRef.current.style.opacity = '0';
+    }
+
     const reducedMotion =
       typeof window !== 'undefined' &&
       typeof window.matchMedia === 'function' &&
@@ -219,12 +283,13 @@ export function HeroCanvasScene({
     renderer.setClearColor(0x000000, 0);
 
     const scene = new THREE.Scene();
-    const envTexture = buildStudioEnvironment(renderer);
-    scene.environment = envTexture;
+    const envTarget = buildStudioEnvironment(renderer);
+    scene.environment = envTarget.texture;
 
-    const camera = new THREE.PerspectiveCamera(30, 16 / 9, 0.1, 100);
-    camera.position.set(0, -0.78, 12.8);
-    camera.lookAt(0, -0.78, 0);
+    const { cameraFov, cameraZ } = VSH_PROJECTION_BOUNDS;
+    const camera = new THREE.PerspectiveCamera(cameraFov, 16 / 9, 0.1, 100);
+    camera.position.set(0, 0, cameraZ);
+    camera.lookAt(0, 0, 0);
 
     const keyLight = new THREE.DirectionalLight(COOL_KEY_COLOR.clone(), 2.6);
     keyLight.position.set(4.8, 6.2, 6.4);
@@ -238,8 +303,7 @@ export function HeroCanvasScene({
     fillLight.position.set(-2.5, -3.2, 6.5);
     scene.add(fillLight);
 
-    // Dual-surface Liquid Metallic Glass ("vidrio metálico"):
-    // [0] Front & Back: luminous translucent liquid-chrome sapphire glass with prism iridescence
+    // Dual-surface Liquid Metallic Glass ("vidrio metálico")
     const faceMaterial = new THREE.MeshPhysicalMaterial({
       color: COOL_FACE_COLOR.clone(),
       metalness: 0.86,
@@ -256,7 +320,6 @@ export function HeroCanvasScene({
       opacity: 0.84,
     });
 
-    // [1] Curved 3D bevels & side walls: blazing mirror platinum-chrome optical glass
     const bevelMaterial = new THREE.MeshPhysicalMaterial({
       color: COOL_BEVEL_COLOR.clone(),
       metalness: 0.96,
@@ -313,25 +376,17 @@ export function HeroCanvasScene({
 
     const syncViewport = () => {
       const rect = canvas.getBoundingClientRect();
-      const width = Math.max(rect.width, 320);
-      const height = Math.max(rect.height, 320);
+      const width = Math.max(rect.width, 160);
+      const height = Math.max(rect.height, 90);
+      const aspect = width / height;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
       renderer.setPixelRatio(dpr);
       renderer.setSize(width, height, false);
-      camera.aspect = width / height;
+      camera.aspect = aspect;
       camera.updateProjectionMatrix();
 
-      // Frame VSH with generous clear margins from Navbar, exhibits, and center pill
-      const isCompact = width < 1024;
-      const responsiveScale = isCompact
-        ? Math.min(0.76, Math.max(0.52, width / 960))
-        : Math.min(0.86, Math.max(0.72, width / 1680));
-
-      vshGroup.scale.setScalar(responsiveScale);
-      // Center monogram cleanly at y ~ 29.5% of hero stage (above hotspot pill, below navbar)
-      camera.position.y = isCompact ? -0.96 : -1.04;
-      camera.lookAt(0, camera.position.y, 0);
+      vshGroup.scale.setScalar(computeVshFitScale(aspect, cameraFov, cameraZ));
     };
 
     let rafId = 0;
@@ -369,28 +424,29 @@ export function HeroCanvasScene({
       keyLight.color.copy(COOL_KEY_COLOR).lerp(ALERT_KEY_COLOR, s.alertMix);
       rimLight.color.copy(COOL_RIM_COLOR).lerp(ALERT_RIM_COLOR, s.alertMix);
 
+      // Forward-facing sculptural 3D swing (±0.43 rad ≈ ±24.6°, up to ±0.68 rad with pointer)
       vshGroup.rotation.y = reducedMotion
-        ? -0.28
-        : -0.28 + elapsed * 0.34 + s.currentMouseX * 0.45;
+        ? -0.24
+        : Math.sin(elapsed * 0.62 - 0.5) * 0.43 + s.currentMouseX * 0.25;
       vshGroup.rotation.x = reducedMotion
-        ? 0.09
-        : 0.08 + Math.sin(elapsed * 0.6) * 0.045 + s.currentMouseY * 0.18;
-      vshGroup.position.x = s.currentMouseX * 0.2;
+        ? 0.07
+        : 0.06 + Math.sin(elapsed * 0.85) * 0.04 + s.currentMouseY * 0.14;
+      vshGroup.position.x = s.currentMouseX * 0.12;
       vshGroup.position.y = reducedMotion
         ? 0
-        : Math.sin(elapsed * 0.9) * 0.05 - s.currentMouseY * 0.1;
+        : Math.sin(elapsed * 1.05) * 0.04 - s.currentMouseY * 0.07;
 
       for (const entry of glyphEntries) {
         const mix = s.alertMix;
         const driftY = reducedMotion
-          ? entry.dir * 0.09 * mix
-          : Math.sin(elapsed * 3.1 + entry.phase) * 0.095 * mix;
+          ? entry.dir * 0.07 * mix
+          : Math.sin(elapsed * 3.1 + entry.phase) * 0.075 * mix;
         const driftZ = reducedMotion
-          ? entry.dir * 0.14 * mix
-          : Math.cos(elapsed * 2.5 + entry.phase) * 0.16 * mix;
+          ? entry.dir * 0.1 * mix
+          : Math.cos(elapsed * 2.5 + entry.phase) * 0.12 * mix;
         const driftRotZ = reducedMotion
-          ? entry.dir * 0.055 * mix
-          : Math.sin(elapsed * 3.6 + entry.phase) * 0.065 * mix;
+          ? entry.dir * 0.045 * mix
+          : Math.sin(elapsed * 3.6 + entry.phase) * 0.05 * mix;
 
         entry.mesh.position.set(entry.spec.centerX, driftY, driftZ);
         entry.mesh.rotation.z = driftRotZ;
@@ -431,16 +487,34 @@ export function HeroCanvasScene({
       }
       faceMaterial.dispose();
       bevelMaterial.dispose();
-      envTexture.dispose();
+      envTarget.dispose();
       renderer.dispose();
     };
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
+    <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 block h-full w-full"
-    />
+      className="pointer-events-none relative h-full w-full select-none"
+    >
+      <div
+        ref={fallbackRef}
+        className="absolute inset-0 flex items-center justify-center transition-opacity duration-300"
+      >
+        <span
+          className={`bg-clip-text font-serif text-7xl font-semibold tracking-[0.18em] text-transparent sm:text-8xl lg:text-9xl ${
+            mode === 'after'
+              ? 'bg-[linear-gradient(135deg,#ffffff_0%,#bfdbfe_45%,#2563eb_100%)]'
+              : 'bg-[linear-gradient(135deg,#fee2e2_0%,#fca5a5_45%,#b91c1c_100%)]'
+          }`}
+        >
+          VSH
+        </span>
+      </div>
+      <canvas
+        ref={canvasRef}
+        className="relative block h-full w-full"
+      />
+    </div>
   );
 }

@@ -14,8 +14,9 @@ type InspectionMode = 'before' | 'after';
 /**
  * Full-viewport luminous sapphire-navy Hero:
  * - Pure architectural fluted-glass studio backdrop (/images/hero-backdrop.jpg) with mouse parallax.
- * - Rotating 3D extruded "VSH" (VibeShield) monogram rendered live in HTML5 Canvas.
- * - Two spacious frosted white-blue architectural exhibits (real RLS SQL diff + live LCP curve).
+ * - Dedicated in-flow 3D WebGL stage for the sculpted liquid metallic-glass "VSH" monogram
+ *   (prevents any overlap with the pill, headline, or exhibits on mobile, laptop, and desktop).
+ * - Two spacious frosted white-blue architectural exhibits flanking the 3D stage on xl screens.
  * - Zero decorative stars/sparkles; 1-line Cormorant headline & dual pill CTAs above the fold.
  */
 export function HeroSection() {
@@ -67,11 +68,11 @@ export function HeroSection() {
 
   return (
     <div className="bg-porcelain-canvas">
-      {/* Full-Viewport Studio Fluted-Light Hero with Rotating 3D VSH */}
+      {/* Full-Viewport Studio Fluted-Light Hero with Dedicated In-Flow 3D VSH Stage */}
       <section
         onPointerMove={handlePointerMove}
         onPointerLeave={handlePointerLeave}
-        className="bg-hero-stage relative flex min-h-[760px] flex-col justify-between overflow-hidden pt-20 pb-20 text-white lg:h-[min(100svh,880px)] lg:pb-24"
+        className="bg-hero-stage relative flex min-h-[720px] flex-col justify-between overflow-hidden pt-20 pb-16 text-white sm:pt-24 sm:pb-20 lg:min-h-[760px] lg:pb-24"
       >
         {/* Pure Atmospheric Fluted-Glass Architectural Backdrop with Parallax */}
         <div
@@ -95,23 +96,20 @@ export function HeroSection() {
           />
         </div>
 
-        {/* Sculpted top & lower readability veil (guarantees AAA navbar & H1 legibility) */}
+        {/* Sculpted top & lower readability veil */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(7,20,43,0.78)_0%,rgba(7,20,43,0.72)_9%,rgba(7,20,43,0.18)_20%,transparent_34%,rgba(7,20,43,0.28)_55%,rgba(7,20,43,0.9)_76%,rgba(7,20,43,1)_100%)]"
         />
 
-        {/* Rotating 3D Extruded "VSH" Monogram */}
-        <HeroCanvasScene mode={mode} mouseX={mouse.x} mouseY={mouse.y} />
-
-        {/* UPPER STAGE: Two Architectural Frosted White-Blue Exhibits flanking 3D VSH */}
-        <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-end px-5 pb-6 sm:px-10">
+        {/* UPPER STAGE: Dedicated In-Flow 3D VSH Monogram + Flanking Exhibits + Hotspot Pill */}
+        <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-1 flex-col items-center justify-center px-5 pt-2 pb-6 sm:px-10">
           {/* Left Heritage Label */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: SILK_EASE }}
-            className="absolute top-4 left-10 hidden max-w-[190px] xl:block"
+            className="absolute top-2 left-8 hidden max-w-[190px] xl:block"
           >
             <span className="block h-px w-9 bg-[#93C5FD]/65" aria-hidden="true" />
             <p className="mt-3 font-sans text-[11px] leading-[1.7] font-medium tracking-[0.26em] text-white/75 uppercase">
@@ -135,18 +133,18 @@ export function HeroSection() {
             </p>
           </motion.div>
 
-          {/* Two Large Frosted White-Blue Architectural Exhibits */}
-          <div className="pointer-events-none absolute inset-x-8 top-12 bottom-4 hidden xl:block">
+          {/* Two Large Frosted White-Blue Architectural Exhibits (xl+ flanking the 3D stage) */}
+          <div className="pointer-events-none absolute inset-x-8 top-10 bottom-4 hidden xl:block">
             {/* Left Exhibit: Live RLS Policy & HTTP Trace Sheet */}
             <div
-              className="pointer-events-auto absolute top-14 left-0 w-[292px] transition-transform duration-300 ease-out"
+              className="pointer-events-auto absolute top-16 left-0 w-[276px] transition-transform duration-300 ease-out 2xl:w-[292px]"
               style={{
                 transform: `translate3d(${mouse.x * -14}px, ${mouse.y * -10}px, 0)`,
               }}
             >
               <div className="animate-float-left bg-ice-luxury rounded-[26px] border border-white/80 p-5 text-[#0E2244] shadow-luxury-dark">
                 <div className="flex items-center justify-between gap-2 border-b border-[#0E2244]/10 pb-3">
-                  <span className="whitespace-nowrap font-mono text-[10px] font-semibold tracking-[0.16em] text-[#52607A] uppercase">
+                  <span className="whitespace-nowrap font-mono text-[10px] font-semibold tracking-[0.14em] text-[#52607A] uppercase">
                     {locale === 'es' ? 'INSPECCIÓN HTTP · RLS' : 'HTTP TRACE · RLS'}
                   </span>
                   <span
@@ -182,14 +180,14 @@ export function HeroSection() {
 
             {/* Right Exhibit: Real Latency & Quality Trajectory Curve */}
             <div
-              className="pointer-events-auto absolute top-8 right-0 w-[292px] transition-transform duration-300 ease-out"
+              className="pointer-events-auto absolute top-6 right-0 w-[276px] transition-transform duration-300 ease-out 2xl:w-[292px]"
               style={{
                 transform: `translate3d(${mouse.x * 16}px, ${mouse.y * -10}px, 0)`,
               }}
             >
               <div className="animate-float-right bg-ice-luxury rounded-[26px] border border-white/80 p-5 text-[#0E2244] shadow-luxury-dark">
                 <div className="flex items-center justify-between gap-2 border-b border-[#0E2244]/10 pb-3">
-                  <span className="whitespace-nowrap font-mono text-[10px] font-semibold tracking-[0.16em] text-[#52607A] uppercase">
+                  <span className="whitespace-nowrap font-mono text-[10px] font-semibold tracking-[0.14em] text-[#52607A] uppercase">
                     {locale === 'es' ? 'PERFILADO · DEVTOOLS' : 'PROFILING · DEVTOOLS'}
                   </span>
                   <span className="shrink-0 whitespace-nowrap font-mono text-[11px] font-semibold text-[#1D4ED8] tabular-nums">
@@ -234,13 +232,18 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Interactive Frosted Porcelain Hotspot Pill */}
-          <div className="flex justify-center pt-40 sm:pt-48 lg:pt-56">
+          {/* Dedicated In-Flow 3D Stage — guaranteed zero overlap on mobile, laptop, and desktop */}
+          <div className="relative h-[160px] w-full max-w-[360px] sm:h-[205px] sm:max-w-[540px] lg:h-[235px] lg:max-w-[620px] 2xl:h-[255px] 2xl:max-w-[680px]">
+            <HeroCanvasScene mode={mode} mouseX={mouse.x} mouseY={mouse.y} />
+          </div>
+
+          {/* Interactive Frosted Porcelain Hotspot Pill — placed in normal flow cleanly BELOW 3D stage */}
+          <div className="mt-4 flex justify-center sm:mt-5">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.85, delay: 0.15, ease: SILK_EASE }}
-              className="inline-flex flex-wrap items-center gap-2.5 rounded-full border border-white/75 bg-[#F8FAFD]/95 py-1.5 pr-2 pl-4 text-[#0E2244] shadow-luxury-dark backdrop-blur-md"
+              className="inline-flex flex-wrap items-center justify-center gap-2.5 rounded-full border border-white/75 bg-[#F8FAFD]/95 py-1.5 pr-2 pl-4 text-[#0E2244] shadow-luxury-dark backdrop-blur-md"
             >
               <div className="flex items-center gap-2">
                 <span className="font-sans text-[11px] font-semibold tracking-[0.14em] text-[#52607A] uppercase">

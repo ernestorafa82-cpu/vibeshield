@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, Shield, X } from 'lucide-react';
 import { useLocale } from '@/context/LocaleContext';
 import { DEMO_RECOMMENDED_MODULES } from '@/data/modules';
-import { DIAGNOSTIC_CTA_EVENT, type Locale } from '@/types/vibeshield';
+import { triggerDiagnosticSelection } from '@/lib/diagnostic-trigger';
+import type { Locale } from '@/types/vibeshield';
 
 const LOCALE_OPTIONS: readonly { readonly code: Locale; readonly label: string }[] = [
   { code: 'es', label: 'ES' },
@@ -61,14 +62,39 @@ export function Navbar() {
   const demoHref = `/demo?lang=${locale}`;
   const loadModulesHref = `/?modules=${DEMO_RECOMMENDED_MODULES.join(',')}&lang=${locale}#calculator`;
 
+  useEffect(() => {
+    if (!mobileMenuOpen) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [mobileMenuOpen]);
+
   const handleDiagnosticClick = () => {
     setMobileMenuOpen(false);
-    const calculatorEl = document.getElementById('calculator');
-    if (calculatorEl && typeof calculatorEl.scrollIntoView === 'function') {
-      calculatorEl.scrollIntoView({ behavior: 'smooth' });
-    }
-    window.dispatchEvent(new CustomEvent(DIAGNOSTIC_CTA_EVENT));
+    triggerDiagnosticSelection();
   };
+
+  const ariaBreadcrumb = locale === 'es' ? 'Ruta de navegación' : 'Breadcrumb';
+  const ariaPrimaryNav =
+    locale === 'es' ? 'Navegación principal' : 'Primary navigation';
+  const ariaMobileNav = locale === 'es' ? 'Menú móvil' : 'Mobile navigation';
+  const ariaMenuToggle = mobileMenuOpen
+    ? locale === 'es'
+      ? 'Cerrar menú'
+      : 'Close menu'
+    : locale === 'es'
+      ? 'Abrir menú'
+      : 'Open menu';
 
   return (
     <header className="sticky top-0 z-40 border-b border-zinc-800/80 bg-[#09090B]/90 backdrop-blur-md">
@@ -88,7 +114,7 @@ export function Navbar() {
 
           {isDemoPage && (
             <div
-              aria-label="Breadcrumb"
+              aria-label={ariaBreadcrumb}
               className="hidden items-center gap-2 text-sm text-zinc-400 sm:flex"
             >
               <span aria-hidden="true" className="text-zinc-600">
@@ -109,7 +135,7 @@ export function Navbar() {
 
         {!isDemoPage && (
           <nav
-            aria-label="Primary"
+            aria-label={ariaPrimaryNav}
             className="hidden items-center gap-7 text-sm font-medium text-zinc-300 md:flex"
           >
             <a
@@ -161,7 +187,7 @@ export function Navbar() {
                 type="button"
                 aria-expanded={mobileMenuOpen}
                 aria-controls="mobile-nav-menu"
-                aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+                aria-label={ariaMenuToggle}
                 onClick={() => setMobileMenuOpen((prev) => !prev)}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900/80 text-zinc-300 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 md:hidden"
               >
@@ -181,32 +207,32 @@ export function Navbar() {
           id="mobile-nav-menu"
           className="border-t border-zinc-800/80 bg-[#09090B] px-4 py-4 md:hidden"
         >
-          <nav aria-label="Mobile" className="flex flex-col gap-3 text-sm">
+          <nav aria-label={ariaMobileNav} className="flex flex-col gap-3 text-sm">
             <a
               href="#how-it-works"
               onClick={() => setMobileMenuOpen(false)}
-              className="rounded-md px-2 py-1.5 text-zinc-300 transition-colors hover:bg-zinc-900 hover:text-white"
+              className="rounded-md px-2 py-1.5 text-zinc-300 transition-colors hover:bg-zinc-900 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
             >
               {dict.nav.howItWorks}
             </a>
             <a
               href="#calculator"
               onClick={() => setMobileMenuOpen(false)}
-              className="rounded-md px-2 py-1.5 text-zinc-300 transition-colors hover:bg-zinc-900 hover:text-white"
+              className="rounded-md px-2 py-1.5 text-zinc-300 transition-colors hover:bg-zinc-900 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
             >
               {dict.nav.calculator}
             </a>
             <Link
               href={demoHref}
               onClick={() => setMobileMenuOpen(false)}
-              className="rounded-md px-2 py-1.5 text-zinc-300 transition-colors hover:bg-zinc-900 hover:text-emerald-300"
+              className="rounded-md px-2 py-1.5 text-zinc-300 transition-colors hover:bg-zinc-900 hover:text-emerald-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
             >
               {dict.nav.demoXray}
             </Link>
             <button
               type="button"
               onClick={handleDiagnosticClick}
-              className="mt-1 inline-flex w-full items-center justify-center rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-zinc-950 transition-colors hover:bg-emerald-400"
+              className="mt-1 inline-flex w-full items-center justify-center rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-zinc-950 transition-colors hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
             >
               {dict.nav.diagnosticCta}
             </button>

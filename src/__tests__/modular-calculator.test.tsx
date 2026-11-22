@@ -349,4 +349,80 @@ describe('ModularCalculator & RequestModal', () => {
     expect(bookingLink).toHaveAttribute('target', '_blank');
     expect(bookingLink).toHaveAttribute('rel', 'noopener noreferrer');
   });
+
+  it('traps keyboard focus inside RequestModal, restores focus on close, and handles clipboard success and missing API', async () => {
+    vi.stubEnv('NEXT_PUBLIC_BOOKING_URL', '');
+    const writeTextSuccess = vi
+      .fn<(text: string) => Promise<void>>()
+      .mockResolvedValue(undefined);
+
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText: writeTextSuccess },
+    });
+
+    renderCalculator('es');
+
+    const triggerBtn = screen.getByRole('button', {
+      name: esDictionary.calculator.summary.requestCta,
+    });
+    triggerBtn.focus();
+    expect(document.activeElement).toBe(triggerBtn);
+
+    fireEvent.click(triggerBtn);
+
+    const dialog = screen.getByRole('dialog');
+    const closeBtn = within(dialog).getByRole('button', {
+      name: esDictionary.modal.closeLabel,
+    });
+    const mailtoLink = within(dialog).getByRole('link', {
+      name: esDictionary.modal.mailtoButton,
+    });
+
+    // Focus moves inside dialog on open
+    expect(dialog.contains(document.activeElement)).toBe(true);
+    expect(document.activeElement).toBe(closeBtn);
+
+    // Shift+Tab from first element wraps to last focusable element inside dialog
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+    expect(document.activeElement).toBe(mailtoLink);
+
+    // Tab from last element wraps back to first focusable element inside dialog
+    fireEvent.keyDown(document, { key: 'Tab' });
+    expect(document.activeElement).toBe(closeBtn);
+
+    // Clipboard copy success feedback
+    await act(async () => {
+      fireEvent.click(
+        within(dialog).getByRole('button', {
+          name: esDictionary.modal.copyButton,
+        }),
+      );
+    });
+    expect(writeTextSuccess).toHaveBeenCalledTimes(1);
+    expect(
+      within(dialog).getByText(esDictionary.modal.copiedFeedback),
+    ).toBeInTheDocument();
+
+    // Missing navigator.clipboard API fallback without crashing
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: undefined,
+    });
+    await act(async () => {
+      fireEvent.click(
+        within(dialog).getByRole('button', {
+          name: esDictionary.modal.copyButton,
+        }),
+      );
+    });
+    expect(
+      within(dialog).getByText(esDictionary.modal.copyErrorFeedback),
+    ).toBeInTheDocument();
+
+    // Closing restores focus to original trigger button
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(triggerBtn);
+  });
 });

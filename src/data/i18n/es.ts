@@ -18,7 +18,7 @@ export const esDictionary: Dictionary = {
     demoBreadcrumbSection: 'demo',
     demoCaseName: 'PulseCRM',
     loadModulesCta: 'Cargar módulos en calculadora',
-    switchLanguageLabel: 'English',
+    switchLanguageLabel: 'Selector de idioma',
   },
   hero: {
     badge: 'ESCUDO ANTI-VIBE • WEB & FLUTTER',

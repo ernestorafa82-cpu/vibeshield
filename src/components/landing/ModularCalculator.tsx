@@ -82,9 +82,7 @@ export function ModularCalculator() {
         setStack('web');
       }
 
-      if (diagnosticParam === '1') {
-        setIncludeDiagnostic(true);
-      }
+      setIncludeDiagnostic(diagnosticParam === '1');
     },
     [],
   );

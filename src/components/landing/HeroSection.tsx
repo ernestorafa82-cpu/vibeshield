@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Check, Terminal } from 'lucide-react';
 import { useLocale } from '@/context/LocaleContext';
-import { DIAGNOSTIC_CTA_EVENT } from '@/types/vibeshield';
+import { triggerDiagnosticSelection } from '@/lib/diagnostic-trigger';
 
 /**
  * Above-the-fold hero section with primary diagnostic CTA, demo link, and Shield CI terminal preview.
@@ -15,11 +15,7 @@ export function HeroSection() {
   const demoHref = `/demo?lang=${locale}`;
 
   const handleDiagnosticCtaClick = () => {
-    window.dispatchEvent(new CustomEvent(DIAGNOSTIC_CTA_EVENT));
-    const calculatorEl = document.getElementById('calculator');
-    if (calculatorEl && typeof calculatorEl.scrollIntoView === 'function') {
-      calculatorEl.scrollIntoView({ behavior: 'smooth' });
-    }
+    triggerDiagnosticSelection();
   };
 
   return (

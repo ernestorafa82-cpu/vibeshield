@@ -2,35 +2,13 @@
 
 import React from 'react';
 import { Gauge, GitPullRequest, ShieldCheck } from 'lucide-react';
+import { buildSparklinePoints } from '@/components/demo/sparkline';
 import { useLocale } from '@/context/LocaleContext';
 import type { DemoCaseData, DemoTabId } from '@/types/vibeshield';
 
 export interface DemoSummaryCardsProps {
   demoCase: DemoCaseData;
   onSelectTab?: (tab: DemoTabId) => void;
-}
-
-function buildMiniSparklinePoints(points: readonly number[]): string {
-  if (points.length === 0) {
-    return '';
-  }
-  const width = 110;
-  const height = 28;
-  const pad = 4;
-  const minVal = Math.min(...points);
-  const maxVal = Math.max(...points);
-  const span = maxVal - minVal || 1;
-
-  return points
-    .map((val, index) => {
-      const x =
-        points.length === 1
-          ? width / 2
-          : pad + (index / (points.length - 1)) * (width - pad * 2);
-      const y = pad + (1 - (val - minVal) / span) * (height - pad * 2);
-      return `${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(' ');
 }
 
 /**
@@ -40,7 +18,7 @@ export function DemoSummaryCards({
   demoCase,
   onSelectTab,
 }: DemoSummaryCardsProps) {
-  const { dict } = useLocale();
+  const { locale, dict } = useLocale();
   const totalChecks = demoCase.pullRequest.checks.length;
   const passedChecks = demoCase.pullRequest.checks.filter(
     (c) => c.status === 'passed',
@@ -48,7 +26,11 @@ export function DemoSummaryCards({
 
   return (
     <section
-      aria-label={dict.demo.summaryRow.sonarqubeLabel}
+      aria-label={
+        locale === 'es'
+          ? 'Resumen rápido de telemetría y PR'
+          : 'Quick telemetry and PR summary'
+      }
       className="grid gap-4 md:grid-cols-3"
     >
       <button
@@ -121,7 +103,12 @@ export function DemoSummaryCards({
               strokeWidth="2.2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              points={buildMiniSparklinePoints(demoCase.telemetry.lcpSparkline)}
+              points={buildSparklinePoints(demoCase.telemetry.lcpSparkline, {
+                width: 110,
+                height: 28,
+                padX: 4,
+                padY: 4,
+              })}
             />
           </svg>
         </div>

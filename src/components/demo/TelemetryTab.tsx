@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Activity, ArrowRight, Bug, Gauge, ShieldCheck } from 'lucide-react';
+import { buildSparklinePoints } from '@/components/demo/sparkline';
 import { useLocale } from '@/context/LocaleContext';
 import type { DemoCaseData, TelemetryMetric } from '@/types/vibeshield';
 
@@ -18,31 +19,6 @@ const PROGRESS_PERCENT_BY_METRIC: Readonly<Record<string, number>> = {
   'sentry-errors': 100,
 };
 
-function buildSparklinePoints(points: readonly number[]): string {
-  if (points.length === 0) {
-    return '';
-  }
-  const width = 180;
-  const height = 44;
-  const padX = 6;
-  const padY = 6;
-  const minVal = Math.min(...points);
-  const maxVal = Math.max(...points);
-  const span = maxVal - minVal || 1;
-
-  return points
-    .map((val, index) => {
-      const x =
-        points.length === 1
-          ? width / 2
-          : padX + (index / (points.length - 1)) * (width - padX * 2);
-      const y =
-        padY + (1 - (val - minVal) / span) * (height - padY * 2);
-      return `${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(' ');
-}
-
 interface TelemetryGroupConfig {
   readonly tool: TelemetryMetric['tool'];
   readonly title: string;
@@ -53,7 +29,7 @@ interface TelemetryGroupConfig {
  * Telemetry evidence tab grouping SonarQube, Chrome DevTools, and Sentry metrics.
  */
 export function TelemetryTab({ demoCase }: TelemetryTabProps) {
-  const { dict } = useLocale();
+  const { locale, dict } = useLocale();
 
   const groups: readonly TelemetryGroupConfig[] = [
     {
@@ -165,7 +141,11 @@ export function TelemetryTab({ demoCase }: TelemetryTabProps) {
                               <svg
                                 viewBox="0 0 180 44"
                                 role="img"
-                                aria-label={`${metric.label} sparkline`}
+                                aria-label={
+                                  locale === 'es'
+                                    ? `Tendencia de ${metric.label}`
+                                    : `${metric.label} trend`
+                                }
                                 className="h-11 w-full overflow-visible"
                               >
                                 <polyline
@@ -176,6 +156,7 @@ export function TelemetryTab({ demoCase }: TelemetryTabProps) {
                                   strokeLinejoin="round"
                                   points={buildSparklinePoints(
                                     metric.sparklinePoints,
+                                    { width: 180, height: 44, padX: 6, padY: 6 },
                                   )}
                                 />
                               </svg>

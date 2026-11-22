@@ -44,7 +44,9 @@ export function Footer() {
           </div>
 
           <nav
-            aria-label="Footer"
+            aria-label={
+              locale === 'es' ? 'Navegación del pie de página' : 'Footer navigation'
+            }
             className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm"
           >
             <Link

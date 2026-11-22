@@ -90,7 +90,8 @@ export function DemoRadiographyView() {
           role="tabpanel"
           id={`demo-panel-${activeTab}`}
           aria-labelledby={`demo-tab-${activeTab}`}
-          className="focus-visible:outline-none"
+          tabIndex={0}
+          className="rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
         >
           {activeTab === 'security' && (
             <SecurityBeforeAfterTab demoCase={demoCase} />

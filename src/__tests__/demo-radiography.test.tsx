@@ -192,8 +192,9 @@ describe('DemoRadiographyView', () => {
     expect(within(panel).getByText('4.8s')).toBeInTheDocument();
     expect(within(panel).getByText('1.2s')).toBeInTheDocument();
     expect(within(panel).getByText('84 errores/día')).toBeInTheDocument();
+    expect(panel).toHaveAttribute('tabindex', '0');
     expect(
-      within(panel).getByLabelText('Largest Contentful Paint (LCP) sparkline'),
+      within(panel).getByLabelText('Tendencia de Largest Contentful Paint (LCP)'),
     ).toBeInTheDocument();
   });
 
@@ -235,7 +236,7 @@ describe('DemoRadiographyView', () => {
     renderDemoView('es');
 
     const summaryRegion = screen.getByRole('region', {
-      name: 'SonarQube Gate',
+      name: 'Resumen rápido de telemetría y PR',
     });
 
     expect(

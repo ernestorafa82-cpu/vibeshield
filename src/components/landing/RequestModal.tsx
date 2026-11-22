@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useId, useMemo, useState } from 'react';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Calendar, Check, Copy, Mail, ShieldCheck, X } from 'lucide-react';
 import { useLocale } from '@/context/LocaleContext';
 import {
@@ -36,6 +36,9 @@ export function RequestModal({ isOpen, onClose, estimate }: RequestModalProps) {
     useState<QuoteModalFormValues>(INITIAL_FORM_VALUES);
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
 
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
   const nameId = useId();
   const emailId = useId();
   const repoId = useId();
@@ -46,16 +49,64 @@ export function RequestModal({ isOpen, onClose, estimate }: RequestModalProps) {
       return;
     }
 
+    previousFocusRef.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+
+    const getFocusableElements = (): HTMLElement[] => {
+      const container = dialogRef.current;
+      if (!container) {
+        return [];
+      }
+      const selector =
+        'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+      return Array.from(container.querySelectorAll<HTMLElement>(selector));
+    };
+
+    const focusablesOnOpen = getFocusableElements();
+    if (focusablesOnOpen.length > 0) {
+      focusablesOnOpen[0].focus();
+    } else {
+      dialogRef.current?.focus();
+    }
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setCopyStatus('idle');
         onClose();
+        return;
+      }
+
+      if (event.key === 'Tab') {
+        const focusables = getFocusableElements();
+        if (focusables.length === 0) {
+          event.preventDefault();
+          return;
+        }
+
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        const active = document.activeElement;
+
+        if (event.shiftKey) {
+          if (active === first || !dialogRef.current?.contains(active)) {
+            event.preventDefault();
+            last.focus();
+          }
+        } else if (active === last || !dialogRef.current?.contains(active)) {
+          event.preventDefault();
+          first.focus();
+        }
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+      if (previousFocusRef.current?.isConnected) {
+        previousFocusRef.current.focus();
+      }
     };
   }, [isOpen, onClose]);
 
@@ -121,10 +172,12 @@ export function RequestModal({ isOpen, onClose, estimate }: RequestModalProps) {
       />
 
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="request-modal-title"
-        className="relative z-10 flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-[#111114] text-zinc-100 shadow-2xl"
+        tabIndex={-1}
+        className="relative z-10 flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-[#111114] text-zinc-100 shadow-2xl focus:outline-none"
       >
         <div className="flex items-start justify-between gap-4 border-b border-zinc-800 px-6 py-5">
           <div className="space-y-1">

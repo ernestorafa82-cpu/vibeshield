@@ -15,7 +15,7 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
     "centerX": -1.6802,
     "pts": [
       [
-        -0.1099,
+        -0.1897,
         -0.93,
         1
       ],
@@ -25,13 +25,13 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
         0
       ],
       [
-        -0.2619,
-        -0.8213,
+        -0.236,
+        -0.8969,
         1
       ],
       [
-        -0.8242,
-        0.8213,
+        -0.85,
+        0.8969,
         1
       ],
       [
@@ -40,12 +40,12 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
         0
       ],
       [
-        -0.7465,
+        -0.8264,
         0.93,
         1
       ],
       [
-        -0.5518,
+        -0.4719,
         0.93,
         1
       ],
@@ -55,43 +55,28 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
         0
       ],
       [
-        -0.4018,
-        0.8207,
+        -0.4262,
+        0.8967,
         1
       ],
       [
-        0.0315,
-        -0.529,
+        -0.0107,
+        -0.3974,
         1
       ],
       [
-        0.0424,
-        -0.563,
+        0,
+        -0.4307,
         0
       ],
       [
-        0.0068,
-        -0.563,
+        0.0107,
+        -0.3974,
         1
       ],
       [
-        -0.0068,
-        -0.563,
-        1
-      ],
-      [
-        -0.0424,
-        -0.563,
-        0
-      ],
-      [
-        -0.0315,
-        -0.529,
-        1
-      ],
-      [
-        0.4018,
-        0.8207,
+        0.4262,
+        0.8967,
         1
       ],
       [
@@ -100,12 +85,12 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
         0
       ],
       [
-        0.5518,
+        0.4719,
         0.93,
         1
       ],
       [
-        0.7465,
+        0.8264,
         0.93,
         1
       ],
@@ -115,13 +100,13 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
         0
       ],
       [
-        0.8242,
-        0.8213,
+        0.85,
+        0.8969,
         1
       ],
       [
-        0.2619,
-        -0.8213,
+        0.236,
+        -0.8969,
         1
       ],
       [
@@ -130,7 +115,7 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
         0
       ],
       [
-        0.1099,
+        0.1897,
         -0.93,
         1
       ]
@@ -377,7 +362,7 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
     "centerX": 1.7926,
     "pts": [
       [
-        -0.6341,
+        -0.714,
         -0.93,
         1
       ],
@@ -388,12 +373,12 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
       ],
       [
         -0.749,
-        -0.8152,
+        -0.895,
         1
       ],
       [
         -0.749,
-        0.8152,
+        0.895,
         1
       ],
       [
@@ -402,12 +387,12 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
         0
       ],
       [
-        -0.6341,
+        -0.714,
         0.93,
         1
       ],
       [
-        -0.4769,
+        -0.397,
         0.93,
         1
       ],
@@ -418,12 +403,12 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
       ],
       [
         -0.362,
-        0.8152,
+        0.895,
         1
       ],
       [
         -0.362,
-        0.2409,
+        0.161,
         1
       ],
       [
@@ -432,12 +417,12 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
         0
       ],
       [
-        -0.2472,
+        -0.3271,
         0.1261,
         1
       ],
       [
-        0.2472,
+        0.3271,
         0.1261,
         1
       ],
@@ -448,12 +433,12 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
       ],
       [
         0.362,
-        0.2409,
+        0.161,
         1
       ],
       [
         0.362,
-        0.8152,
+        0.895,
         1
       ],
       [
@@ -462,12 +447,12 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
         0
       ],
       [
-        0.4769,
+        0.397,
         0.93,
         1
       ],
       [
-        0.6341,
+        0.714,
         0.93,
         1
       ],
@@ -478,12 +463,12 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
       ],
       [
         0.749,
-        0.8152,
+        0.895,
         1
       ],
       [
         0.749,
-        -0.8152,
+        -0.895,
         1
       ],
       [
@@ -492,12 +477,12 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
         0
       ],
       [
-        0.6341,
+        0.714,
         -0.93,
         1
       ],
       [
-        0.4769,
+        0.397,
         -0.93,
         1
       ],
@@ -508,12 +493,12 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
       ],
       [
         0.362,
-        -0.8152,
+        -0.895,
         1
       ],
       [
         0.362,
-        -0.3258,
+        -0.2459,
         1
       ],
       [
@@ -522,12 +507,12 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
         0
       ],
       [
-        0.2472,
+        0.3271,
         -0.211,
         1
       ],
       [
-        -0.2472,
+        -0.3271,
         -0.211,
         1
       ],
@@ -538,12 +523,12 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
       ],
       [
         -0.362,
-        -0.3258,
+        -0.2459,
         1
       ],
       [
         -0.362,
-        -0.8152,
+        -0.895,
         1
       ],
       [
@@ -552,7 +537,7 @@ export const VSH_FOUNDRY_GLYPHS: readonly GlyphContourSpec[] = [
         0
       ],
       [
-        -0.4769,
+        -0.397,
         -0.93,
         1
       ]

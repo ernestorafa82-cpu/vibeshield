@@ -1,10 +1,14 @@
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
 import {
+  buildShapeFromTrueType,
   computeVshFitScale,
   computeVshFitScaleForStage,
+  extractContourSegments,
+  MAX_SDF_SEGMENTS,
   VSH_PROJECTION_BOUNDS,
 } from '@/components/landing/HeroCanvasScene';
+import { VSH_FOUNDRY_GLYPHS } from '@/components/landing/vsh-glyph-paths';
 
 describe('HeroCanvasScene 3D perspective projection fitting', () => {
   const viewports = [
@@ -76,4 +80,21 @@ describe('HeroCanvasScene 3D perspective projection fitting', () => {
       expect(worstAbsY).toBeLessThanOrEqual(1.0);
     },
   );
+
+  it('extracts valid non-degenerate 2D SDF contour segments for V, S, and H within shader uniform limits', () => {
+    for (const glyph of VSH_FOUNDRY_GLYPHS) {
+      const shape = buildShapeFromTrueType(glyph.pts);
+      const { segments, count } = extractContourSegments(shape);
+      expect(count).toBeGreaterThanOrEqual(12);
+      expect(count).toBeLessThanOrEqual(MAX_SDF_SEGMENTS);
+      expect(segments).toHaveLength(MAX_SDF_SEGMENTS);
+
+      for (let i = 0; i < count; i++) {
+        const seg = segments[i];
+        const len = Math.hypot(seg.z - seg.x, seg.w - seg.y);
+        expect(Number.isFinite(len)).toBe(true);
+        expect(len).toBeGreaterThan(1e-4);
+      }
+    }
+  });
 });

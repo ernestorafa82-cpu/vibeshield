@@ -1,10 +1,26 @@
 import type { Metadata } from 'next';
+import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Footer } from '@/components/layout/Footer';
+import { Navbar } from '@/components/layout/Navbar';
+import { LocaleProvider } from '@/context/LocaleContext';
+import { DEFAULT_LOCALE, dictionaries } from '@/data/i18n';
 import './globals.css';
 
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
-  title: 'VibeShield — De prototipo IA a producción blindada',
-  description:
-    'Rescatamos y blindamos apps creadas con Lovable, Bolt y Cursor en 7–10 días con seguridad real, tests anti-regresión y precios públicos.',
+  title: dictionaries[DEFAULT_LOCALE].meta.homeTitle,
+  description: dictionaries[DEFAULT_LOCALE].meta.homeDescription,
 };
 
 export default function RootLayout({
@@ -13,9 +29,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className="dark">
-      <body className="min-h-screen bg-[#09090B] text-zinc-100 antialiased">
-        {children}
+    <html
+      lang={DEFAULT_LOCALE}
+      className={`dark ${inter.variable} ${jetbrainsMono.variable}`}
+    >
+      <body className="flex min-h-screen flex-col bg-[#09090B] font-sans text-zinc-100 antialiased">
+        <LocaleProvider
+          dictionaries={dictionaries}
+          initialLocale={DEFAULT_LOCALE}
+        >
+          <Navbar />
+          <div className="flex-1">{children}</div>
+          <Footer />
+        </LocaleProvider>
       </body>
     </html>
   );

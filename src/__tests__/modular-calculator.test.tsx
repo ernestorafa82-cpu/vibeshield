@@ -287,7 +287,7 @@ describe('ModularCalculator & RequestModal', () => {
     const mailtoLink = within(dialog).getByRole('link', {
       name: esDictionary.modal.mailtoButton,
     });
-    expect(mailtoLink.getAttribute('href')).toMatch(/^mailto:hello@velnea\.dev\?subject=/);
+    expect(mailtoLink.getAttribute('href')).toMatch(/^mailto:hello@vibeshield\.dev\?subject=/);
 
     const nameInput = within(dialog).getByLabelText(
       esDictionary.modal.fields.nameLabel,

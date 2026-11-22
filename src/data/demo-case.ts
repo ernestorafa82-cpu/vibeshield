@@ -189,7 +189,7 @@ const SHARED_PR_FILES: DemoCaseData['pullRequest']['files'] = [
       {
         type: 'add',
         lineNumber: '1',
-        content: '# PulseCRM — Velnea Repo Guardrails',
+        content: '# PulseCRM — VibeShield Repo Guardrails',
       },
       {
         type: 'add',
@@ -356,7 +356,7 @@ const DEMO_CASES: Record<Locale, DemoCaseData> = {
       title: 'fix(security): lock customers RLS policies & install AGENTS.md',
       branch: 'fix/rls-customers-guardrails',
       baseBranch: 'main',
-      author: 'velnea-audit',
+      author: 'vibeshield-audit',
       summary:
         'Activa FORCE ROW LEVEL SECURITY en public.customers, revoca permisos al rol anon, añade test anti-fuga de regresión e instala reglas AGENTS.md.',
       checks: [
@@ -522,7 +522,7 @@ const DEMO_CASES: Record<Locale, DemoCaseData> = {
       title: 'fix(security): lock customers RLS policies & install AGENTS.md',
       branch: 'fix/rls-customers-guardrails',
       baseBranch: 'main',
-      author: 'velnea-audit',
+      author: 'vibeshield-audit',
       summary:
         'Enables FORCE ROW LEVEL SECURITY on public.customers, revokes anon role grants, adds an automated anti-leak regression test, and installs AGENTS.md guardrails.',
       checks: [

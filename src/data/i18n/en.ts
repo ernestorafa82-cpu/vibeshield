@@ -2,10 +2,10 @@ import type { Dictionary } from '@/types/vibeshield';
 
 export const enDictionary: Dictionary = {
   meta: {
-    homeTitle: 'Velnea — Technical Audits & Production Rescue for AI-Built Software',
+    homeTitle: 'VibeShield — Technical Audits & Production Rescue for AI-Built Software',
     homeDescription:
       'We audit your repository in 48 hours and stabilize Lovable, Cursor, and Bolt apps within one week with real security, regression tests, and fixed fees.',
-    demoTitle: 'Sample Technical Dossier: PulseCRM — Velnea',
+    demoTitle: 'Sample Technical Dossier: PulseCRM — VibeShield',
     demoDescription:
       'Inspect a real sample rescue dossier: before/after RLS security, SonarQube/LCP/Sentry telemetry, and the first verified Pull Request.',
   },
@@ -14,14 +14,14 @@ export const enDictionary: Dictionary = {
     calculator: 'Fee Schedule',
     demoXray: 'Sample Dossier',
     diagnosticCta: '48h Diagnostic',
-    demoBreadcrumbRoot: 'Velnea',
+    demoBreadcrumbRoot: 'VibeShield',
     demoBreadcrumbSection: 'dossier',
     demoCaseName: 'PulseCRM',
     loadModulesCta: 'Load in fee schedule',
     switchLanguageLabel: 'Language switcher',
   },
   hero: {
-    badge: 'VELNEA · AUDIT & RESCUE · WEB & FLUTTER',
+    badge: 'VIBESHIELD · AUDIT & RESCUE · WEB & FLUTTER',
     title: 'Your AI app, ready to charge.',
     subtitle:
       'We audit your repository in 48 hours and within one week close data leaks, wire regression tests, and hand back maintainable production code.',
@@ -73,7 +73,7 @@ export const enDictionary: Dictionary = {
       ],
     },
     solution: {
-      badge: 'VELNEA INTERVENTION',
+      badge: 'VIBESHIELD INTERVENTION',
       title: 'How we stabilize your codebase without throwing it away',
       description:
         'We work inside your Git repository through small, reviewable Pull Requests with measurable checks.',
@@ -256,7 +256,7 @@ export const enDictionary: Dictionary = {
       'Clipboard access unavailable. Select and copy the summary text manually.',
     mailtoButton: 'Send via email',
     bookingButton: 'Book 15-min call',
-    mailtoSubjectPrefix: '[Velnea] Technical proposal',
+    mailtoSubjectPrefix: '[VibeShield] Technical proposal',
     footerNote:
       'This site sends zero data to third-party servers; you control when and how you contact us.',
   },
@@ -273,7 +273,7 @@ export const enDictionary: Dictionary = {
         id: 'ownership',
         title: '100% client-owned code',
         description:
-          'Every fix lands via Pull Requests in your GitHub repository. Zero proprietary runtime dependencies and zero lock-in to Velnea.',
+          'Every fix lands via Pull Requests in your GitHub repository. Zero proprietary runtime dependencies and zero lock-in to VibeShield.',
       },
       {
         id: 'fixed-price',
@@ -320,8 +320,8 @@ export const enDictionary: Dictionary = {
   },
   footer: {
     tagline:
-      'Velnea — Technical studio for software audits, security hardening, and codebase rescue.',
-    rights: '© 2026 Velnea. All rights reserved.',
+      'VibeShield by Velnea — Technical studio for software audits, security hardening, and codebase rescue.',
+    rights: '© 2026 VibeShield · Velnea. All rights reserved.',
     noDatabaseNote:
       'Static site with zero tracking cookies and zero intermediary servers.',
     links: {

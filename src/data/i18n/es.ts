@@ -2,10 +2,10 @@ import type { Dictionary } from '@/types/vibeshield';
 
 export const esDictionary: Dictionary = {
   meta: {
-    homeTitle: 'Velnea — Auditoría y estabilización de software generado con IA',
+    homeTitle: 'VibeShield — Auditoría y estabilización de software generado con IA',
     homeDescription:
       'Auditamos tu repositorio en 48 horas y en una semana dejamos tu app de Lovable, Cursor o Bolt lista para cobrar con seguridad real, tests y precios públicos.',
-    demoTitle: 'Expediente Técnico: PulseCRM — Velnea',
+    demoTitle: 'Expediente Técnico: PulseCRM — VibeShield',
     demoDescription:
       'Ejemplo real de auditoría técnica: fugas RLS antes y después, telemetría de rendimiento y primer Pull Request verificado.',
   },
@@ -14,14 +14,14 @@ export const esDictionary: Dictionary = {
     calculator: 'Tarifario',
     demoXray: 'Expediente Demo',
     diagnosticCta: 'Diagnóstico 48h',
-    demoBreadcrumbRoot: 'Velnea',
+    demoBreadcrumbRoot: 'VibeShield',
     demoBreadcrumbSection: 'expediente',
     demoCaseName: 'PulseCRM',
     loadModulesCta: 'Cargar en tarifario',
     switchLanguageLabel: 'Selector de idioma',
   },
   hero: {
-    badge: 'VELNEA · AUDITORÍA & RESCATE · WEB Y FLUTTER',
+    badge: 'VIBESHIELD · AUDITORÍA & RESCATE · WEB Y FLUTTER',
     title: 'Tu app de IA, lista para cobrar.',
     subtitle:
       'Auditamos tu repositorio en 48 horas y en una semana cerramos fugas de datos, fijamos tests de regresión y te entregamos código mantenible.',
@@ -73,7 +73,7 @@ export const esDictionary: Dictionary = {
       ],
     },
     solution: {
-      badge: 'INTERVENCIÓN VELNEA',
+      badge: 'INTERVENCIÓN VIBESHIELD',
       title: 'Cómo estabilizamos tu repositorio sin reescribirlo entero',
       description:
         'Trabajamos directamente en tu Git con Pull Requests pequeños, medibles y auditables por tu equipo.',
@@ -256,7 +256,7 @@ export const esDictionary: Dictionary = {
       'No se pudo acceder al portapapeles. Puedes seleccionar y copiar el texto manualmente.',
     mailtoButton: 'Enviar por correo',
     bookingButton: 'Reservar llamada de 15 min',
-    mailtoSubjectPrefix: '[Velnea] Propuesta técnica',
+    mailtoSubjectPrefix: '[VibeShield] Propuesta técnica',
     footerNote:
       'Esta web no envía tus datos a ningún servidor de terceros; tú decides cuándo y cómo escribirnos.',
   },
@@ -273,7 +273,7 @@ export const esDictionary: Dictionary = {
         id: 'ownership',
         title: 'El código siempre es tuyo',
         description:
-          'Trabajamos por Pull Requests en tu propio GitHub. Sin librerías propietarias, sin permanencias y sin dependencias hacia Velnea.',
+          'Trabajamos por Pull Requests en tu propio GitHub. Sin librerías propietarias, sin permanencias y sin dependencias hacia VibeShield.',
       },
       {
         id: 'fixed-price',
@@ -320,8 +320,8 @@ export const esDictionary: Dictionary = {
   },
   footer: {
     tagline:
-      'Velnea — Estudio técnico de auditoría, seguridad y estabilización de software.',
-    rights: '© 2026 Velnea. Todos los derechos reservados.',
+      'VibeShield by Velnea — Estudio técnico de auditoría, seguridad y estabilización de software.',
+    rights: '© 2026 VibeShield · Velnea. Todos los derechos reservados.',
     noDatabaseNote:
       'Sitio estático sin cookies de rastreo ni servidores intermedios.',
     links: {

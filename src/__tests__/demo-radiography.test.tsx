@@ -228,7 +228,7 @@ describe('DemoRadiographyView', () => {
     fireEvent.click(agentsFileBtn);
 
     expect(
-      within(panel).getByText('# PulseCRM — Velnea Repo Guardrails'),
+      within(panel).getByText('# PulseCRM — VibeShield Repo Guardrails'),
     ).toBeInTheDocument();
   });
 

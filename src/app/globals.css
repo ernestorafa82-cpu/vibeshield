@@ -153,22 +153,22 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-@keyframes velnea-float-left {
+@keyframes vsh-float-left {
   0%, 100% { transform: translateY(0px) rotate(-1.5deg); }
   50% { transform: translateY(-8px) rotate(-0.5deg); }
 }
 
-@keyframes velnea-float-right {
+@keyframes vsh-float-right {
   0%, 100% { transform: translateY(0px) rotate(1.5deg); }
   50% { transform: translateY(-9px) rotate(0.5deg); }
 }
 
 .animate-float-left {
-  animation: velnea-float-left 8s ease-in-out infinite;
+  animation: vsh-float-left 8s ease-in-out infinite;
 }
 
 .animate-float-right {
-  animation: velnea-float-right 8.6s ease-in-out infinite;
+  animation: vsh-float-right 8.6s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

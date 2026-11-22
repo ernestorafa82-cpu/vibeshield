@@ -38,7 +38,7 @@ function LocaleSwitcher({ locale, label, onSelect }: LocaleSwitcherProps) {
             className={`rounded-full px-2.5 py-1 font-medium tracking-wider transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD] ${
               isActive
                 ? 'bg-[#EEF5FF] text-[#0E2244]'
-                : 'text-white/75 hover:text-white'
+                : 'text-white/90 hover:text-white'
             }`}
           >
             {option.label}
@@ -131,7 +131,7 @@ export function Navbar() {
               {dict.nav.demoBreadcrumbRoot}
             </span>
             <span className="mt-0.5 font-sans text-[9px] font-semibold tracking-[0.34em] text-[#93C5FD] uppercase">
-              {locale === 'es' ? 'INGENIERÍA · UE' : 'ENGINEERING · EU'}
+              {locale === 'es' ? 'BY VELNEA · UE' : 'BY VELNEA · EU'}
             </span>
           </Link>
 

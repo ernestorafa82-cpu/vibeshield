@@ -59,7 +59,7 @@ describe('Landing sections', () => {
       // Interactive before/after hero hotspot toggle
       fireEvent.click(screen.getByRole('button', { name: 'Prototipo IA' }));
       expect(screen.getByText('EXPUESTO')).toBeInTheDocument();
-      fireEvent.click(screen.getByRole('button', { name: 'Tras Velnea' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Tras VibeShield' }));
       expect(screen.getByText(es.pipelineCard.statusLabel)).toBeInTheDocument();
 
       const demoLink = screen.getByRole('link', { name: es.secondaryCta });

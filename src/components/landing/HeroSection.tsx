@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Plus } from 'lucide-react';
 import { HeroCanvasScene } from '@/components/landing/HeroCanvasScene';
 import { SILK_EASE } from '@/components/motion/SilkReveal';
@@ -13,9 +13,9 @@ type InspectionMode = 'before' | 'after';
 
 /**
  * Full-viewport luminous sapphire-navy Hero:
- * - Shaded 3D frosted glacier-blue crystal monolith in HTML5 Canvas reacting to pointer.
- * - Two spacious frosted white-blue architectural exhibits (real RLS SQL diff + live LCP curve)
- *   replacing generic AI mini-cards.
+ * - Pure architectural fluted-glass studio backdrop (/images/hero-backdrop.jpg) with mouse parallax.
+ * - Rotating 3D extruded "VSH" (VibeShield) monogram rendered live in HTML5 Canvas.
+ * - Two spacious frosted white-blue architectural exhibits (real RLS SQL diff + live LCP curve).
  * - Zero decorative stars/sparkles; 1-line Cormorant headline & dual pill CTAs above the fold.
  */
 export function HeroSection() {
@@ -23,10 +23,12 @@ export function HeroSection() {
   const { hero } = dict;
   const [mode, setMode] = useState<InspectionMode>('after');
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const prefersReducedMotion = useReducedMotion();
   const demoHref = `/demo?lang=${locale}`;
   const isHardened = mode === 'after';
 
   const handlePointerMove = (event: React.PointerEvent<HTMLElement>) => {
+    if (prefersReducedMotion) return;
     const rect = event.currentTarget.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
     const nx = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
@@ -65,21 +67,44 @@ export function HeroSection() {
 
   return (
     <div className="bg-porcelain-canvas">
-      {/* Full-Viewport Luminous Sapphire-Navy Hero */}
+      {/* Full-Viewport Studio Fluted-Light Hero with Rotating 3D VSH */}
       <section
         onPointerMove={handlePointerMove}
         onPointerLeave={handlePointerLeave}
         className="bg-hero-stage relative flex min-h-[760px] flex-col justify-between overflow-hidden pt-20 pb-20 text-white lg:h-[min(100svh,880px)] lg:pb-24"
       >
-        <HeroCanvasScene mode={mode} mouseX={mouse.x} mouseY={mouse.y} />
-
-        {/* Clean dark-sapphire bottom gradient keeping typography crisp */}
+        {/* Pure Atmospheric Fluted-Glass Architectural Backdrop with Parallax */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(11,28,56,0.32)_0%,transparent_28%,rgba(11,28,56,0.42)_54%,rgba(11,28,56,0.92)_78%,rgba(11,28,56,1)_100%)]"
+          className="pointer-events-none absolute inset-0 overflow-hidden"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/hero-backdrop.jpg"
+            alt=""
+            className="h-full w-full object-cover object-center opacity-90 transition-transform duration-500 ease-out will-change-transform select-none"
+            style={{
+              transform: `translate3d(${mouse.x * -14}px, ${mouse.y * -9}px, 0) scale(1.06)`,
+            }}
+          />
+          {/* Reactive ambient mode tint when inspecting vulnerable AI prototype */}
+          <div
+            className={`absolute inset-0 transition-opacity duration-700 ${
+              isHardened ? 'opacity-0' : 'opacity-100'
+            } bg-[radial-gradient(65%_55%_at_50%_34%,rgba(185,28,28,0.34)_0%,rgba(127,29,29,0.2)_45%,transparent_75%)]`}
+          />
+        </div>
+
+        {/* Sculpted top & lower readability veil (guarantees AAA navbar & H1 legibility) */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(7,20,43,0.78)_0%,rgba(7,20,43,0.72)_9%,rgba(7,20,43,0.18)_20%,transparent_34%,rgba(7,20,43,0.28)_55%,rgba(7,20,43,0.9)_76%,rgba(7,20,43,1)_100%)]"
         />
 
-        {/* UPPER STAGE: Two Architectural Frosted White-Blue Exhibits flanking the 3D crystal */}
+        {/* Rotating 3D Extruded "VSH" Monogram */}
+        <HeroCanvasScene mode={mode} mouseX={mouse.x} mouseY={mouse.y} />
+
+        {/* UPPER STAGE: Two Architectural Frosted White-Blue Exhibits flanking 3D VSH */}
         <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-end px-5 pb-6 sm:px-10">
           {/* Left Heritage Label */}
           <motion.div
@@ -89,7 +114,7 @@ export function HeroSection() {
             className="absolute top-4 left-10 hidden max-w-[190px] xl:block"
           >
             <span className="block h-px w-9 bg-[#93C5FD]/65" aria-hidden="true" />
-            <p className="mt-3 font-sans text-[11px] leading-[1.7] font-medium tracking-[0.26em] text-white/70 uppercase">
+            <p className="mt-3 font-sans text-[11px] leading-[1.7] font-medium tracking-[0.26em] text-white/75 uppercase">
               {locale === 'es' ? (
                 <>
                   MADRID · UE
@@ -110,11 +135,11 @@ export function HeroSection() {
             </p>
           </motion.div>
 
-          {/* Two Large Frosted White-Blue Architectural Exhibits (NO AI mini-card clutter) */}
-          <div className="pointer-events-none absolute inset-x-10 top-12 bottom-4 hidden xl:block">
+          {/* Two Large Frosted White-Blue Architectural Exhibits */}
+          <div className="pointer-events-none absolute inset-x-8 top-12 bottom-4 hidden xl:block">
             {/* Left Exhibit: Live RLS Policy & HTTP Trace Sheet */}
             <div
-              className="pointer-events-auto absolute top-16 left-[3.5%] w-[304px] transition-transform duration-300 ease-out"
+              className="pointer-events-auto absolute top-14 left-0 w-[292px] transition-transform duration-300 ease-out"
               style={{
                 transform: `translate3d(${mouse.x * -14}px, ${mouse.y * -10}px, 0)`,
               }}
@@ -157,7 +182,7 @@ export function HeroSection() {
 
             {/* Right Exhibit: Real Latency & Quality Trajectory Curve */}
             <div
-              className="pointer-events-auto absolute top-14 right-[3.5%] w-[304px] transition-transform duration-300 ease-out"
+              className="pointer-events-auto absolute top-8 right-0 w-[292px] transition-transform duration-300 ease-out"
               style={{
                 transform: `translate3d(${mouse.x * 16}px, ${mouse.y * -10}px, 0)`,
               }}
@@ -267,7 +292,7 @@ export function HeroSection() {
                       : 'text-[#52607A] hover:text-[#0E2244]'
                   }`}
                 >
-                  {locale === 'es' ? 'Tras Velnea' : 'After Velnea'}
+                  {locale === 'es' ? 'Tras VibeShield' : 'After VibeShield'}
                 </button>
               </div>
 
@@ -346,7 +371,7 @@ export function HeroSection() {
           </motion.div>
 
           {/* Clean typographic scope strip — zero diamond or star symbols */}
-          <ul className="mx-auto mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-1.5 font-mono text-[10px] text-white/55">
+          <ul className="mx-auto mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-1.5 font-mono text-[10px] text-white/60">
             {hero.pipelineCard.checks.map((check) => (
               <li key={check.id}>{check.label}</li>
             ))}

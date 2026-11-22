@@ -480,7 +480,7 @@ describe('getSiteConfig URL sanitization', () => {
 
     const unsafeConfig = getSiteConfig();
     expect(unsafeConfig.bookingUrl).toBeNull();
-    expect(unsafeConfig.siteUrl).toBe('https://velnea.dev');
+    expect(unsafeConfig.siteUrl).toBe('https://vibeshield.dev');
 
     vi.stubEnv('NEXT_PUBLIC_BOOKING_URL', 'https://cal.com/vibeshield');
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://vibeshield.dev');

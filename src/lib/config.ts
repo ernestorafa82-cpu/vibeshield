@@ -24,13 +24,13 @@ function sanitizeExternalUrl(rawUrl: string | undefined): string | null {
 export function getSiteConfig(): SiteConfig {
   const siteUrl =
     sanitizeExternalUrl(process.env.NEXT_PUBLIC_SITE_URL) ??
-    'https://velnea.dev';
+    'https://vibeshield.dev';
   const contactEmail =
-    process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || 'hello@velnea.dev';
+    process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || 'hello@vibeshield.dev';
   const bookingUrl = sanitizeExternalUrl(process.env.NEXT_PUBLIC_BOOKING_URL);
 
   return {
-    brandName: 'Velnea',
+    brandName: 'VibeShield',
     siteUrl,
     contactEmail,
     bookingUrl,

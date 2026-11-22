@@ -107,7 +107,7 @@ export function JourneySection() {
 
                   <div className="p-7 pb-6">
                     <div className="flex items-center justify-between font-mono text-[10px] font-semibold tracking-[0.22em] text-[#1D4ED8] uppercase">
-                      <span>VELNEA · AUDIT PASS</span>
+                      <span>VIBESHIELD · AUDIT PASS</span>
                       <span>REV. 2026</span>
                     </div>
 

@@ -1,49 +1,82 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-obsidian: #09090b;
-  --color-surface: #111114;
-  --color-surface-elevated: #16161b;
-  --color-border-zinc: #27272a;
-  --color-emerald-accent: #10b981;
-  --color-cyan-accent: #06b6d4;
-  --color-crimson-accent: #ef4444;
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+  --color-paper: #fbf9f5;
+  --color-paper-warm: #f3efe6;
+  --color-paper-stone: #e8e2d5;
+  --color-ink: #141311;
+  --color-ink-muted: #57534c;
+  --color-ink-subtle: #857f75;
+  --color-forensic: #161514;
+  --color-vermilion: #c94a22;
+  --color-forest: #1a6340;
+  --font-sans: var(--font-dm-sans), "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument-serif), Georgia, "Iowan Old Style", serif;
+  --font-mono: var(--font-ibm-plex-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html {
   scroll-behavior: smooth;
-  background-color: #09090b;
-  color: #f4f4f5;
+  background-color: #fbf9f5;
+  color: #141311;
 }
 
 body {
-  background-color: #09090b;
-  color: #f4f4f5;
+  background-color: #fbf9f5;
+  color: #141311;
   font-family: var(--font-sans);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.bg-tech-grid {
+/* Warm Daylight atmospheric wash — subtle sunlit editorial warmth, zero neon */
+.bg-daylight-wash {
   background-image:
-    linear-gradient(to right, rgba(39, 39, 42, 0.28) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(39, 39, 42, 0.28) 1px, transparent 1px);
-  background-size: 48px 48px;
+    radial-gradient(
+      900px 520px at 78% -4%,
+      rgba(232, 185, 134, 0.28) 0%,
+      rgba(232, 185, 134, 0.08) 45%,
+      transparent 72%
+    ),
+    radial-gradient(
+      680px 420px at 12% 18%,
+      rgba(201, 74, 34, 0.055) 0%,
+      transparent 68%
+    );
 }
 
-.glow-emerald {
-  box-shadow: 0 0 40px -14px rgba(16, 185, 129, 0.32);
+/* Tactile fine architectural drafting lines */
+.bg-architect-grid {
+  background-image:
+    linear-gradient(to right, rgba(20, 19, 17, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(20, 19, 17, 0.045) 1px, transparent 1px);
+  background-size: 64px 64px;
 }
 
-.glow-crimson {
-  box-shadow: 0 0 36px -14px rgba(239, 68, 68, 0.28);
+/* Subtle organic paper grain overlay */
+.paper-grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.editorial-shadow {
+  box-shadow:
+    0 1px 2px rgba(20, 19, 17, 0.04),
+    0 24px 60px -28px rgba(20, 19, 17, 0.16);
 }
 
 @media (prefers-reduced-motion: reduce) {

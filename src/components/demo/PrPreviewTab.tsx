@@ -8,166 +8,176 @@ import {
   GitPullRequest,
 } from 'lucide-react';
 import { useLocale } from '@/context/LocaleContext';
-import type { DemoCaseData, PrDiffLine } from '@/types/vibeshield';
+import type { DemoCaseData } from '@/types/vibeshield';
 
 export interface PrPreviewTabProps {
   demoCase: DemoCaseData;
 }
 
-function getLineStyle(type: PrDiffLine['type']): {
-  rowClass: string;
-  symbol: string;
-} {
-  if (type === 'add') {
-    return {
-      rowClass: 'bg-emerald-500/10 text-emerald-200',
-      symbol: '+',
-    };
-  }
-  if (type === 'remove') {
-    return {
-      rowClass: 'bg-red-500/10 text-red-200',
-      symbol: '-',
-    };
-  }
-  return {
-    rowClass: 'text-zinc-400',
-    symbol: ' ',
-  };
-}
-
 /**
- * Pull Request #142 verification preview tab showing CI checks and interactive file diffs.
+ * Interactive PR #142 inspection tab with CI checks and matte obsidian diff viewer.
  */
 export function PrPreviewTab({ demoCase }: PrPreviewTabProps) {
   const { dict } = useLocale();
-  const [selectedFileIndex, setSelectedFileIndex] = useState(0);
-
   const { pullRequest } = demoCase;
-  const activeFile = pullRequest.files[selectedFileIndex] ?? pullRequest.files[0];
+  const [selectedFilePath, setSelectedFilePath] = useState<string>(
+    pullRequest.files[0]?.path ?? '',
+  );
+
+  const activeFile =
+    pullRequest.files.find((file) => file.path === selectedFilePath) ??
+    pullRequest.files[0];
 
   return (
-    <div className="space-y-5">
-      <section className="rounded-2xl border border-zinc-800 bg-[#111114] p-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+    <div className="space-y-6">
+      {/* PR Header */}
+      <section className="border border-[#141311]/15 bg-white p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-[#57534C]">
               <GitPullRequest
-                className="h-5 w-5 text-emerald-400"
+                className="h-4 w-4 text-[#1A6340]"
                 aria-hidden="true"
               />
-              <h2 className="text-lg font-semibold text-zinc-100">
-                {dict.demo.prTab.prTitle}
-              </h2>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3 font-mono text-xs text-zinc-400">
-              <span className="inline-flex items-center gap-1.5 rounded-md border border-zinc-800 bg-[#09090B] px-2.5 py-1 text-cyan-300">
-                <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>
-                  {dict.demo.prTab.branchLabel}: {pullRequest.branch} →{' '}
-                  {pullRequest.baseBranch}
-                </span>
+              <span className="font-semibold text-[#141311]">
+                #{pullRequest.number}
               </span>
-              <span>@{pullRequest.author}</span>
+              <span className="text-[#141311]/30">·</span>
+              <span>{pullRequest.author}</span>
             </div>
 
-            <p className="max-w-3xl text-sm text-zinc-300">
+            <h2 className="font-serif text-2xl text-[#141311] sm:text-3xl">
+              {dict.demo.prTab.prTitle}
+            </h2>
+
+            <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-[#57534C]">
+              <GitBranch className="h-3.5 w-3.5 text-[#857F75]" aria-hidden="true" />
+              <span>{dict.demo.prTab.branchLabel}:</span>
+              <span className="border border-[#141311]/15 bg-[#F3EFE6] px-2 py-0.5 text-[#141311]">
+                {pullRequest.branch}
+              </span>
+              <span aria-hidden="true">→</span>
+              <span className="border border-[#141311]/15 bg-[#F3EFE6] px-2 py-0.5 text-[#141311]">
+                {pullRequest.baseBranch}
+              </span>
+            </div>
+
+            <p className="max-w-3xl pt-1 text-sm leading-relaxed text-[#57534C]">
               {pullRequest.summary}
             </p>
           </div>
 
-          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3.5 py-1.5 font-mono text-xs font-semibold text-emerald-300 glow-emerald">
-            <CheckCircle2 className="h-4 w-4 text-emerald-400" aria-hidden="true" />
+          <span className="inline-flex items-center gap-1.5 border border-[#1A6340]/40 bg-[#EDF5F0] px-3 py-1.5 font-mono text-xs font-semibold text-[#1A6340]">
+            <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
             <span>{dict.demo.prTab.allChecksPassedLabel}</span>
           </span>
         </div>
       </section>
 
-      <section className="rounded-2xl border border-zinc-800 bg-[#111114] p-5">
-        <h3 className="mb-3 text-sm font-semibold text-zinc-200">
+      {/* CI Checks Grid */}
+      <section className="border border-[#141311]/15 bg-white p-6">
+        <h3 className="mb-4 font-mono text-xs font-semibold tracking-[0.16em] text-[#857F75] uppercase">
           {dict.demo.prTab.checksHeading}
         </h3>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <ul className="grid gap-3 md:grid-cols-2">
           {pullRequest.checks.map((check) => (
-            <div
+            <li
               key={check.id}
-              className="flex items-start justify-between gap-3 rounded-xl border border-emerald-500/25 bg-[#09090B] p-3.5"
+              className="flex items-start justify-between gap-3 border border-[#141311]/12 bg-[#FBF9F5] p-4"
             >
               <div className="flex items-start gap-2.5">
                 <CheckCircle2
-                  className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-[#1A6340]"
                   aria-hidden="true"
                 />
                 <div>
-                  <div className="font-mono text-xs font-semibold text-zinc-100">
+                  <p className="font-mono text-xs font-semibold text-[#141311]">
                     {check.name}
-                  </div>
-                  <div className="mt-0.5 text-xs text-zinc-400">
-                    {check.detail}
-                  </div>
+                  </p>
+                  <p className="mt-0.5 text-xs text-[#57534C]">{check.detail}</p>
                 </div>
               </div>
-              <span className="shrink-0 rounded-md border border-zinc-800 bg-zinc-900 px-2 py-0.5 font-mono text-[11px] text-emerald-300">
+              <span className="shrink-0 font-mono text-[11px] text-[#857F75]">
                 {check.duration}
               </span>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
-      <section className="rounded-2xl border border-zinc-800 bg-[#111114] p-5">
-        <h3 className="mb-3 text-sm font-semibold text-zinc-200">
-          {dict.demo.prTab.filesHeading}
-        </h3>
-
-        <div className="mb-4 flex flex-wrap gap-2">
-          {pullRequest.files.map((file, index) => {
-            const isSelected = index === selectedFileIndex;
-            return (
-              <button
-                key={file.path}
-                type="button"
-                aria-pressed={isSelected}
-                onClick={() => setSelectedFileIndex(index)}
-                className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 font-mono text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
-                  isSelected
-                    ? 'border-emerald-500/50 bg-emerald-500/15 text-emerald-200'
-                    : 'border-zinc-800 bg-[#09090B] text-zinc-400 hover:border-zinc-700 hover:text-zinc-200'
-                }`}
-              >
-                <FileCode2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                <span>{file.path}</span>
-                <span className="text-emerald-400">+{file.additions}</span>
-                <span className="text-red-400">-{file.deletions}</span>
-              </button>
-            );
-          })}
+      {/* Matte Obsidian Diff Viewer */}
+      <section className="overflow-hidden border border-[#141311]/15 bg-white">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#141311]/12 bg-[#F3EFE6]/70 px-5 py-3.5">
+          <h3 className="font-mono text-xs font-semibold tracking-[0.16em] text-[#57534C] uppercase">
+            {dict.demo.prTab.filesHeading}
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {pullRequest.files.map((file) => {
+              const isSelected = activeFile?.path === file.path;
+              return (
+                <button
+                  key={file.path}
+                  type="button"
+                  aria-pressed={isSelected}
+                  onClick={() => setSelectedFilePath(file.path)}
+                  className={`inline-flex items-center gap-2 border px-3 py-1.5 font-mono text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22] ${
+                    isSelected
+                      ? 'border-[#141311] bg-[#141311] text-[#FBF9F5]'
+                      : 'border-[#141311]/15 bg-white text-[#57534C] hover:border-[#141311] hover:text-[#141311]'
+                  }`}
+                >
+                  <FileCode2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span>{file.path}</span>
+                  <span
+                    className={
+                      isSelected ? 'text-emerald-300' : 'text-[#1A6340]'
+                    }
+                  >
+                    +{file.additions}
+                  </span>
+                  {file.deletions > 0 && (
+                    <span
+                      className={isSelected ? 'text-red-300' : 'text-[#C94A22]'}
+                    >
+                      -{file.deletions}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {activeFile && (
-          <div className="overflow-hidden rounded-xl border border-zinc-800 bg-[#09090B]">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800 bg-zinc-900/60 px-4 py-2.5 font-mono text-xs">
-              <span className="text-zinc-200">{activeFile.path}</span>
-              <div className="flex items-center gap-3">
-                <span className="text-emerald-400">+{activeFile.additions}</span>
-                <span className="text-red-400">-{activeFile.deletions}</span>
-              </div>
+          <div className="overflow-x-auto bg-[#161514] font-mono text-xs">
+            <div className="border-b border-white/10 px-5 py-2.5 text-[11px] text-white/50">
+              {activeFile.path} · {activeFile.language}
             </div>
+            <div className="divide-y divide-white/[0.04]">
+              {activeFile.lines.map((line, index) => {
+                const rowClass =
+                  line.type === 'add'
+                    ? 'bg-emerald-500/12 text-emerald-200'
+                    : line.type === 'remove'
+                      ? 'bg-red-500/12 text-red-200'
+                      : 'text-[#E7E2D8]';
+                const prefix =
+                  line.type === 'add'
+                    ? '+'
+                    : line.type === 'remove'
+                      ? '-'
+                      : ' ';
 
-            <div className="overflow-x-auto py-2 font-mono text-xs">
-              {activeFile.lines.map((line, idx) => {
-                const { rowClass, symbol } = getLineStyle(line.type);
                 return (
                   <div
-                    key={`${activeFile.path}-${idx}-${line.lineNumber}`}
-                    className={`flex items-baseline px-4 py-0.5 leading-relaxed ${rowClass}`}
+                    key={`${activeFile.path}-${index}`}
+                    className={`flex items-baseline gap-4 px-5 py-1.5 ${rowClass}`}
                   >
-                    <span className="w-8 shrink-0 select-none text-zinc-600">
+                    <span className="w-6 shrink-0 select-none text-right text-[11px] text-white/35">
                       {line.lineNumber}
                     </span>
-                    <span className="w-4 shrink-0 select-none font-bold">
-                      {symbol}
+                    <span className="w-3 shrink-0 select-none text-center font-bold">
+                      {prefix}
                     </span>
                     <span className="whitespace-pre">{line.content}</span>
                   </div>

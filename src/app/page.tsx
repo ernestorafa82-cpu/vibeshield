@@ -6,7 +6,7 @@ import { ProblemSolutionSection } from '@/components/landing/ProblemSolutionSect
 
 export default function HomePage() {
   return (
-    <main className="bg-[#09090B] text-zinc-100">
+    <main className="bg-[#FBF9F5] text-[#141311]">
       <HeroSection />
       <ProblemSolutionSection />
       <JourneySection />

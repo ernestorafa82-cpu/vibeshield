@@ -1,20 +1,30 @@
 import type { Metadata } from 'next';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { DM_Sans, IBM_Plex_Mono, Instrument_Serif } from 'next/font/google';
 import { Footer } from '@/components/layout/Footer';
 import { Navbar } from '@/components/layout/Navbar';
 import { LocaleProvider } from '@/context/LocaleContext';
 import { DEFAULT_LOCALE, dictionaries } from '@/data/i18n';
 import './globals.css';
 
-const inter = Inter({
+const dmSans = DM_Sans({
   subsets: ['latin'],
-  variable: '--font-inter',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-dm-sans',
   display: 'swap',
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const instrumentSerif = Instrument_Serif({
   subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
+  weight: ['400'],
+  style: ['normal', 'italic'],
+  variable: '--font-instrument-serif',
+  display: 'swap',
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-ibm-plex-mono',
   display: 'swap',
 });
 
@@ -31,9 +41,9 @@ export default function RootLayout({
   return (
     <html
       lang={DEFAULT_LOCALE}
-      className={`dark ${inter.variable} ${jetbrainsMono.variable}`}
+      className={`${dmSans.variable} ${instrumentSerif.variable} ${ibmPlexMono.variable}`}
     >
-      <body className="flex min-h-screen flex-col bg-[#09090B] font-sans text-zinc-100 antialiased">
+      <body className="paper-grain flex min-h-screen flex-col bg-[#FBF9F5] font-sans text-[#141311] antialiased selection:bg-[#C94A22]/15 selection:text-[#141311]">
         <LocaleProvider
           dictionaries={dictionaries}
           initialLocale={DEFAULT_LOCALE}

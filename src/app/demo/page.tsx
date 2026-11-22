@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function DemoPage() {
   return (
-    <main className="min-h-screen bg-[#09090B] text-zinc-100">
+    <main className="min-h-screen bg-[#FBF9F5] text-[#141311]">
       <DemoRadiographyView />
     </main>
   );

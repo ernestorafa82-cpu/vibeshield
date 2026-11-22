@@ -3,12 +3,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Shield } from 'lucide-react';
 import { useLocale } from '@/context/LocaleContext';
 import { getSiteConfig } from '@/lib/config';
 
 /**
- * Site footer with brand mark, quick navigation links, and privacy note.
+ * Quiet editorial studio footer on warm stone paper.
  */
 export function Footer() {
   const { locale, dict } = useLocale();
@@ -23,23 +22,24 @@ export function Footer() {
       : '#calculator';
 
   return (
-    <footer className="border-t border-zinc-800/80 bg-[#09090B] text-zinc-400">
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-        <div className="flex flex-col justify-between gap-8 md:flex-row md:items-start">
-          <div className="max-w-sm space-y-3">
+    <footer className="border-t border-[#141311]/12 bg-[#F3EFE6] text-[#57534C]">
+      <div className="mx-auto max-w-[1320px] px-5 py-16 sm:px-8 lg:px-10">
+        <div className="flex flex-col justify-between gap-10 md:flex-row md:items-end">
+          <div className="max-w-md space-y-4">
             <Link
               href={homeHref}
-              className="inline-flex items-center gap-2.5 text-zinc-100 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+              className="inline-flex items-center gap-3 text-[#141311] transition-opacity hover:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22]"
             >
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-emerald-400">
-                <Shield className="h-3.5 w-3.5" aria-hidden="true" />
-              </span>
-              <span className="font-semibold tracking-tight">
+              <span className="inline-block h-2.5 w-2.5 bg-[#C94A22]" aria-hidden="true" />
+              <span className="font-serif text-3xl tracking-tight">
                 {config.brandName}
               </span>
             </Link>
-            <p className="text-sm leading-relaxed text-zinc-400">
+            <p className="text-sm leading-relaxed text-[#57534C]">
               {dict.footer.tagline}
+            </p>
+            <p className="font-mono text-xs text-[#857F75]">
+              {config.contactEmail} · {locale === 'es' ? 'Madrid / Remoto UE' : 'Madrid / EU Remote'}
             </p>
           </div>
 
@@ -47,36 +47,36 @@ export function Footer() {
             aria-label={
               locale === 'es' ? 'Navegación del pie de página' : 'Footer navigation'
             }
-            className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm"
+            className="flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-[#141311]"
           >
             <Link
               href={homeHref}
-              className="transition-colors hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+              className="transition-colors hover:text-[#C94A22] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22]"
             >
               {dict.footer.links.home}
             </Link>
             <a
               href={calculatorHref}
-              className="transition-colors hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+              className="transition-colors hover:text-[#C94A22] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22]"
             >
               {dict.footer.links.calculator}
             </a>
             <Link
               href={demoHref}
-              className="transition-colors hover:text-emerald-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+              className="transition-colors hover:text-[#C94A22] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22]"
             >
               {dict.footer.links.demo}
             </Link>
             <a
               href={`mailto:${config.contactEmail}`}
-              className="transition-colors hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+              className="transition-colors hover:text-[#C94A22] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22]"
             >
               {dict.footer.links.contact}
             </a>
           </nav>
         </div>
 
-        <div className="mt-8 flex flex-col justify-between gap-3 border-t border-zinc-800/80 pt-6 text-xs text-zinc-500 sm:flex-row sm:items-center">
+        <div className="mt-12 flex flex-col justify-between gap-3 border-t border-[#141311]/10 pt-6 font-mono text-[11px] text-[#857F75] sm:flex-row sm:items-center">
           <p>{dict.footer.noDatabaseNote}</p>
           <p>{dict.footer.rights}</p>
         </div>

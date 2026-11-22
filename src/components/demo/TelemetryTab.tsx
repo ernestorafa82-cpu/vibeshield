@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Activity, ArrowRight, Bug, Gauge, ShieldCheck } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { buildSparklinePoints } from '@/components/demo/sparkline';
 import { useLocale } from '@/context/LocaleContext';
 import type { DemoCaseData, TelemetryMetric } from '@/types/vibeshield';
@@ -22,45 +22,32 @@ const PROGRESS_PERCENT_BY_METRIC: Readonly<Record<string, number>> = {
 interface TelemetryGroupConfig {
   readonly tool: TelemetryMetric['tool'];
   readonly title: string;
-  readonly icon: React.ReactNode;
 }
 
 /**
- * Telemetry evidence tab grouping SonarQube, Chrome DevTools, and Sentry metrics.
+ * Editorial forensic telemetry tab grouping SonarQube, Chrome DevTools, and Sentry evidence.
  */
 export function TelemetryTab({ demoCase }: TelemetryTabProps) {
   const { locale, dict } = useLocale();
 
   const groups: readonly TelemetryGroupConfig[] = [
-    {
-      tool: 'sonarqube',
-      title: dict.demo.telemetryTab.sonarqubeTitle,
-      icon: <ShieldCheck className="h-4 w-4 text-emerald-400" aria-hidden="true" />,
-    },
-    {
-      tool: 'chrome_devtools',
-      title: dict.demo.telemetryTab.devtoolsTitle,
-      icon: <Gauge className="h-4 w-4 text-cyan-400" aria-hidden="true" />,
-    },
-    {
-      tool: 'sentry',
-      title: dict.demo.telemetryTab.sentryTitle,
-      icon: <Bug className="h-4 w-4 text-emerald-400" aria-hidden="true" />,
-    },
+    { tool: 'sonarqube', title: dict.demo.telemetryTab.sonarqubeTitle },
+    { tool: 'chrome_devtools', title: dict.demo.telemetryTab.devtoolsTitle },
+    { tool: 'sentry', title: dict.demo.telemetryTab.sentryTitle },
   ];
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2 text-sm font-medium text-zinc-300">
-        <Activity className="h-4 w-4 text-cyan-400" aria-hidden="true" />
-        <h2>{dict.demo.telemetryTab.sectionTitle}</h2>
-      </div>
+      <h2 className="font-serif text-2xl text-[#141311]">
+        {dict.demo.telemetryTab.sectionTitle}
+      </h2>
 
       <div className="space-y-6">
         {groups.map((group) => {
           const metrics = demoCase.telemetry.metrics.filter(
             (metric) => metric.tool === group.tool,
           );
+
           if (metrics.length === 0) {
             return null;
           }
@@ -68,76 +55,73 @@ export function TelemetryTab({ demoCase }: TelemetryTabProps) {
           return (
             <section
               key={group.tool}
-              className="rounded-2xl border border-zinc-800 bg-[#111114] p-5"
+              className="border border-[#141311]/15 bg-white p-6"
             >
-              <div className="mb-4 flex items-center gap-2 border-b border-zinc-800/80 pb-3">
-                {group.icon}
-                <h3 className="text-sm font-semibold tracking-wide text-zinc-100">
+              <div className="mb-5 flex items-center justify-between border-b border-[#141311]/10 pb-3">
+                <h3 className="font-mono text-xs font-semibold tracking-[0.16em] text-[#141311] uppercase">
                   {group.title}
                 </h3>
+                <span className="font-mono text-[11px] text-[#857F75]">
+                  {metrics.length}{' '}
+                  {locale === 'es' ? 'mediciones' : 'measurements'}
+                </span>
               </div>
 
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {metrics.map((metric) => {
                   const progressWidth =
-                    PROGRESS_PERCENT_BY_METRIC[metric.id] ?? 90;
-                  const beforeColor =
-                    metric.statusBefore === 'failed'
-                      ? 'text-red-400'
-                      : 'text-amber-400';
+                    PROGRESS_PERCENT_BY_METRIC[metric.id] ?? 95;
 
                   return (
                     <div
                       key={metric.id}
-                      className="flex flex-col justify-between rounded-xl border border-zinc-800/90 bg-[#09090B] p-4"
+                      className="flex flex-col justify-between gap-4 border border-[#141311]/12 bg-[#FBF9F5] p-5"
                     >
-                      <div className="space-y-3">
-                        <div className="flex items-start justify-between gap-2">
-                          <span className="text-sm font-medium text-zinc-200">
-                            {metric.label}
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="text-sm font-medium text-[#141311]">
+                          {metric.label}
+                        </p>
+                        <span className="shrink-0 border border-[#1A6340]/30 bg-[#EDF5F0] px-2 py-0.5 font-mono text-[11px] font-medium text-[#1A6340]">
+                          {metric.improvementBadge}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-3 font-mono text-sm">
+                        <div className="flex-1 border border-[#141311]/10 bg-white px-3 py-2">
+                          <span className="block text-[10px] tracking-wider text-[#857F75] uppercase">
+                            {dict.demo.telemetryTab.beforeLabel}
                           </span>
-                          <span className="shrink-0 rounded-full border border-emerald-500/35 bg-emerald-500/10 px-2.5 py-0.5 font-mono text-[11px] font-semibold text-emerald-300">
-                            {metric.improvementBadge}
+                          <span className="font-semibold text-[#C94A22]">
+                            {metric.beforeValue}
                           </span>
                         </div>
 
-                        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-lg border border-zinc-800/70 bg-[#111114] px-3 py-2.5">
-                          <div>
-                            <div className="text-[11px] uppercase tracking-wider text-zinc-500">
-                              {dict.demo.telemetryTab.beforeLabel}
-                            </div>
-                            <div className={`font-mono text-sm font-semibold ${beforeColor}`}>
-                              {metric.beforeValue}
-                            </div>
-                          </div>
+                        <ArrowRight
+                          className="h-4 w-4 shrink-0 text-[#857F75]"
+                          aria-hidden="true"
+                        />
 
-                          <ArrowRight
-                            className="h-4 w-4 text-zinc-600"
-                            aria-hidden="true"
-                          />
-
-                          <div className="text-right">
-                            <div className="text-[11px] uppercase tracking-wider text-zinc-500">
-                              {dict.demo.telemetryTab.afterLabel}
-                            </div>
-                            <div className="font-mono text-sm font-semibold text-emerald-400">
-                              {metric.afterValue}
-                            </div>
-                          </div>
+                        <div className="flex-1 border border-[#1A6340]/30 bg-[#EDF5F0]/60 px-3 py-2">
+                          <span className="block text-[10px] tracking-wider text-[#57534C] uppercase">
+                            {dict.demo.telemetryTab.afterLabel}
+                          </span>
+                          <span className="font-semibold text-[#1A6340]">
+                            {metric.afterValue}
+                          </span>
                         </div>
                       </div>
 
-                      <div className="mt-4 space-y-2.5">
-                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-800">
+                      <div className="space-y-3">
+                        <div className="h-1 w-full overflow-hidden bg-[#141311]/10">
                           <div
-                            className="h-full rounded-full bg-emerald-500"
+                            className="h-full bg-[#1A6340]"
                             style={{ width: `${progressWidth}%` }}
                           />
                         </div>
 
                         {metric.sparklinePoints &&
                           metric.sparklinePoints.length > 1 && (
-                            <div className="rounded-lg border border-zinc-800/70 bg-[#111114] p-2">
+                            <div className="border border-[#141311]/10 bg-white p-2.5">
                               <svg
                                 viewBox="0 0 180 44"
                                 role="img"
@@ -150,8 +134,8 @@ export function TelemetryTab({ demoCase }: TelemetryTabProps) {
                               >
                                 <polyline
                                   fill="none"
-                                  stroke="#10B981"
-                                  strokeWidth="2.5"
+                                  stroke="#1A6340"
+                                  strokeWidth="2.2"
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
                                   points={buildSparklinePoints(

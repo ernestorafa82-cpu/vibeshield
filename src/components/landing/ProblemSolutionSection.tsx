@@ -1,11 +1,18 @@
 'use client';
 
 import React from 'react';
-import { AlertTriangle, CheckCircle2, ShieldCheck, XCircle } from 'lucide-react';
 import { useLocale } from '@/context/LocaleContext';
 
+const FINDING_TAGS = [
+  'rls_enabled = false',
+  'NEXT_PUBLIC_SECRET',
+  '0 automated tests',
+  'cyclic imports',
+] as const;
+
 /**
- * Side-by-side comparison contrasting AI prototype failure modes with the Anti-Vibe Shield layers.
+ * Asymmetric Swiss editorial section detailing real recurring audit findings
+ * and Velnea's four-layer engineering intervention.
  */
 export function ProblemSolutionSection() {
   const { dict } = useLocale();
@@ -15,97 +22,96 @@ export function ProblemSolutionSection() {
   return (
     <section
       id="how-it-works"
-      className="border-b border-zinc-800/80 bg-[#09090B] py-16 sm:py-20"
+      className="border-b border-[#141311]/10 bg-[#FBF9F5] py-24 lg:py-32"
     >
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="mx-auto max-w-3xl space-y-3 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            {sectionTitle}
-          </h2>
-          <p className="text-base leading-relaxed text-zinc-400 sm:text-lg">
-            {sectionSubtitle}
-          </p>
+      <div className="mx-auto max-w-[1320px] px-5 sm:px-8 lg:px-10">
+        {/* Asymmetric Header */}
+        <div className="grid gap-8 border-b border-[#141311]/12 pb-12 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-7">
+            <p className="font-mono text-[11px] font-medium tracking-[0.2em] text-[#C94A22] uppercase">
+              {problem.badge}
+            </p>
+            <h2 className="mt-4 font-serif text-4xl leading-[1.04] tracking-[-0.02em] text-[#141311] sm:text-5xl">
+              {sectionTitle}
+            </h2>
+          </div>
+          <div className="lg:col-span-5">
+            <p className="text-base leading-relaxed text-[#57534C]">
+              {sectionSubtitle}
+            </p>
+          </div>
         </div>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
-          <article className="flex flex-col justify-between rounded-xl border border-red-500/25 bg-[#111114] p-6 sm:p-8">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-500/10 px-3 py-1 font-mono text-xs font-semibold tracking-wider text-red-300">
-                <AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>{problem.badge}</span>
-              </div>
+        {/* Part 1: Numbered Forensic Findings Ledger */}
+        <div className="grid gap-10 border-b border-[#141311]/12 py-14 lg:grid-cols-12">
+          <div className="space-y-4 lg:col-span-4">
+            <h3 className="font-serif text-3xl leading-tight text-[#141311]">
+              {problem.title}
+            </h3>
+            <p className="text-sm leading-relaxed text-[#57534C]">
+              {problem.description}
+            </p>
+            <p className="border-l-2 border-[#C94A22] pl-4 font-mono text-xs text-[#141311]">
+              {problem.statHighlight}
+            </p>
+          </div>
 
-              <div className="space-y-2">
-                <h3 className="text-2xl font-bold tracking-tight text-white">
-                  {problem.title}
-                </h3>
-                <p className="rounded-lg border border-red-500/20 bg-red-500/5 px-3.5 py-2.5 font-mono text-xs font-medium text-red-200 sm:text-sm">
-                  {problem.statHighlight}
+          <ol className="divide-y divide-[#141311]/12 border-t border-[#141311]/12 lg:col-span-8 lg:border-t-0">
+            {problem.bullets.map((bullet, idx) => (
+              <li
+                key={bullet}
+                className="grid gap-3 py-5 first:pt-0 sm:grid-cols-12 sm:items-baseline"
+              >
+                <span className="font-mono text-xs font-medium text-[#C94A22] sm:col-span-1">
+                  0{idx + 1}
+                </span>
+                <p className="text-[15px] leading-relaxed text-[#141311] sm:col-span-8">
+                  {bullet}
+                </p>
+                <span className="font-mono text-[11px] text-[#857F75] sm:col-span-3 sm:text-right">
+                  {FINDING_TAGS[idx] ?? 'audit'}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        {/* Part 2: Velnea Intervention Architectural Grid */}
+        <div className="grid gap-10 pt-14 lg:grid-cols-12">
+          <div className="space-y-4 lg:col-span-4">
+            <p className="font-mono text-[11px] font-medium tracking-[0.2em] text-[#1A6340] uppercase">
+              {solution.badge}
+            </p>
+            <h3 className="font-serif text-3xl leading-tight text-[#141311]">
+              {solution.title}
+            </h3>
+            <p className="text-sm leading-relaxed text-[#57534C]">
+              {solution.description}
+            </p>
+          </div>
+
+          <div className="grid border border-[#141311]/12 bg-white sm:grid-cols-2 lg:col-span-8">
+            {solution.pillars.map((pillar, idx) => (
+              <div
+                key={pillar.key}
+                className={`p-7 sm:p-8 ${
+                  idx % 2 === 0 ? 'sm:border-r sm:border-[#141311]/12' : ''
+                } ${idx < 2 ? 'border-b border-[#141311]/12' : ''} ${
+                  idx === 2 ? 'border-b border-[#141311]/12 sm:border-b-0' : ''
+                }`}
+              >
+                <span className="font-mono text-[11px] tracking-[0.16em] text-[#857F75] uppercase">
+                  SPEC · 0{idx + 1}
+                </span>
+                <h4 className="mt-3 text-base font-semibold tracking-tight text-[#141311]">
+                  {pillar.title}
+                </h4>
+                <p className="mt-2.5 text-sm leading-relaxed text-[#57534C]">
+                  {pillar.detail}
                 </p>
               </div>
-
-              <p className="text-sm leading-relaxed text-zinc-400 sm:text-base">
-                {problem.description}
-              </p>
-
-              <ul className="space-y-3 pt-2">
-                {problem.bullets.map((bullet) => (
-                  <li
-                    key={bullet}
-                    className="flex items-start gap-3 text-sm leading-relaxed text-zinc-300"
-                  >
-                    <XCircle
-                      className="mt-0.5 h-4 w-4 shrink-0 text-red-400"
-                      aria-hidden="true"
-                    />
-                    <span>{bullet}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </article>
-
-          <article className="glow-emerald flex flex-col justify-between rounded-xl border border-emerald-500/30 bg-[#111114] p-6 sm:p-8">
-            <div className="space-y-5">
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 font-mono text-xs font-semibold tracking-wider text-emerald-300">
-                <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>{solution.badge}</span>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="text-2xl font-bold tracking-tight text-white">
-                  {solution.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-zinc-400 sm:text-base">
-                  {solution.description}
-                </p>
-              </div>
-
-              <div className="grid gap-3.5 sm:grid-cols-2">
-                {solution.pillars.map((pillar) => (
-                  <div
-                    key={pillar.key}
-                    className="rounded-lg border border-zinc-800 bg-zinc-950/60 p-4"
-                  >
-                    <div className="flex items-start gap-2.5">
-                      <CheckCircle2
-                        className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400"
-                        aria-hidden="true"
-                      />
-                      <div className="space-y-1">
-                        <h4 className="text-sm font-semibold text-zinc-100">
-                          {pillar.title}
-                        </h4>
-                        <p className="text-xs leading-relaxed text-zinc-400">
-                          {pillar.detail}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </article>
+            ))}
+          </div>
         </div>
       </div>
     </section>

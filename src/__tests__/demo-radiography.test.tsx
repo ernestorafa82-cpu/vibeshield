@@ -228,7 +228,7 @@ describe('DemoRadiographyView', () => {
     fireEvent.click(agentsFileBtn);
 
     expect(
-      within(panel).getByText('# PulseCRM — VibeShield Guardrails'),
+      within(panel).getByText('# PulseCRM — Velnea Repo Guardrails'),
     ).toBeInTheDocument();
   });
 
@@ -259,7 +259,7 @@ describe('DemoRadiographyView', () => {
       screen.getByRole('tab', { name: dictionaries.es.demo.tabs.telemetry }),
     );
     expect(
-      within(summaryRegion).getByText(/4\/4 checks en verde/),
+      within(summaryRegion).getByText(/4\/4 checks aprobados/),
     ).toBeInTheDocument();
 
     const prSummaryButton = within(summaryRegion).getByRole('button', {

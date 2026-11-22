@@ -13,7 +13,7 @@ import type { DemoTabId } from '@/types/vibeshield';
 const TAB_ORDER: readonly DemoTabId[] = ['security', 'telemetry', 'pr'];
 
 /**
- * Main interactive X-Ray orchestrator for the /demo PulseCRM case study.
+ * Editorial forensic audit dossier orchestrator for the /demo PulseCRM case study.
  */
 export function DemoRadiographyView() {
   const { locale, dict } = useLocale();
@@ -49,14 +49,14 @@ export function DemoRadiographyView() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-[1320px] space-y-8 px-5 py-12 sm:px-8 lg:px-10 lg:py-16">
       <DemoHeader demoCase={demoCase} />
 
-      <div className="space-y-5">
+      <div className="space-y-6">
         <div
           role="tablist"
           aria-label={dict.demo.kicker}
-          className="flex flex-wrap gap-2 rounded-2xl border border-zinc-800 bg-[#111114] p-2"
+          className="flex flex-wrap gap-2 border-b border-[#141311]/15"
         >
           {TAB_ORDER.map((tabId, index) => {
             const isSelected = activeTab === tabId;
@@ -74,10 +74,10 @@ export function DemoRadiographyView() {
                 tabIndex={isSelected ? 0 : -1}
                 onClick={() => setActiveTab(tabId)}
                 onKeyDown={(event) => handleTabKeyDown(event, index)}
-                className={`rounded-xl px-4 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+                className={`-mb-px border-b-2 px-4 py-3 font-mono text-xs tracking-wider uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22] ${
                   isSelected
-                    ? 'border border-emerald-500/40 bg-emerald-500/15 text-emerald-300'
-                    : 'border border-transparent text-zinc-400 hover:bg-zinc-900 hover:text-zinc-100'
+                    ? 'border-[#C94A22] font-semibold text-[#141311]'
+                    : 'border-transparent text-[#857F75] hover:text-[#141311]'
                 }`}
               >
                 {dict.demo.tabs[tabId]}
@@ -91,7 +91,7 @@ export function DemoRadiographyView() {
           id={`demo-panel-${activeTab}`}
           aria-labelledby={`demo-tab-${activeTab}`}
           tabIndex={0}
-          className="rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+          className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22]"
         >
           {activeTab === 'security' && (
             <SecurityBeforeAfterTab demoCase={demoCase} />

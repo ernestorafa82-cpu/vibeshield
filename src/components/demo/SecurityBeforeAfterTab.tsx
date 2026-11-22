@@ -6,9 +6,8 @@ import {
   CheckCircle2,
   Play,
   RotateCcw,
-  ShieldAlert,
   ShieldCheck,
-  Terminal,
+  XCircle,
 } from 'lucide-react';
 import { useLocale } from '@/context/LocaleContext';
 import type {
@@ -23,122 +22,112 @@ export interface SecurityBeforeAfterTabProps {
 
 const VIEW_MODES: readonly SecurityViewMode[] = ['split', 'before', 'after'];
 
-interface SecuritySnapshotCardProps {
+interface TerminalCardProps {
   snapshot: SecuritySnapshot;
   badgeText: string;
   testResultLabel: string;
   isSimulating: boolean;
 }
 
-function SecuritySnapshotCard({
+function SecurityEvidenceCard({
   snapshot,
   badgeText,
   testResultLabel,
   isSimulating,
-}: SecuritySnapshotCardProps) {
+}: TerminalCardProps) {
   const isVulnerable = snapshot.status === 'vulnerable';
-
-  const cardToneClass = isVulnerable
-    ? `border-red-500/35 glow-crimson ${isSimulating ? 'ring-2 ring-red-500/60' : ''}`
-    : `border-emerald-500/35 glow-emerald ${isSimulating ? 'ring-2 ring-emerald-500/60' : ''}`;
-
-  const badgeToneClass = isVulnerable
-    ? 'border-red-500/40 bg-red-500/15 text-red-300'
-    : 'border-emerald-500/40 bg-emerald-500/15 text-emerald-300';
-
-  const statusToneClass = isVulnerable
-    ? 'border-red-500/40 bg-red-500/15 text-red-300'
-    : 'border-emerald-500/40 bg-emerald-500/15 text-emerald-300';
-
-  const highlightToneClass = isVulnerable
-    ? 'border-red-500/30 bg-red-500/10 text-red-200'
-    : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200';
 
   return (
     <article
-      className={`flex flex-col justify-between rounded-2xl border bg-[#111114] p-5 transition-all ${cardToneClass}`}
+      className={`border bg-white p-6 transition-all ${
+        isVulnerable
+          ? isSimulating
+            ? 'border-[#C94A22] ring-1 ring-[#C94A22]'
+            : 'border-[#141311]/15'
+          : isSimulating
+            ? 'border-[#1A6340] ring-1 ring-[#1A6340]'
+            : 'border-[#141311]/15'
+      }`}
     >
-      <div className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <span
-            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-xs font-semibold ${badgeToneClass}`}
-          >
-            {isVulnerable ? (
-              <ShieldAlert className="h-3.5 w-3.5" aria-hidden="true" />
-            ) : (
-              <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-            )}
-            <span>{badgeText}</span>
-          </span>
-
-          {isSimulating && (
-            <span
-              className={`inline-flex items-center gap-1.5 font-mono text-xs font-medium ${
-                isVulnerable ? 'text-red-400' : 'text-emerald-400'
-              }`}
-            >
-              <span
-                className={`h-2 w-2 rounded-full animate-pulse ${
-                  isVulnerable ? 'bg-red-500' : 'bg-emerald-500'
-                }`}
-                aria-hidden="true"
-              />
-              <span>
-                {snapshot.httpStatus} {snapshot.httpStatusText}
-              </span>
-            </span>
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#141311]/10 pb-3.5">
+        <span
+          className={`inline-flex items-center gap-2 font-mono text-xs font-semibold tracking-wider uppercase ${
+            isVulnerable ? 'text-[#C94A22]' : 'text-[#1A6340]'
+          }`}
+        >
+          {isVulnerable ? (
+            <AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />
+          ) : (
+            <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
           )}
-        </div>
+          <span>{badgeText}</span>
+        </span>
 
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-zinc-800 bg-[#09090B] px-3.5 py-2.5 font-mono text-xs">
-          <div className="flex items-center gap-2 text-zinc-200">
-            <Terminal className="h-3.5 w-3.5 text-zinc-500" aria-hidden="true" />
-            <span>
-              {snapshot.method} {snapshot.endpoint}
-            </span>
-          </div>
-          <span
-            className={`rounded-md border px-2 py-0.5 font-semibold ${statusToneClass}`}
-          >
-            {snapshot.httpStatus} {snapshot.httpStatusText}
-          </span>
-        </div>
-
-        <pre className="overflow-x-auto rounded-xl border border-zinc-800/90 bg-[#09090B] p-4 font-mono text-xs leading-relaxed text-zinc-200">
-          <code>{snapshot.payloadJson}</code>
-        </pre>
-
-        <ul className="flex flex-wrap gap-2">
-          {snapshot.highlights.map((highlight) => (
-            <li
-              key={highlight}
-              className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs ${highlightToneClass}`}
-            >
-              {isVulnerable ? (
-                <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-red-400" aria-hidden="true" />
-              ) : (
-                <CheckCircle2
-                  className="h-3.5 w-3.5 shrink-0 text-emerald-400"
-                  aria-hidden="true"
-                />
-              )}
-              <span>{highlight}</span>
-            </li>
-          ))}
-        </ul>
+        <span
+          className={`px-2.5 py-0.5 font-mono text-xs font-semibold ${
+            isVulnerable
+              ? 'bg-[#FDF3EF] text-[#C94A22]'
+              : 'bg-[#EDF5F0] text-[#1A6340]'
+          }`}
+        >
+          {snapshot.httpStatus} {snapshot.httpStatusText}
+        </span>
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-zinc-800/80 pt-3.5 text-xs">
-        <span className="text-zinc-400">{testResultLabel}</span>
+      {/* Matte Obsidian Code Artifact */}
+      <div className="mt-4 bg-[#161514] text-[#E7E2D8]">
+        <div className="flex items-center justify-between border-b border-white/10 px-4 py-2 font-mono text-xs">
+          <span className="truncate">
+            <span className="text-white/45">{snapshot.method}</span>{' '}
+            <span>{snapshot.endpoint}</span>
+          </span>
+          <span
+            className={
+              isVulnerable ? 'text-[#F87171]' : 'text-[#34D399]'
+            }
+          >
+            → {snapshot.httpStatus} {snapshot.httpStatusText}
+          </span>
+        </div>
+        <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-[#E7E2D8]">
+          <code>{snapshot.payloadJson}</code>
+        </pre>
+      </div>
+
+      <ul className="mt-4 space-y-2">
+        {snapshot.highlights.map((item) => (
+          <li
+            key={item}
+            className={`flex items-start gap-2.5 border-l-2 pl-3 text-xs leading-relaxed ${
+              isVulnerable
+                ? 'border-[#C94A22] text-[#46423C]'
+                : 'border-[#1A6340] text-[#46423C]'
+            }`}
+          >
+            {isVulnerable ? (
+              <XCircle
+                className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#C94A22]"
+                aria-hidden="true"
+              />
+            ) : (
+              <CheckCircle2
+                className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#1A6340]"
+                aria-hidden="true"
+              />
+            )}
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-[#141311]/10 pt-3.5 font-mono text-xs">
+        <span className="text-[#857F75]">{testResultLabel}</span>
         <span
-          className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 font-mono font-semibold ${statusToneClass}`}
+          className={`font-semibold ${
+            snapshot.testPassed ? 'text-[#1A6340]' : 'text-[#C94A22]'
+          }`}
         >
-          {snapshot.testPassed ? (
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
-          ) : (
-            <AlertTriangle className="h-3.5 w-3.5 text-red-400" aria-hidden="true" />
-          )}
-          <span>{snapshot.testBadge}</span>
+          {snapshot.testBadge}
         </span>
       </div>
     </article>
@@ -146,41 +135,40 @@ function SecuritySnapshotCard({
 }
 
 /**
- * Interactive Before/After RLS security comparison tab with live unauthenticated simulation.
+ * Interactive RLS before/after forensic evidence tab with live anonymous request trace.
  */
 export function SecurityBeforeAfterTab({
   demoCase,
 }: SecurityBeforeAfterTabProps) {
   const { dict } = useLocale();
-  const [isSimulating, setIsSimulating] = useState(false);
   const [viewMode, setViewMode] = useState<SecurityViewMode>('split');
+  const [isSimulating, setIsSimulating] = useState<boolean>(false);
 
   const showBefore = viewMode === 'split' || viewMode === 'before';
   const showAfter = viewMode === 'split' || viewMode === 'after';
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col gap-3 rounded-2xl border border-zinc-800 bg-[#111114] p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3 border border-[#141311]/15 bg-[#F3EFE6]/70 p-4">
         <div className="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
-            aria-pressed={isSimulating}
-            onClick={() => setIsSimulating((prev) => !prev)}
-            className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
-              isSimulating
-                ? 'border-cyan-500/60 bg-cyan-500/15 text-cyan-200'
-                : 'border-cyan-500/40 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20'
-            }`}
+            onClick={() => setIsSimulating(true)}
+            className="inline-flex items-center gap-2 bg-[#141311] px-4 py-2 font-mono text-xs tracking-wider text-[#FBF9F5] uppercase transition-colors hover:bg-[#C94A22] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22]"
           >
-            <Play className="h-4 w-4" aria-hidden="true" />
-            <span>{dict.demo.securityTab.simulateButton}</span>
+            <Play className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>
+              {isSimulating
+                ? dict.demo.securityTab.simulatingLabel
+                : dict.demo.securityTab.simulateButton}
+            </span>
           </button>
 
           {isSimulating && (
             <button
               type="button"
               onClick={() => setIsSimulating(false)}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs font-medium text-zinc-300 transition-colors hover:border-zinc-600 hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+              className="inline-flex items-center gap-1.5 border border-[#141311]/20 bg-white px-3 py-2 font-mono text-xs text-[#57534C] transition-colors hover:border-[#141311] hover:text-[#141311] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22]"
             >
               <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
               <span>{dict.demo.securityTab.resetSimulationButton}</span>
@@ -191,20 +179,20 @@ export function SecurityBeforeAfterTab({
         <div
           role="group"
           aria-label={dict.demo.tabs.security}
-          className="inline-flex items-center rounded-xl border border-zinc-800 bg-[#09090B] p-1"
+          className="inline-flex border border-[#141311]/15 bg-white p-0.5 font-mono text-xs"
         >
           {VIEW_MODES.map((mode) => {
-            const active = viewMode === mode;
+            const isPressed = viewMode === mode;
             return (
               <button
                 key={mode}
                 type="button"
-                aria-pressed={active}
+                aria-pressed={isPressed}
                 onClick={() => setViewMode(mode)}
-                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
-                  active
-                    ? 'bg-zinc-800 text-zinc-100'
-                    : 'text-zinc-400 hover:text-zinc-200'
+                className={`px-3 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C94A22] ${
+                  isPressed
+                    ? 'bg-[#141311] text-[#FBF9F5]'
+                    : 'text-[#57534C] hover:text-[#141311]'
                 }`}
               >
                 {dict.demo.securityTab.viewModeLabels[mode]}
@@ -219,30 +207,19 @@ export function SecurityBeforeAfterTab({
         aria-live="polite"
         className={
           isSimulating
-            ? 'rounded-2xl border border-cyan-500/40 bg-[#111114] p-4'
+            ? 'border border-[#C94A22]/40 bg-[#FDF3EF] p-5 text-[#141311]'
             : 'sr-only'
         }
       >
-        {isSimulating ? (
+        {isSimulating && (
           <div className="space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-2 text-xs font-semibold text-cyan-300">
-                <span
-                  className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"
-                  aria-hidden="true"
-                />
-                <span>{dict.demo.securityTab.simulatingLabel}</span>
-              </div>
-              <span className="font-mono text-xs text-zinc-400">
-                {dict.demo.securityTab.unauthLabel}
-              </span>
-            </div>
-
-            <p className="text-xs text-zinc-300">
+            <p className="text-sm font-medium text-[#9C3515]">
               {dict.demo.securityTab.simulationActiveNotice}
             </p>
-
-            <div className="rounded-xl border border-zinc-800 bg-[#09090B] p-3 font-mono text-xs text-zinc-300">
+            <div className="bg-[#161514] p-4 font-mono text-xs text-[#E7E2D8]">
+              <p className="mb-2 text-[11px] tracking-wider text-white/50 uppercase">
+                {dict.demo.securityTab.unauthLabel}
+              </p>
               {demoCase.security.simulatedRequestHeaders.map((header) => (
                 <div key={header} className="leading-relaxed">
                   {header}
@@ -250,14 +227,16 @@ export function SecurityBeforeAfterTab({
               ))}
             </div>
           </div>
-        ) : null}
+        )}
       </div>
 
       <div
-        className={`grid gap-5 ${viewMode === 'split' ? 'lg:grid-cols-2' : 'grid-cols-1'}`}
+        className={`grid gap-5 ${
+          viewMode === 'split' ? 'lg:grid-cols-2' : 'grid-cols-1'
+        }`}
       >
         {showBefore && (
-          <SecuritySnapshotCard
+          <SecurityEvidenceCard
             snapshot={demoCase.security.before}
             badgeText={dict.demo.securityTab.beforeBadge}
             testResultLabel={dict.demo.securityTab.testResultLabel}
@@ -266,7 +245,7 @@ export function SecurityBeforeAfterTab({
         )}
 
         {showAfter && (
-          <SecuritySnapshotCard
+          <SecurityEvidenceCard
             snapshot={demoCase.security.after}
             badgeText={dict.demo.securityTab.afterBadge}
             testResultLabel={dict.demo.securityTab.testResultLabel}

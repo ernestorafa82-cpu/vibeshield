@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import {
   VSH_FOUNDRY_GLYPHS,
   type GlyphContourSpec,
@@ -11,51 +12,51 @@ export interface HeroCanvasSceneProps {
   mode: 'before' | 'after';
   mouseX: number;
   mouseY: number;
+  stageRef: React.RefObject<HTMLDivElement | null>;
 }
 
-// Exact physical half-extents of extruded VSH wordmark including bevels + alert drift
+// Exact physical half-extents of the plump blown-glass droplet VSH wordmark
+// (measured Box3 ±2.562 x ±0.980 x ±0.295 plus alert drift margin)
 export const VSH_PROJECTION_BOUNDS = {
-  halfW: 2.6,
-  halfH: 1.02,
-  halfD: 0.42,
-  maxRx: 0.24,
-  maxRy: 0.68,
-  maxPosX: 0.12,
+  halfW: 2.57,
+  halfH: 0.99,
+  halfD: 0.38,
+  maxRx: 0.22,
+  maxRy: 0.56,
+  maxPosX: 0.14,
   maxPosY: 0.11,
-  cameraFov: 22,
-  cameraZ: 13.5,
-  margin: 0.92,
+  cameraFov: 24,
+  cameraZ: 14.0,
+  margin: 0.97,
 } as const;
 
 /**
- * Computes the largest uniform scale for the rotating 3D VSH wordmark such that
- * all 8 corners of its rotated + drifted bounding box stay strictly inside the
- * perspective frustum (|NDC_x| <= margin, |NDC_y| <= margin) at every swing angle
- * and pointer position.
+ * Computes the largest uniform scale for the rotating 3D VSH liquid-glass wordmark
+ * such that all 8 corners of its rotated + drifted bounding box stay strictly inside
+ * a target frustum rectangle of world size (stageWorldW x stageWorldH) at z = 0.
  */
-export function computeVshFitScale(
-  aspect: number,
-  cameraFov: number = VSH_PROJECTION_BOUNDS.cameraFov,
+export function computeVshFitScaleForStage(
+  stageWorldW: number,
+  stageWorldH: number,
   cameraZ: number = VSH_PROJECTION_BOUNDS.cameraZ,
 ): number {
-  const safeAspect = Math.max(aspect, 0.25);
+  const safeW = Math.max(stageWorldW, 0.5);
+  const safeH = Math.max(stageWorldH, 0.5);
   const { halfW, halfH, halfD, maxRx, maxRy, maxPosX, maxPosY, margin } =
     VSH_PROJECTION_BOUNDS;
 
-  const tanHalf = Math.tan(THREE.MathUtils.degToRad(cameraFov * 0.5));
-  const tanY = tanHalf * margin;
-  const tanX = tanHalf * safeAspect * margin;
+  const halfStageW = safeW * 0.5 * margin;
+  const halfStageH = safeH * 0.5 * margin;
+  const slopeX = halfStageW / cameraZ;
+  const slopeY = halfStageH / cameraZ;
 
-  // Worst-case Y/Z envelope after X pitch rotation (Euler XYZ / YXZ safe upper bound)
   const yAfterRx = halfH * Math.cos(maxRx) + halfD * Math.sin(maxRx);
   const zAfterRx = halfH * Math.sin(maxRx) + halfD * Math.cos(maxRx);
 
   let fitScale = Infinity;
-  // Evaluate across the full yaw range [0, maxRy] to cover both wide-face and corner-peak Z advance
   for (const ry of [0, maxRy * 0.5, maxRy]) {
     const xRot = halfW * Math.cos(ry) + zAfterRx * Math.sin(ry);
     const zNear = halfW * Math.sin(ry) + zAfterRx * Math.cos(ry);
-    // Conservative Y upper bound accounting for X rotation after Y rotation (Euler XYZ order)
     const yWorst =
       halfH * Math.cos(maxRx) +
       (halfW * Math.sin(ry) + halfD * Math.cos(ry)) * Math.sin(maxRx);
@@ -67,8 +68,8 @@ export function computeVshFitScale(
     const maxYExtent = Math.max(yAfterRx, yWorst);
     const maxZAdvance = Math.max(zNear, zWorst);
 
-    const scaleX = (cameraZ * tanX - maxPosX) / (maxXExtent + maxZAdvance * tanX);
-    const scaleY = (cameraZ * tanY - maxPosY) / (maxYExtent + maxZAdvance * tanY);
+    const scaleX = (halfStageW - maxPosX) / (maxXExtent + maxZAdvance * slopeX);
+    const scaleY = (halfStageH - maxPosY) / (maxYExtent + maxZAdvance * slopeY);
     fitScale = Math.min(fitScale, scaleX, scaleY);
   }
 
@@ -76,8 +77,23 @@ export function computeVshFitScale(
 }
 
 /**
+ * Convenience wrapper computing VSH scale from a container aspect ratio + camera FOV.
+ */
+export function computeVshFitScale(
+  aspect: number,
+  cameraFov: number = VSH_PROJECTION_BOUNDS.cameraFov,
+  cameraZ: number = VSH_PROJECTION_BOUNDS.cameraZ,
+): number {
+  const safeAspect = Math.max(aspect, 0.25);
+  const stageWorldH =
+    2 * cameraZ * Math.tan(THREE.MathUtils.degToRad(cameraFov * 0.5));
+  const stageWorldW = stageWorldH * safeAspect;
+  return computeVshFitScaleForStage(stageWorldW, stageWorldH, cameraZ);
+}
+
+/**
  * Converts TrueType quadratic Bezier contour points ([x, y, onCurve]) into a
- * lossless THREE.Shape ready for smooth beveled 3D extrusion.
+ * lossless THREE.Shape ready for plump blown-glass droplet extrusion.
  */
 function buildShapeFromTrueType(
   pts: readonly (readonly [number, number, 0 | 1])[],
@@ -133,22 +149,22 @@ function buildShapeFromTrueType(
 }
 
 /**
- * Builds a high-contrast luxury photography studio reflection dome (PMREM)
- * with diagonal front-hemisphere softbox bands + deep sapphire dark cards,
- * giving both serif faces and curved bevels liquid metallic-glass reflections.
+ * Builds a studio reflection dome tailored for wet blown-glass water droplets:
+ * razor-bright white crescent softboxes + cool glacier sky light + dark sapphire contrast
+ * voids so thick curved glass forms gleaming liquid highlights and luminous Fresnel rims.
  */
-function buildStudioEnvironment(
+function buildDropletStudioEnvironment(
   renderer: THREE.WebGLRenderer,
 ): THREE.WebGLRenderTarget {
   const pmrem = new THREE.PMREMGenerator(renderer);
   pmrem.compileEquirectangularShader();
 
   const envScene = new THREE.Scene();
-  envScene.background = new THREE.Color('#061126');
+  envScene.background = new THREE.Color('#061229');
 
   const disposables: { dispose: () => void }[] = [];
 
-  const addSoftbox = (
+  const addLightPanel = (
     w: number,
     h: number,
     colorHex: string,
@@ -172,19 +188,18 @@ function buildStudioEnvironment(
     disposables.push(geo, mat);
   };
 
-  // Front-hemisphere diagonal studio softboxes reflected across the sculpted serif faces
-  addSoftbox(14, 2.2, '#ffffff', 3.4, [1.8, 3.2, 8.2], -0.42);
-  addSoftbox(12, 1.3, '#bfdbfe', 2.4, [-2.4, -0.6, 8.4], -0.42);
-  addSoftbox(10, 1.1, '#93c5fd', 2.0, [3.2, -3.4, 7.8], -0.42);
-  addSoftbox(15, 1.5, '#07142b', 0.35, [0.0, 0.9, 7.6], -0.42);
+  // Pure white wet-droplet specular crescent light strips (upper-right & crown)
+  addLightPanel(12, 2.0, '#ffffff', 5.2, [3.2, 5.4, 7.2], -0.38);
+  addLightPanel(11, 1.4, '#eef6ff', 4.4, [-2.8, 6.2, 4.2], 0.28);
+  // Wide soft glacier horizon bounce
+  addLightPanel(14, 1.8, '#93c5fd', 2.8, [-4.5, -1.5, 7.6], -0.22);
+  // Crisp side rim lights outlining the swollen droplet silhouettes in pure white-ice
+  addLightPanel(2.4, 11.0, '#ffffff', 4.8, [7.8, 1.2, 1.2]);
+  addLightPanel(2.6, 11.0, '#dbeafe', 4.2, [-7.8, 1.8, 0.8]);
+  // Lower sapphire caustic bounce
+  addLightPanel(13, 3.2, '#3b82f6', 2.4, [0, -7.2, 2.8]);
 
-  // Side & overhead platinum rim softboxes illuminating curved 3D bevels
-  addSoftbox(2.4, 11.0, '#eef5ff', 3.6, [7.6, 1.0, 2.5]);
-  addSoftbox(2.8, 10.5, '#93c5fd', 2.9, [-7.4, 2.0, 1.6]);
-  addSoftbox(11.0, 2.6, '#ffffff', 3.2, [0, 7.4, 1.8]);
-  addSoftbox(11.5, 3.4, '#3b82f6', 1.8, [0, -6.8, 3.0]);
-
-  const rt = pmrem.fromScene(envScene, 0.02);
+  const rt = pmrem.fromScene(envScene, 0.018);
   for (const d of disposables) {
     d.dispose();
   }
@@ -192,28 +207,29 @@ function buildStudioEnvironment(
   return rt;
 }
 
-const COOL_FACE_COLOR = new THREE.Color('#9ec7ff');
-const COOL_BEVEL_COLOR = new THREE.Color('#f0f7ff');
-const COOL_KEY_COLOR = new THREE.Color('#eef5ff');
-const COOL_RIM_COLOR = new THREE.Color('#93c5fd');
+const COOL_ATTENUATION = new THREE.Color('#3b82f6');
+const COOL_TINT = new THREE.Color('#ffffff');
+const COOL_BACKDROP_TINT = new THREE.Color('#ffffff');
 
-const ALERT_FACE_COLOR = new THREE.Color('#d95763');
-const ALERT_BEVEL_COLOR = new THREE.Color('#fee2e2');
-const ALERT_KEY_COLOR = new THREE.Color('#fecaca');
-const ALERT_RIM_COLOR = new THREE.Color('#ef4444');
+const ALERT_ATTENUATION = new THREE.Color('#dc2626');
+const ALERT_TINT = new THREE.Color('#fff1f2');
+const ALERT_BACKDROP_TINT = new THREE.Color('#ffd6d6');
 
 /**
- * Self-contained Three.js WebGL PBR stage rendering the sculpted liquid metallic-glass
- * "VSH" serif monogram (DM Serif Display) using exact perspective frustum fitting so
- * all rotated/drifted vertices stay strictly inside the canvas across all viewports.
+ * Full-hero Three.js WebGL PBR liquid-glass scene:
+ * - Renders `/images/hero-backdrop.jpg` inside the 3D scene so true `transmission: 1.0`
+ *   physically bends, magnifies, and prism-disperses the fluted studio light rays through
+ *   plump, rounded blown-glass water-droplet "VSH" letters.
+ * - Dynamically locks the 3D VSH wordmark to the exact DOM rect of `stageRef` via
+ *   ResizeObserver + perspective frustum math, ensuring zero overlap on mobile and desktop.
  */
 export function HeroCanvasScene({
   mode,
   mouseX,
   mouseY,
+  stageRef,
 }: HeroCanvasSceneProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const fallbackRef = useRef<HTMLDivElement | null>(null);
   const renderOnceRef = useRef<(() => void) | null>(null);
   const stateRef = useRef({
     mode,
@@ -251,9 +267,7 @@ export function HeroCanvasScene({
     } catch {
       return;
     }
-    if (!webglContext) {
-      return;
-    }
+    if (!webglContext) return;
 
     let renderer: THREE.WebGLRenderer;
     try {
@@ -268,22 +282,18 @@ export function HeroCanvasScene({
       return;
     }
 
-    if (fallbackRef.current) {
-      fallbackRef.current.style.opacity = '0';
-    }
-
     const reducedMotion =
       typeof window !== 'undefined' &&
       typeof window.matchMedia === 'function' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.28;
+    renderer.toneMappingExposure = 1.15;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.setClearColor(0x000000, 0);
+    renderer.setClearColor(0x07142b, 0);
 
     const scene = new THREE.Scene();
-    const envTarget = buildStudioEnvironment(renderer);
+    const envTarget = buildDropletStudioEnvironment(renderer);
     scene.environment = envTarget.texture;
 
     const { cameraFov, cameraZ } = VSH_PROJECTION_BOUNDS;
@@ -291,55 +301,90 @@ export function HeroCanvasScene({
     camera.position.set(0, 0, cameraZ);
     camera.lookAt(0, 0, 0);
 
-    const keyLight = new THREE.DirectionalLight(COOL_KEY_COLOR.clone(), 2.6);
-    keyLight.position.set(4.8, 6.2, 6.4);
+    // MUST be opaque (transparent: false) so Three.js physical transmission pass
+    // renders the fluted light backdrop into the refraction buffer behind the droplets!
+    // Keep invisible until texture loads (or on error) so SSR <img> shines through with zero flash.
+    const backdropZ = -3.8;
+    const backdropGeo = new THREE.PlaneGeometry(1, 1);
+    const backdropMat = new THREE.MeshBasicMaterial({
+      color: COOL_BACKDROP_TINT.clone(),
+      transparent: false,
+      depthWrite: true,
+    });
+    const backdropMesh = new THREE.Mesh(backdropGeo, backdropMat);
+    backdropMesh.position.set(0, 0, backdropZ);
+    backdropMesh.visible = false;
+    scene.add(backdropMesh);
+
+    let backdropTexture: THREE.Texture | null = null;
+    let backdropImgAspect = 16 / 9;
+    let isDisposed = false;
+
+    const loader = new THREE.TextureLoader();
+    loader.load(
+      '/images/hero-backdrop.jpg',
+      (tex) => {
+        if (isDisposed) {
+          tex.dispose();
+          return;
+        }
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.minFilter = THREE.LinearFilter;
+        tex.magFilter = THREE.LinearFilter;
+        backdropTexture = tex;
+        const img = tex.image as { width?: number; height?: number } | undefined;
+        if (img?.width && img?.height) {
+          backdropImgAspect = img.width / img.height;
+        }
+        backdropMat.map = tex;
+        backdropMat.color.copy(COOL_BACKDROP_TINT);
+        backdropMat.needsUpdate = true;
+        backdropMesh.visible = true;
+        syncViewport();
+        renderFrame(performance.now(), false);
+      },
+      undefined,
+      () => {
+        // Leave backdropMesh hidden on texture error so the underlying SSR <img> stays visible
+        backdropMesh.visible = false;
+      },
+    );
+
+    const keyLight = new THREE.DirectionalLight('#ffffff', 2.4);
+    keyLight.position.set(4.5, 6.8, 7.0);
     scene.add(keyLight);
 
-    const rimLight = new THREE.DirectionalLight(COOL_RIM_COLOR.clone(), 2.2);
-    rimLight.position.set(-6.5, 2.5, -4.0);
+    const rimLight = new THREE.DirectionalLight('#bfdbfe', 2.0);
+    rimLight.position.set(-6.5, 3.0, -3.5);
     scene.add(rimLight);
 
-    const fillLight = new THREE.PointLight('#dbeafe', 1.6, 26);
-    fillLight.position.set(-2.5, -3.2, 6.5);
-    scene.add(fillLight);
-
-    // Dual-surface Liquid Metallic Glass ("vidrio metálico")
-    const faceMaterial = new THREE.MeshPhysicalMaterial({
-      color: COOL_FACE_COLOR.clone(),
-      metalness: 0.86,
-      roughness: 0.055,
+    // True Blown-Glass Water-Droplet Material ("vidrio en forma de gota"):
+    // 100% physical transmission refracting the fluted light rays + crystal dispersion + wet clearcoat!
+    const dropletGlassMaterial = new THREE.MeshPhysicalMaterial({
+      color: COOL_TINT.clone(),
+      transmission: 1.0,
+      opacity: 1,
+      transparent: false,
+      thickness: 2.6,
+      ior: 1.52,
+      dispersion: 5.5,
+      roughness: 0.015,
+      metalness: 0.0,
       clearcoat: 1.0,
-      clearcoatRoughness: 0.015,
-      reflectivity: 1.0,
-      ior: 1.75,
-      iridescence: 0.82,
-      iridescenceIOR: 1.4,
-      iridescenceThicknessRange: [170, 450],
-      envMapIntensity: 2.5,
-      transparent: true,
-      opacity: 0.84,
+      clearcoatRoughness: 0.008,
+      specularIntensity: 1.6,
+      specularColor: new THREE.Color('#ffffff'),
+      attenuationColor: COOL_ATTENUATION.clone(),
+      attenuationDistance: 2.1,
+      envMapIntensity: 2.7,
     });
 
-    const bevelMaterial = new THREE.MeshPhysicalMaterial({
-      color: COOL_BEVEL_COLOR.clone(),
-      metalness: 0.96,
-      roughness: 0.04,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.015,
-      reflectivity: 1.0,
-      ior: 1.85,
-      iridescence: 0.6,
-      iridescenceIOR: 1.35,
-      iridescenceThicknessRange: [200, 420],
-      envMapIntensity: 3.2,
-      transparent: true,
-      opacity: 0.96,
-    });
-
+    const vshAnchor = new THREE.Group();
     const vshGroup = new THREE.Group();
-    scene.add(vshGroup);
+    vshAnchor.add(vshGroup);
+    scene.add(vshAnchor);
 
-    const geometries: THREE.ExtrudeGeometry[] = [];
+    const geometries: THREE.BufferGeometry[] = [];
     const glyphEntries: {
       mesh: THREE.Mesh;
       spec: GlyphContourSpec;
@@ -349,20 +394,26 @@ export function HeroCanvasScene({
 
     VSH_FOUNDRY_GLYPHS.forEach((spec, idx) => {
       const shape = buildShapeFromTrueType(spec.pts);
-      const geometry = new THREE.ExtrudeGeometry(shape, {
-        depth: 0.44,
-        curveSegments: 28,
+      const rawGeo = new THREE.ExtrudeGeometry(shape, {
+        depth: 0.05,
+        curveSegments: 22,
         bevelEnabled: true,
-        bevelThickness: 0.05,
-        bevelSize: 0.015,
-        bevelOffset: 0,
-        bevelSegments: 8,
+        bevelThickness: 0.27,
+        bevelSize: 0.105,
+        bevelOffset: -0.085,
+        bevelSegments: 16,
       });
-      geometry.translate(0, 0, -0.22);
-      geometry.computeVertexNormals();
-      geometries.push(geometry);
+      rawGeo.translate(0, 0, -0.025);
+      // Remove hard face normals & split UVs so front/back caps and 16 bevel rings weld into
+      // ONE silky-smooth, pillowy blown-glass droplet surface with zero hard creases
+      rawGeo.deleteAttribute('normal');
+      rawGeo.deleteAttribute('uv');
+      const weldedGeo = mergeVertices(rawGeo, 1e-4);
+      rawGeo.dispose();
+      weldedGeo.computeVertexNormals();
+      geometries.push(weldedGeo);
 
-      const mesh = new THREE.Mesh(geometry, [faceMaterial, bevelMaterial]);
+      const mesh = new THREE.Mesh(weldedGeo, dropletGlassMaterial);
       mesh.position.set(spec.centerX, 0, 0);
       vshGroup.add(mesh);
 
@@ -375,9 +426,9 @@ export function HeroCanvasScene({
     });
 
     const syncViewport = () => {
-      const rect = canvas.getBoundingClientRect();
-      const width = Math.max(rect.width, 160);
-      const height = Math.max(rect.height, 90);
+      const canvasRect = canvas.getBoundingClientRect();
+      const width = Math.max(canvasRect.width, 320);
+      const height = Math.max(canvasRect.height, 320);
       const aspect = width / height;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
@@ -386,6 +437,58 @@ export function HeroCanvasScene({
       camera.aspect = aspect;
       camera.updateProjectionMatrix();
 
+      // Size the Three.js backdrop plane to exact CSS object-cover + 1.08x parallax bleed
+      const distBackdrop = cameraZ - backdropZ;
+      const bgVisH =
+        2 * distBackdrop * Math.tan(THREE.MathUtils.degToRad(cameraFov * 0.5));
+      const bgVisW = bgVisH * aspect;
+      const coverScale = 1.08;
+      if (aspect > backdropImgAspect) {
+        backdropMesh.scale.set(
+          bgVisW * coverScale,
+          (bgVisW / backdropImgAspect) * coverScale,
+          1,
+        );
+      } else {
+        backdropMesh.scale.set(
+          bgVisH * backdropImgAspect * coverScale,
+          bgVisH * coverScale,
+          1,
+        );
+      }
+
+      // Lock VSH mathematically inside stageRef's exact pixel rectangle at z = 0
+      const fullVisH =
+        2 * cameraZ * Math.tan(THREE.MathUtils.degToRad(cameraFov * 0.5));
+      const fullVisW = fullVisH * aspect;
+
+      const stageEl = stageRef.current;
+      if (stageEl) {
+        const stageRect = stageEl.getBoundingClientRect();
+        if (stageRect.width > 40 && stageRect.height > 40) {
+          const cxPx =
+            stageRect.left - canvasRect.left + stageRect.width * 0.5;
+          const cyPx =
+            stageRect.top - canvasRect.top + stageRect.height * 0.5;
+          const ndcX = (cxPx / width) * 2 - 1;
+          const ndcY = 1 - (cyPx / height) * 2;
+
+          vshAnchor.position.set(
+            ndcX * fullVisW * 0.5,
+            ndcY * fullVisH * 0.5,
+            0,
+          );
+
+          const stageWorldW = fullVisW * (stageRect.width / width);
+          const stageWorldH = fullVisH * (stageRect.height / height);
+          vshGroup.scale.setScalar(
+            computeVshFitScaleForStage(stageWorldW, stageWorldH, cameraZ),
+          );
+          return;
+        }
+      }
+
+      vshAnchor.position.set(0, fullVisH * 0.14, 0);
       vshGroup.scale.setScalar(computeVshFitScale(aspect, cameraFov, cameraZ));
     };
 
@@ -408,45 +511,54 @@ export function HeroCanvasScene({
         s.alertMix = targetAlert;
       } else {
         const smoothPointer = 1 - Math.exp(-5.0 * dt);
-        const smoothState = 1 - Math.exp(-5.8 * dt);
+        const smoothState = 1 - Math.exp(-5.5 * dt);
         s.currentMouseX += (s.targetMouseX - s.currentMouseX) * smoothPointer;
         s.currentMouseY += (s.targetMouseY - s.currentMouseY) * smoothPointer;
         s.alertMix += (targetAlert - s.alertMix) * smoothState;
         elapsed += dt;
       }
 
-      faceMaterial.color
-        .copy(COOL_FACE_COLOR)
-        .lerp(ALERT_FACE_COLOR, s.alertMix);
-      bevelMaterial.color
-        .copy(COOL_BEVEL_COLOR)
-        .lerp(ALERT_BEVEL_COLOR, s.alertMix);
-      keyLight.color.copy(COOL_KEY_COLOR).lerp(ALERT_KEY_COLOR, s.alertMix);
-      rimLight.color.copy(COOL_RIM_COLOR).lerp(ALERT_RIM_COLOR, s.alertMix);
+      // Smoothly transition liquid glass crystal tint between glacier-ice and crimson alert
+      dropletGlassMaterial.attenuationColor
+        .copy(COOL_ATTENUATION)
+        .lerp(ALERT_ATTENUATION, s.alertMix);
+      dropletGlassMaterial.color
+        .copy(COOL_TINT)
+        .lerp(ALERT_TINT, s.alertMix);
+      // Only apply tint once the texture is mounted so initial load stays deep sapphire
+      if (backdropMat.map) {
+        backdropMat.color
+          .copy(COOL_BACKDROP_TINT)
+          .lerp(ALERT_BACKDROP_TINT, s.alertMix);
+      }
 
-      // Forward-facing sculptural 3D swing (±0.43 rad ≈ ±24.6°, up to ±0.68 rad with pointer)
+      // Gentle studio backdrop parallax refracting behind the droplets
+      backdropMesh.position.x = -s.currentMouseX * 0.34;
+      backdropMesh.position.y = s.currentMouseY * 0.22;
+
+      // Forward-facing buoyant liquid-droplet 3D sway (±20° + pointer tilt)
       vshGroup.rotation.y = reducedMotion
-        ? -0.24
-        : Math.sin(elapsed * 0.62 - 0.5) * 0.43 + s.currentMouseX * 0.25;
+        ? -0.2
+        : Math.sin(elapsed * 0.6 - 0.45) * 0.35 + s.currentMouseX * 0.21;
       vshGroup.rotation.x = reducedMotion
-        ? 0.07
-        : 0.06 + Math.sin(elapsed * 0.85) * 0.04 + s.currentMouseY * 0.14;
-      vshGroup.position.x = s.currentMouseX * 0.12;
+        ? 0.06
+        : 0.05 + Math.sin(elapsed * 0.85) * 0.045 + s.currentMouseY * 0.12;
+      vshGroup.position.x = s.currentMouseX * 0.14;
       vshGroup.position.y = reducedMotion
         ? 0
-        : Math.sin(elapsed * 1.05) * 0.04 - s.currentMouseY * 0.07;
+        : Math.sin(elapsed * 1.1) * 0.05 - s.currentMouseY * 0.06;
 
       for (const entry of glyphEntries) {
         const mix = s.alertMix;
         const driftY = reducedMotion
           ? entry.dir * 0.07 * mix
-          : Math.sin(elapsed * 3.1 + entry.phase) * 0.075 * mix;
+          : Math.sin(elapsed * 3.0 + entry.phase) * 0.08 * mix;
         const driftZ = reducedMotion
           ? entry.dir * 0.1 * mix
-          : Math.cos(elapsed * 2.5 + entry.phase) * 0.12 * mix;
+          : Math.cos(elapsed * 2.4 + entry.phase) * 0.12 * mix;
         const driftRotZ = reducedMotion
-          ? entry.dir * 0.045 * mix
-          : Math.sin(elapsed * 3.6 + entry.phase) * 0.05 * mix;
+          ? entry.dir * 0.04 * mix
+          : Math.sin(elapsed * 3.4 + entry.phase) * 0.05 * mix;
 
         entry.mesh.position.set(entry.spec.centerX, driftY, driftZ);
         entry.mesh.rotation.z = driftRotZ;
@@ -474,47 +586,43 @@ export function HeroCanvasScene({
 
     syncViewport();
     window.addEventListener('resize', handleResize);
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(handleResize);
+      resizeObserver.observe(canvas);
+      if (stageRef.current) {
+        resizeObserver.observe(stageRef.current);
+      }
+    }
+
     renderFrame(performance.now(), !reducedMotion);
 
     return () => {
+      isDisposed = true;
       renderOnceRef.current = null;
       window.removeEventListener('resize', handleResize);
+      resizeObserver?.disconnect();
       if (rafId) {
         window.cancelAnimationFrame(rafId);
       }
       for (const geo of geometries) {
         geo.dispose();
       }
-      faceMaterial.dispose();
-      bevelMaterial.dispose();
+      backdropGeo.dispose();
+      backdropMat.dispose();
+      backdropTexture?.dispose();
+      dropletGlassMaterial.dispose();
       envTarget.dispose();
       renderer.dispose();
     };
-  }, []);
+  }, [stageRef]);
 
   return (
-    <div
+    <canvas
+      ref={canvasRef}
       aria-hidden="true"
-      className="pointer-events-none relative h-full w-full select-none"
-    >
-      <div
-        ref={fallbackRef}
-        className="absolute inset-0 flex items-center justify-center transition-opacity duration-300"
-      >
-        <span
-          className={`bg-clip-text font-serif text-7xl font-semibold tracking-[0.18em] text-transparent sm:text-8xl lg:text-9xl ${
-            mode === 'after'
-              ? 'bg-[linear-gradient(135deg,#ffffff_0%,#bfdbfe_45%,#2563eb_100%)]'
-              : 'bg-[linear-gradient(135deg,#fee2e2_0%,#fca5a5_45%,#b91c1c_100%)]'
-          }`}
-        >
-          VSH
-        </span>
-      </div>
-      <canvas
-        ref={canvasRef}
-        className="relative block h-full w-full"
-      />
-    </div>
+      className="pointer-events-none absolute inset-0 block h-full w-full"
+    />
   );
 }

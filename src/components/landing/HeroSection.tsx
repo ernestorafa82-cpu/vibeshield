@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Link from 'next/link';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Plus } from 'lucide-react';
@@ -13,10 +13,10 @@ type InspectionMode = 'before' | 'after';
 
 /**
  * Full-viewport luminous sapphire-navy Hero:
- * - Pure architectural fluted-glass studio backdrop (/images/hero-backdrop.jpg) with mouse parallax.
- * - Dedicated in-flow 3D WebGL stage for the sculpted liquid metallic-glass "VSH" monogram
- *   (prevents any overlap with the pill, headline, or exhibits on mobile, laptop, and desktop).
- * - Two spacious frosted white-blue architectural exhibits flanking the 3D stage on xl screens.
+ * - Full-bleed Three.js PBR WebGL liquid-glass scene rendering `/images/hero-backdrop.jpg`
+ *   and physically refracting its fluted light beams through plump, rounded blown-glass
+ *   water-droplet "VSH" letters locked to an in-flow responsive stageRef spacer.
+ * - Two spacious frosted white-blue architectural exhibits flanking the 3D stage on xl+.
  * - Zero decorative stars/sparkles; 1-line Cormorant headline & dual pill CTAs above the fold.
  */
 export function HeroSection() {
@@ -24,6 +24,7 @@ export function HeroSection() {
   const { hero } = dict;
   const [mode, setMode] = useState<InspectionMode>('after');
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const stageRef = useRef<HTMLDivElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const demoHref = `/demo?lang=${locale}`;
   const isHardened = mode === 'after';
@@ -68,13 +69,13 @@ export function HeroSection() {
 
   return (
     <div className="bg-porcelain-canvas">
-      {/* Full-Viewport Studio Fluted-Light Hero with Dedicated In-Flow 3D VSH Stage */}
+      {/* Full-Viewport Studio Fluted-Light Hero with True Refractive Liquid-Glass Droplet VSH */}
       <section
         onPointerMove={handlePointerMove}
         onPointerLeave={handlePointerLeave}
-        className="bg-hero-stage relative flex min-h-[720px] flex-col justify-between overflow-hidden pt-20 pb-16 text-white sm:pt-24 sm:pb-20 lg:min-h-[760px] lg:pb-24"
+        className="bg-hero-stage relative flex min-h-[740px] flex-col justify-between overflow-hidden pt-20 pb-16 text-white sm:pt-24 sm:pb-20 lg:min-h-[780px] lg:pb-24"
       >
-        {/* Pure Atmospheric Fluted-Glass Architectural Backdrop with Parallax */}
+        {/* Instant SSR fallback backdrop behind the Three.js refractive WebGL canvas */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 overflow-hidden"
@@ -83,33 +84,38 @@ export function HeroSection() {
           <img
             src="/images/hero-backdrop.jpg"
             alt=""
-            className="h-full w-full object-cover object-center opacity-90 transition-transform duration-500 ease-out will-change-transform select-none"
-            style={{
-              transform: `translate3d(${mouse.x * -14}px, ${mouse.y * -9}px, 0) scale(1.06)`,
-            }}
-          />
-          {/* Reactive ambient mode tint when inspecting vulnerable AI prototype */}
-          <div
-            className={`absolute inset-0 transition-opacity duration-700 ${
-              isHardened ? 'opacity-0' : 'opacity-100'
-            } bg-[radial-gradient(65%_55%_at_50%_34%,rgba(185,28,28,0.34)_0%,rgba(127,29,29,0.2)_45%,transparent_75%)]`}
+            className="h-full w-full object-cover object-center opacity-90 select-none"
           />
         </div>
 
-        {/* Sculpted top & lower readability veil */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(7,20,43,0.78)_0%,rgba(7,20,43,0.72)_9%,rgba(7,20,43,0.18)_20%,transparent_34%,rgba(7,20,43,0.28)_55%,rgba(7,20,43,0.9)_76%,rgba(7,20,43,1)_100%)]"
+        {/* Full-bleed Three.js PBR WebGL Canvas (renders backdrop + refractive glass droplet VSH) */}
+        <HeroCanvasScene
+          mode={mode}
+          mouseX={mouse.x}
+          mouseY={mouse.y}
+          stageRef={stageRef}
         />
 
-        {/* UPPER STAGE: Dedicated In-Flow 3D VSH Monogram + Flanking Exhibits + Hotspot Pill */}
-        <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-1 flex-col items-center justify-center px-5 pt-2 pb-6 sm:px-10">
+        {/* Reactive alert ambient tint + top/bottom readability veil (keeps central glass stage 100% bright) */}
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-0 transition-opacity duration-700 ${
+            isHardened ? 'opacity-0' : 'opacity-100'
+          } bg-[radial-gradient(62%_48%_at_50%_32%,rgba(185,28,28,0.22)_0%,transparent_72%)]`}
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(7,20,43,0.78)_0%,rgba(7,20,43,0.68)_8%,transparent_18%,transparent_48%,rgba(7,20,43,0.78)_68%,rgba(7,20,43,0.96)_84%,rgba(7,20,43,1)_100%)]"
+        />
+
+        {/* UPPER STAGE: Reserved In-Flow Stage Spacer (for 3D Droplet VSH) + Flanking Exhibits + Pill */}
+        <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-1 flex-col items-center justify-center px-5 pt-1 pb-5 sm:px-10">
           {/* Left Heritage Label */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: SILK_EASE }}
-            className="absolute top-2 left-8 hidden max-w-[190px] xl:block"
+            className="absolute top-1 left-8 hidden max-w-[190px] xl:block"
           >
             <span className="block h-px w-9 bg-[#93C5FD]/65" aria-hidden="true" />
             <p className="mt-3 font-sans text-[11px] leading-[1.7] font-medium tracking-[0.26em] text-white/75 uppercase">
@@ -133,7 +139,7 @@ export function HeroSection() {
             </p>
           </motion.div>
 
-          {/* Two Large Frosted White-Blue Architectural Exhibits (xl+ flanking the 3D stage) */}
+          {/* Two Large Frosted White-Blue Architectural Exhibits (xl+ flanking the 3D glass stage) */}
           <div className="pointer-events-none absolute inset-x-8 top-10 bottom-4 hidden xl:block">
             {/* Left Exhibit: Live RLS Policy & HTTP Trace Sheet */}
             <div
@@ -144,11 +150,11 @@ export function HeroSection() {
             >
               <div className="animate-float-left bg-ice-luxury rounded-[26px] border border-white/80 p-5 text-[#0E2244] shadow-luxury-dark">
                 <div className="flex items-center justify-between gap-2 border-b border-[#0E2244]/10 pb-3">
-                  <span className="whitespace-nowrap font-mono text-[10px] font-semibold tracking-[0.14em] text-[#52607A] uppercase">
+                  <span className="whitespace-nowrap font-mono text-[10px] font-semibold tracking-[0.12em] text-[#52607A] uppercase">
                     {locale === 'es' ? 'INSPECCIÓN HTTP · RLS' : 'HTTP TRACE · RLS'}
                   </span>
                   <span
-                    className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-0.5 font-mono text-[10px] font-semibold ${
+                    className={`shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 font-mono text-[10px] font-semibold ${
                       isHardened
                         ? 'bg-[#DCFCE7] text-[#146C43]'
                         : 'bg-[#FEE2E2] text-[#B91C1C]'
@@ -187,7 +193,7 @@ export function HeroSection() {
             >
               <div className="animate-float-right bg-ice-luxury rounded-[26px] border border-white/80 p-5 text-[#0E2244] shadow-luxury-dark">
                 <div className="flex items-center justify-between gap-2 border-b border-[#0E2244]/10 pb-3">
-                  <span className="whitespace-nowrap font-mono text-[10px] font-semibold tracking-[0.14em] text-[#52607A] uppercase">
+                  <span className="whitespace-nowrap font-mono text-[10px] font-semibold tracking-[0.12em] text-[#52607A] uppercase">
                     {locale === 'es' ? 'PERFILADO · DEVTOOLS' : 'PROFILING · DEVTOOLS'}
                   </span>
                   <span className="shrink-0 whitespace-nowrap font-mono text-[11px] font-semibold text-[#1D4ED8] tabular-nums">
@@ -232,13 +238,15 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Dedicated In-Flow 3D Stage — guaranteed zero overlap on mobile, laptop, and desktop */}
-          <div className="relative h-[160px] w-full max-w-[360px] sm:h-[205px] sm:max-w-[540px] lg:h-[235px] lg:max-w-[620px] 2xl:h-[255px] 2xl:max-w-[680px]">
-            <HeroCanvasScene mode={mode} mouseX={mouse.x} mouseY={mouse.y} />
-          </div>
+          {/* Bigger In-Flow 3D Stage Target — HeroCanvasScene locks VSH strictly inside this rect */}
+          <div
+            ref={stageRef}
+            aria-hidden="true"
+            className="pointer-events-none relative h-[220px] w-full max-w-[390px] sm:h-[265px] sm:max-w-[620px] lg:h-[300px] lg:max-w-[700px] xl:max-w-[630px] 2xl:h-[325px] 2xl:max-w-[780px]"
+          />
 
           {/* Interactive Frosted Porcelain Hotspot Pill — placed in normal flow cleanly BELOW 3D stage */}
-          <div className="mt-4 flex justify-center sm:mt-5">
+          <div className="mt-3 flex justify-center sm:mt-4">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -321,7 +329,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1, ease: SILK_EASE }}
-            className="font-sans text-[11px] font-semibold tracking-[0.3em] text-[#93C5FD] uppercase"
+            className="font-sans text-[11px] font-semibold tracking-[0.3em] text-[#DBEAFE] uppercase drop-shadow-[0_1px_6px_rgba(7,20,43,0.9)]"
           >
             {hero.badge}
           </motion.p>

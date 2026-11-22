@@ -2,26 +2,31 @@ import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
 import {
   computeVshFitScale,
+  computeVshFitScaleForStage,
   VSH_PROJECTION_BOUNDS,
 } from '@/components/landing/HeroCanvasScene';
 
 describe('HeroCanvasScene 3D perspective projection fitting', () => {
   const viewports = [
-    { name: 'mobile-320', width: 280, height: 160 },
-    { name: 'mobile-390', width: 350, height: 160 },
-    { name: 'sm-tablet', width: 540, height: 205 },
-    { name: 'lg-xl-laptop', width: 620, height: 235 },
-    { name: '2xl-desktop', width: 680, height: 255 },
+    { name: 'mobile-320', width: 280, height: 220 },
+    { name: 'mobile-390', width: 350, height: 220 },
+    { name: 'sm-tablet', width: 620, height: 265 },
+    { name: 'xl-laptop', width: 630, height: 300 },
+    { name: '2xl-desktop', width: 780, height: 325 },
   ] as const;
 
   it.each(viewports)(
-    'keeps all 8 rotated/drifted VSH bounding-box corners strictly inside NDC [-1, 1] for $name ($widthx$height)',
+    'keeps all 8 rotated/drifted VSH bounding-box corners strictly inside stage NDC [-1, 1] for $name ($widthx$height)',
     ({ width, height }) => {
       const aspect = width / height;
       const { halfW, halfH, halfD, maxRx, maxRy, maxPosX, maxPosY, cameraFov, cameraZ } =
         VSH_PROJECTION_BOUNDS;
 
-      const scale = computeVshFitScale(aspect, cameraFov, cameraZ);
+      const stageWorldH =
+        2 * cameraZ * Math.tan(THREE.MathUtils.degToRad(cameraFov * 0.5));
+      const stageWorldW = stageWorldH * aspect;
+      const scale = computeVshFitScaleForStage(stageWorldW, stageWorldH, cameraZ);
+      expect(scale).toBeCloseTo(computeVshFitScale(aspect, cameraFov, cameraZ), 6);
       expect(scale).toBeGreaterThan(0.1);
 
       const camera = new THREE.PerspectiveCamera(cameraFov, aspect, 0.1, 100);

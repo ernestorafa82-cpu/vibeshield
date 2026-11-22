@@ -13,7 +13,7 @@ import type { DemoTabId } from '@/types/vibeshield';
 const TAB_ORDER: readonly DemoTabId[] = ['security', 'telemetry', 'pr'];
 
 /**
- * Luxury Parisian editorial audit dossier orchestrator for /demo (PulseCRM).
+ * Editorial audit dossier orchestrator for /demo (PulseCRM).
  */
 export function DemoRadiographyView() {
   const { locale, dict } = useLocale();
@@ -56,7 +56,7 @@ export function DemoRadiographyView() {
         <div
           role="tablist"
           aria-label={dict.demo.kicker}
-          className="inline-flex flex-wrap gap-2 rounded-full border border-[#0E2244]/12 bg-white p-1.5 shadow-luxury"
+          className="inline-flex flex-wrap gap-2 rounded-full border border-[#BFDBFE]/80 bg-white p-1.5 shadow-luxury"
         >
           {TAB_ORDER.map((tabId, index) => {
             const isSelected = activeTab === tabId;
@@ -74,10 +74,10 @@ export function DemoRadiographyView() {
                 tabIndex={isSelected ? 0 : -1}
                 onClick={() => setActiveTab(tabId)}
                 onKeyDown={(event) => handleTabKeyDown(event, index)}
-                className={`rounded-full px-5 py-2.5 text-xs font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878] sm:text-sm ${
+                className={`rounded-full px-5 py-2.5 text-xs font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] sm:text-sm ${
                   isSelected
-                    ? 'bg-[#0E2244] text-[#F3EFE6] shadow-sm'
-                    : 'text-[#5A6378] hover:text-[#0E2244]'
+                    ? 'bg-[#0E2244] text-white shadow-sm'
+                    : 'text-[#52607A] hover:text-[#0E2244]'
                 }`}
               >
                 {dict.demo.tabs[tabId]}
@@ -91,7 +91,7 @@ export function DemoRadiographyView() {
           id={`demo-panel-${activeTab}`}
           aria-labelledby={`demo-tab-${activeTab}`}
           tabIndex={0}
-          className="rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
+          className="rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
         >
           {activeTab === 'security' && (
             <SecurityBeforeAfterTab demoCase={demoCase} />

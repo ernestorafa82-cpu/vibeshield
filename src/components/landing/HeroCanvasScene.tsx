@@ -24,40 +24,37 @@ interface FloatingMote {
   phase: number;
 }
 
-// Faceted architectural crystal-prism monolith (10 vertices, 16 triangular faces)
+// Faceted architectural crystal-prism monolith
 const VERTICES: readonly Vec3[] = [
-  { x: 0, y: -1.48, z: 0 }, // 0: top apex
-  { x: 0.82, y: -0.58, z: 0.48 }, // 1
-  { x: 0, y: -0.58, z: 0.95 }, // 2
-  { x: -0.82, y: -0.58, z: 0.48 }, // 3
-  { x: -0.82, y: -0.58, z: -0.48 }, // 4
-  { x: 0, y: -0.58, z: -0.95 }, // 5
-  { x: 0.82, y: -0.58, z: -0.48 }, // 6
-  { x: 0.92, y: 0.56, z: 0.54 }, // 7
-  { x: 0, y: 0.56, z: 1.06 }, // 8
-  { x: -0.92, y: 0.56, z: 0.54 }, // 9
-  { x: -0.92, y: 0.56, z: -0.54 }, // 10
-  { x: 0, y: 0.56, z: -1.06 }, // 11
-  { x: 0.92, y: 0.56, z: -0.54 }, // 12
-  { x: 0, y: 1.38, z: 0 }, // 13: bottom apex
+  { x: 0, y: -1.48, z: 0 },
+  { x: 0.82, y: -0.58, z: 0.48 },
+  { x: 0, y: -0.58, z: 0.95 },
+  { x: -0.82, y: -0.58, z: 0.48 },
+  { x: -0.82, y: -0.58, z: -0.48 },
+  { x: 0, y: -0.58, z: -0.95 },
+  { x: 0.82, y: -0.58, z: -0.48 },
+  { x: 0.92, y: 0.56, z: 0.54 },
+  { x: 0, y: 0.56, z: 1.06 },
+  { x: -0.92, y: 0.56, z: 0.54 },
+  { x: -0.92, y: 0.56, z: -0.54 },
+  { x: 0, y: 0.56, z: -1.06 },
+  { x: 0.92, y: 0.56, z: -0.54 },
+  { x: 0, y: 1.38, z: 0 },
 ];
 
 const FACES: readonly (readonly number[])[] = [
-  // Upper crown facets
   [0, 1, 2],
   [0, 2, 3],
   [0, 3, 4],
   [0, 4, 5],
   [0, 5, 6],
   [0, 6, 1],
-  // Sculpted body facets (quads)
   [1, 7, 8, 2],
   [2, 8, 9, 3],
   [3, 9, 10, 4],
   [4, 10, 11, 5],
   [5, 11, 12, 6],
   [6, 12, 7, 1],
-  // Lower base facets
   [13, 8, 7],
   [13, 9, 8],
   [13, 10, 9],
@@ -86,9 +83,8 @@ function normalize(v: Vec3): Vec3 {
 }
 
 /**
- * Interactive 60fps HTML5 Canvas rendering a shaded, translucent 3D faceted crystal
- * monolith positioned cleanly in the upper focal stage (never overlapping Hero typography),
- * surrounded by volumetric studio light, orbital rings, and rising champagne motes.
+ * Interactive 60fps HTML5 Canvas rendering a shaded translucent glacier-blue & porcelain
+ * 3D architectural crystal monolith with volumetric light and smooth pointer inertia.
  */
 export function HeroCanvasScene({
   mode,
@@ -135,13 +131,13 @@ export function HeroCanvasScene({
     let height = 0;
     let dpr = 1;
 
-    const motes: FloatingMote[] = Array.from({ length: 48 }, (_, i) => ({
+    const motes: FloatingMote[] = Array.from({ length: 42 }, (_, i) => ({
       x: ((i * 73 + 17) % 100) / 100,
       y: ((i * 41 + 9) % 100) / 100,
-      radius: 0.9 + (i % 4) * 0.65,
-      speedY: 0.00016 + (i % 5) * 0.00005,
-      driftX: ((i % 7) - 3) * 0.000035,
-      alpha: 0.14 + (i % 4) * 0.1,
+      radius: 0.9 + (i % 3) * 0.6,
+      speedY: 0.00014 + (i % 5) * 0.000045,
+      driftX: ((i % 7) - 3) * 0.00003,
+      alpha: 0.12 + (i % 4) * 0.08,
       phase: i * 0.8,
     }));
 
@@ -172,12 +168,11 @@ export function HeroCanvasScene({
 
       ctx.clearRect(0, 0, width, height);
 
-      // Position sculpture cleanly in upper-center focal zone above the typography
       const cx = width * 0.5 + s.currentMouseX * 18;
       const cy = height * 0.34 + s.currentMouseY * 10;
       const scale = Math.min(width * 0.125, height * 0.145, 138);
 
-      // Volumetric studio backdrop aura
+      // Cool studio ice-blue volumetric aura
       const aura = ctx.createRadialGradient(
         cx,
         cy,
@@ -187,28 +182,28 @@ export function HeroCanvasScene({
         scale * 3.1,
       );
       if (isHardened) {
-        aura.addColorStop(0, 'rgba(214, 184, 120, 0.28)');
-        aura.addColorStop(0.32, 'rgba(42, 108, 122, 0.22)');
-        aura.addColorStop(0.65, 'rgba(29, 58, 110, 0.16)');
-        aura.addColorStop(1, 'rgba(7, 18, 34, 0)');
+        aura.addColorStop(0, 'rgba(191, 219, 254, 0.32)');
+        aura.addColorStop(0.35, 'rgba(59, 130, 246, 0.22)');
+        aura.addColorStop(0.68, 'rgba(26, 59, 117, 0.16)');
+        aura.addColorStop(1, 'rgba(11, 28, 56, 0)');
       } else {
-        aura.addColorStop(0, 'rgba(201, 74, 34, 0.32)');
-        aura.addColorStop(0.38, 'rgba(135, 34, 24, 0.20)');
-        aura.addColorStop(1, 'rgba(7, 18, 34, 0)');
+        aura.addColorStop(0, 'rgba(248, 113, 113, 0.30)');
+        aura.addColorStop(0.4, 'rgba(153, 27, 27, 0.20)');
+        aura.addColorStop(1, 'rgba(11, 28, 56, 0)');
       }
       ctx.fillStyle = aura;
       ctx.fillRect(0, 0, width, height);
 
-      // Diagonal studio volumetric light beam
+      // Soft volumetric studio sweep
       ctx.save();
       ctx.translate(cx, cy);
-      ctx.rotate(-0.48);
+      ctx.rotate(-0.46);
       const beam = ctx.createLinearGradient(-width * 0.45, 0, width * 0.45, 0);
       beam.addColorStop(0, 'rgba(255,255,255,0)');
       beam.addColorStop(
         0.5,
         isHardened
-          ? 'rgba(243, 239, 230, 0.055)'
+          ? 'rgba(238, 245, 255, 0.06)'
           : 'rgba(248, 113, 113, 0.05)',
       );
       beam.addColorStop(1, 'rgba(255,255,255,0)');
@@ -216,11 +211,11 @@ export function HeroCanvasScene({
       ctx.fillRect(-width, -scale * 0.75, width * 2, scale * 1.5);
       ctx.restore();
 
-      // Subtle rising champagne motes
+      // Subtle rising frost motes
       for (const m of motes) {
         if (!reducedMotion) {
           m.y -= m.speedY;
-          m.x += m.driftX + Math.sin(time * 0.7 + m.phase) * 0.00007;
+          m.x += m.driftX + Math.sin(time * 0.7 + m.phase) * 0.00006;
           if (m.y < -0.04) m.y = 1.04;
           if (m.x < -0.04) m.x = 1.04;
           if (m.x > 1.04) m.x = -0.04;
@@ -228,12 +223,12 @@ export function HeroCanvasScene({
         ctx.beginPath();
         ctx.arc(m.x * width, m.y * height, m.radius, 0, Math.PI * 2);
         ctx.fillStyle = isHardened
-          ? `rgba(214, 184, 120, ${m.alpha})`
-          : `rgba(248, 113, 113, ${m.alpha})`;
+          ? `rgba(219, 234, 254, ${m.alpha})`
+          : `rgba(252, 165, 165, ${m.alpha})`;
         ctx.fill();
       }
 
-      // Soft studio floor reflection shadow beneath the floating sculpture
+      // Soft studio pedestal shadow
       const pedestalY = cy + scale * 1.55;
       const floorShadow = ctx.createRadialGradient(
         cx,
@@ -246,11 +241,11 @@ export function HeroCanvasScene({
       floorShadow.addColorStop(
         0,
         isHardened
-          ? 'rgba(214, 184, 120, 0.24)'
+          ? 'rgba(147, 197, 253, 0.26)'
           : 'rgba(201, 74, 34, 0.24)',
       );
-      floorShadow.addColorStop(0.55, 'rgba(4, 10, 20, 0.55)');
-      floorShadow.addColorStop(1, 'rgba(4, 10, 20, 0)');
+      floorShadow.addColorStop(0.55, 'rgba(7, 18, 38, 0.55)');
+      floorShadow.addColorStop(1, 'rgba(7, 18, 38, 0)');
       ctx.save();
       ctx.translate(cx, pedestalY);
       ctx.scale(1, 0.24);
@@ -260,7 +255,7 @@ export function HeroCanvasScene({
       ctx.fill();
       ctx.restore();
 
-      // Delicate orbital horizon rings behind/around the crystal
+      // Orbital precision rings
       const ringConfigs = [
         { r: 1.52, tilt: 0.34, speed: 0.14, dashed: false },
         { r: 2.02, tilt: 0.28, speed: -0.09, dashed: true },
@@ -273,7 +268,7 @@ export function HeroCanvasScene({
         ctx.beginPath();
         ctx.arc(0, 0, scale * cfg.r, 0, Math.PI * 2);
         ctx.strokeStyle = isHardened
-          ? 'rgba(214, 184, 120, 0.28)'
+          ? 'rgba(191, 219, 254, 0.28)'
           : 'rgba(248, 113, 113, 0.34)';
         ctx.lineWidth = cfg.dashed ? 0.9 : 1.25;
         if (cfg.dashed) ctx.setLineDash([4, 9]);
@@ -289,12 +284,12 @@ export function HeroCanvasScene({
           0,
           Math.PI * 2,
         );
-        ctx.fillStyle = isHardened ? '#E6CF9B' : '#FCA5A5';
+        ctx.fillStyle = isHardened ? '#DBEAFE' : '#FCA5A5';
         ctx.fill();
         ctx.restore();
       }
 
-      // Project & shade 3D glass/gold crystal monolith with Painter's Algorithm
+      // 3D Glass & Glacier-Blue Crystal Projection
       const rotY = time * 0.26 + s.currentMouseX * 0.6;
       const rotX = 0.22 + Math.sin(time * 0.38) * 0.06 + s.currentMouseY * 0.28;
       const fov = 4.6;
@@ -352,15 +347,14 @@ export function HeroCanvasScene({
         ctx.closePath();
 
         if (isHardened) {
-          // Physical luxury smoked-emerald/navy crystal with champagne-gold specular sheen
-          const r = Math.round(24 + face.lightDot * 175);
-          const g = Math.round(52 + face.lightDot * 145);
-          const b = Math.round(78 + face.lightDot * 78);
-          const alpha = 0.24 + face.lightDot * 0.42;
+          // Physical frosted glacier-blue / sapphire architectural glass
+          const r = Math.round(32 + face.lightDot * 195);
+          const g = Math.round(78 + face.lightDot * 165);
+          const b = Math.round(148 + face.lightDot * 107);
+          const alpha = 0.24 + face.lightDot * 0.44;
           ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(3)})`;
-          ctx.strokeStyle = `rgba(214, 184, 120, ${(0.28 + face.lightDot * 0.52).toFixed(3)})`;
+          ctx.strokeStyle = `rgba(219, 234, 254, ${(0.28 + face.lightDot * 0.55).toFixed(3)})`;
         } else {
-          // Exposed unstable crimson-obsidian glass
           const r = Math.round(92 + face.lightDot * 135);
           const g = Math.round(24 + face.lightDot * 54);
           const b = Math.round(28 + face.lightDot * 38);

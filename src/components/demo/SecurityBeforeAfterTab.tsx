@@ -43,16 +43,16 @@ function SecurityEvidenceCard({
         isVulnerable
           ? isSimulating
             ? 'border-[#C94A22] ring-1 ring-[#C94A22]'
-            : 'border-[#0E2244]/10'
+            : 'border-[#BFDBFE]/70'
           : isSimulating
-            ? 'border-[#1A6340] ring-1 ring-[#1A6340]'
-            : 'border-[#0E2244]/10'
+            ? 'border-[#146C43] ring-1 ring-[#146C43]'
+            : 'border-[#BFDBFE]/70'
       }`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#0E2244]/8 pb-4">
         <span
           className={`inline-flex items-center gap-2 font-sans text-xs font-semibold tracking-wider uppercase ${
-            isVulnerable ? 'text-[#C94A22]' : 'text-[#1A6340]'
+            isVulnerable ? 'text-[#C94A22]' : 'text-[#146C43]'
           }`}
         >
           {isVulnerable ? (
@@ -66,37 +66,37 @@ function SecurityEvidenceCard({
         <span
           className={`rounded-full px-3 py-1 font-mono text-xs font-semibold ${
             isVulnerable
-              ? 'bg-[#FDF3EF] text-[#C94A22]'
-              : 'bg-[#EDF5F0] text-[#1A6340]'
+              ? 'bg-[#FEF2F2] text-[#B91C1C]'
+              : 'bg-[#ECFDF5] text-[#146C43]'
           }`}
         >
           {snapshot.httpStatus} {snapshot.httpStatusText}
         </span>
       </div>
 
-      {/* Deep Parisian-navy Code Artifact */}
-      <div className="mt-4 overflow-hidden rounded-2xl border border-[#D6B878]/20 bg-[#0B1A33] text-[#F3EFE6]">
+      {/* Cool Deep Navy HTTP Trace Artifact */}
+      <div className="mt-4 overflow-hidden rounded-2xl border border-[#93C5FD]/25 bg-[#0B1A33] text-white">
         <div className="flex items-center justify-between border-b border-white/10 px-4 py-2.5 font-mono text-xs">
           <span className="truncate">
-            <span className="text-[#D6B878]/75">{snapshot.method}</span>{' '}
+            <span className="text-[#93C5FD]">{snapshot.method}</span>{' '}
             <span>{snapshot.endpoint}</span>
           </span>
           <span
-            className={isVulnerable ? 'text-[#F87171]' : 'text-[#34D399]'}
+            className={isVulnerable ? 'text-[#FCA5A5]' : 'text-[#6EE7B7]'}
           >
             → {snapshot.httpStatus} {snapshot.httpStatusText}
           </span>
         </div>
-        <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-[#F3EFE6]/90">
+        <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-[#E2EFFF]">
           <code>{snapshot.payloadJson}</code>
         </pre>
       </div>
 
-      <ul className="mt-4 space-y-2">
+      <ul className="mt-5 divide-y divide-[#0E2244]/8 border-t border-[#0E2244]/8">
         {snapshot.highlights.map((item) => (
           <li
             key={item}
-            className="flex items-start gap-2.5 rounded-xl bg-[#F3EFE6]/65 px-3.5 py-2.5 text-xs text-[#0E2244]"
+            className="flex items-start gap-2.5 py-2.5 text-xs text-[#0E2244]"
           >
             {isVulnerable ? (
               <XCircle
@@ -105,7 +105,7 @@ function SecurityEvidenceCard({
               />
             ) : (
               <CheckCircle2
-                className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#1A6340]"
+                className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#146C43]"
                 aria-hidden="true"
               />
             )}
@@ -114,11 +114,11 @@ function SecurityEvidenceCard({
         ))}
       </ul>
 
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-[#0E2244]/8 pt-3.5 font-mono text-xs">
-        <span className="text-[#5A6378]">{testResultLabel}</span>
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-[#0E2244]/8 pt-3.5 font-mono text-xs">
+        <span className="text-[#52607A]">{testResultLabel}</span>
         <span
           className={`font-semibold ${
-            snapshot.testPassed ? 'text-[#1A6340]' : 'text-[#C94A22]'
+            snapshot.testPassed ? 'text-[#146C43]' : 'text-[#C94A22]'
           }`}
         >
           {snapshot.testBadge}
@@ -143,14 +143,14 @@ export function SecurityBeforeAfterTab({
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-[22px] border border-[#0E2244]/10 bg-white p-4 shadow-luxury">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-[22px] border border-[#BFDBFE]/70 bg-white p-4 shadow-luxury">
         <div className="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
             onClick={() => setIsSimulating(true)}
-            className="inline-flex items-center gap-2 rounded-full bg-[#0E2244] px-5 py-2.5 text-xs font-semibold text-[#F3EFE6] transition-colors hover:bg-[#1D3A6E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
+            className="inline-flex items-center gap-2 rounded-full bg-[#0E2244] px-5 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#1A3B75] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
           >
-            <Play className="h-3.5 w-3.5 text-[#D6B878]" aria-hidden="true" />
+            <Play className="h-3.5 w-3.5 text-[#93C5FD]" aria-hidden="true" />
             <span>
               {isSimulating
                 ? dict.demo.securityTab.simulatingLabel
@@ -162,7 +162,7 @@ export function SecurityBeforeAfterTab({
             <button
               type="button"
               onClick={() => setIsSimulating(false)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#0E2244]/20 bg-[#F3EFE6] px-4 py-2.5 text-xs font-medium text-[#0E2244] transition-colors hover:border-[#0E2244] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#BFDBFE] bg-[#EEF5FF] px-4 py-2.5 text-xs font-medium text-[#0E2244] transition-colors hover:border-[#2563EB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
             >
               <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
               <span>{dict.demo.securityTab.resetSimulationButton}</span>
@@ -173,7 +173,7 @@ export function SecurityBeforeAfterTab({
         <div
           role="group"
           aria-label={dict.demo.tabs.security}
-          className="inline-flex rounded-full border border-[#0E2244]/15 bg-[#F3EFE6] p-1 text-xs"
+          className="inline-flex rounded-full border border-[#BFDBFE]/80 bg-[#EEF5FF] p-1 text-xs"
         >
           {VIEW_MODES.map((mode) => {
             const isPressed = viewMode === mode;
@@ -183,10 +183,10 @@ export function SecurityBeforeAfterTab({
                 type="button"
                 aria-pressed={isPressed}
                 onClick={() => setViewMode(mode)}
-                className={`rounded-full px-3.5 py-1.5 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878] ${
+                className={`rounded-full px-3.5 py-1.5 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] ${
                   isPressed
-                    ? 'bg-[#0E2244] text-[#F3EFE6]'
-                    : 'text-[#5A6378] hover:text-[#0E2244]'
+                    ? 'bg-[#0E2244] text-white'
+                    : 'text-[#52607A] hover:text-[#0E2244]'
                 }`}
               >
                 {dict.demo.securityTab.viewModeLabels[mode]}
@@ -201,7 +201,7 @@ export function SecurityBeforeAfterTab({
         aria-live="polite"
         className={
           isSimulating
-            ? 'rounded-[22px] border border-[#D6B878] bg-white p-5 shadow-luxury'
+            ? 'bg-ice-luxury rounded-[22px] border border-[#93C5FD] p-5 shadow-luxury'
             : 'sr-only'
         }
       >
@@ -210,8 +210,8 @@ export function SecurityBeforeAfterTab({
             <p className="text-sm font-medium text-[#0E2244]">
               {dict.demo.securityTab.simulationActiveNotice}
             </p>
-            <div className="rounded-xl bg-[#0B1A33] p-4 font-mono text-xs text-[#F3EFE6]">
-              <p className="mb-2 text-[10px] tracking-[0.2em] text-[#D6B878] uppercase">
+            <div className="rounded-xl bg-[#0B1A33] p-4 font-mono text-xs text-[#E2EFFF]">
+              <p className="mb-2 text-[10px] tracking-[0.2em] text-[#93C5FD] uppercase">
                 {dict.demo.securityTab.unauthLabel}
               </p>
               {demoCase.security.simulatedRequestHeaders.map((header) => (

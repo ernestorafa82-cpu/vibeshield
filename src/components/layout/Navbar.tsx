@@ -18,24 +18,14 @@ interface LocaleSwitcherProps {
   locale: Locale;
   label: string;
   onSelect: (next: Locale) => void;
-  isLightSurface: boolean;
 }
 
-function LocaleSwitcher({
-  locale,
-  label,
-  onSelect,
-  isLightSurface,
-}: LocaleSwitcherProps) {
+function LocaleSwitcher({ locale, label, onSelect }: LocaleSwitcherProps) {
   return (
     <div
       role="group"
       aria-label={label}
-      className={`inline-flex items-center rounded-full border p-0.5 font-mono text-[11px] transition-colors ${
-        isLightSurface
-          ? 'border-[#0E2244]/18 bg-white/80'
-          : 'border-[#D6B878]/30 bg-white/8'
-      }`}
+      className="inline-flex items-center rounded-full border border-[#93C5FD]/30 bg-white/10 p-0.5 font-mono text-[11px]"
     >
       {LOCALE_OPTIONS.map((option) => {
         const isActive = locale === option.code;
@@ -45,14 +35,10 @@ function LocaleSwitcher({
             type="button"
             aria-pressed={isActive}
             onClick={() => onSelect(option.code)}
-            className={`rounded-full px-2.5 py-1 font-medium tracking-wider transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878] ${
+            className={`rounded-full px-2.5 py-1 font-medium tracking-wider transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD] ${
               isActive
-                ? isLightSurface
-                  ? 'bg-[#0E2244] text-[#F3EFE6]'
-                  : 'bg-[#D6B878] text-[#0E2244]'
-                : isLightSurface
-                  ? 'text-[#5A6378] hover:text-[#0E2244]'
-                  : 'text-[#F3EFE6]/75 hover:text-[#F3EFE6]'
+                ? 'bg-[#EEF5FF] text-[#0E2244]'
+                : 'text-white/75 hover:text-white'
             }`}
           >
             {option.label}
@@ -64,9 +50,8 @@ function LocaleSwitcher({
 }
 
 /**
- * Luxury floating header inspired by biologique.es:
- * Transparent overlay over the dark Hero at y=0, morphing smoothly into a
- * centered glassmorphic Parisian-navy pill with champagne-gold hairline on scroll.
+ * Floating luxury navigation bar: transparent over Hero at y=0, morphing smoothly
+ * into a centered glassmorphic navy pill with crisp ice-blue accents on scroll.
  */
 export function Navbar() {
   const { locale, dict, setLocale } = useLocale();
@@ -122,7 +107,6 @@ export function Navbar() {
       ? 'Abrir menú'
       : 'Open menu';
 
-  // On /demo at top (light cream surface), use refined floating navy pill immediately
   const showFloatingPill = isScrolled || isDemoPage;
 
   return (
@@ -134,19 +118,19 @@ export function Navbar() {
       <div
         className={`mx-auto flex items-center justify-between gap-4 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           showFloatingPill
-            ? 'h-[66px] max-w-5xl rounded-full border border-[#D6B878]/35 bg-[#0E2244]/88 px-5 text-[#F3EFE6] shadow-luxury-dark backdrop-blur-xl sm:px-7'
-            : 'h-[82px] max-w-[1440px] bg-transparent px-5 text-[#F3EFE6] sm:px-10'
+            ? 'h-[66px] max-w-5xl rounded-full border border-[#93C5FD]/30 bg-[#0E2244]/88 px-5 text-white shadow-luxury-dark backdrop-blur-xl sm:px-7'
+            : 'h-[82px] max-w-[1440px] bg-transparent px-5 text-white sm:px-10'
         }`}
       >
         <div className="flex min-w-0 items-center gap-4">
           <Link
             href={homeHref}
-            className="group inline-flex flex-col leading-none text-[#F3EFE6] transition-opacity hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
+            className="group inline-flex flex-col leading-none text-white transition-opacity hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD]"
           >
             <span className="font-serif text-xl font-medium tracking-[0.22em] uppercase sm:text-2xl">
               {dict.nav.demoBreadcrumbRoot}
             </span>
-            <span className="mt-0.5 font-sans text-[9px] font-semibold tracking-[0.34em] text-[#D6B878] uppercase">
+            <span className="mt-0.5 font-sans text-[9px] font-semibold tracking-[0.34em] text-[#93C5FD] uppercase">
               {locale === 'es' ? 'INGENIERÍA · UE' : 'ENGINEERING · EU'}
             </span>
           </Link>
@@ -154,13 +138,13 @@ export function Navbar() {
           {isDemoPage && (
             <div
               aria-label={ariaBreadcrumb}
-              className="hidden items-center gap-2 border-l border-[#D6B878]/25 pl-4 font-mono text-xs text-[#F3EFE6]/70 sm:flex"
+              className="hidden items-center gap-2 border-l border-white/20 pl-4 font-mono text-xs text-white/70 sm:flex"
             >
               <span>{dict.nav.demoBreadcrumbSection}</span>
-              <span aria-hidden="true" className="text-[#D6B878]/50">
+              <span aria-hidden="true" className="text-[#93C5FD]/60">
                 /
               </span>
-              <span className="font-medium text-[#D6B878]">
+              <span className="font-medium text-[#DBEAFE]">
                 {dict.nav.demoCaseName}
               </span>
             </div>
@@ -174,19 +158,19 @@ export function Navbar() {
           >
             <a
               href="#how-it-works"
-              className="rounded-full px-3.5 py-2 text-[#F3EFE6]/88 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
+              className="rounded-full px-3.5 py-2 text-white/88 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD]"
             >
               {dict.nav.howItWorks}
             </a>
             <a
               href="#calculator"
-              className="rounded-full px-3.5 py-2 text-[#F3EFE6]/88 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
+              className="rounded-full px-3.5 py-2 text-white/88 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD]"
             >
               {dict.nav.calculator}
             </a>
             <Link
               href={demoHref}
-              className="inline-flex items-center gap-1 rounded-full px-3.5 py-2 text-[#F3EFE6]/88 transition-colors hover:bg-white/10 hover:text-[#D6B878] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
+              className="inline-flex items-center gap-1 rounded-full px-3.5 py-2 text-white/88 transition-colors hover:bg-white/10 hover:text-[#DBEAFE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD]"
             >
               <span>{dict.nav.demoXray}</span>
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -199,13 +183,12 @@ export function Navbar() {
             locale={locale}
             label={dict.nav.switchLanguageLabel}
             onSelect={setLocale}
-            isLightSurface={false}
           />
 
           {isDemoPage ? (
             <Link
               href={loadModulesHref}
-              className="inline-flex items-center rounded-full bg-[#D6B878] px-4 py-2 text-xs font-semibold text-[#0E2244] transition-all hover:bg-[#E4CB93] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878] sm:px-5"
+              className="inline-flex items-center rounded-full bg-[#EEF5FF] px-4 py-2 text-xs font-semibold text-[#0E2244] transition-all hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD] sm:px-5"
             >
               {dict.nav.loadModulesCta}
             </Link>
@@ -214,7 +197,7 @@ export function Navbar() {
               <button
                 type="button"
                 onClick={handleDiagnosticClick}
-                className="hidden items-center rounded-full bg-[#D6B878] px-5 py-2 text-xs font-semibold text-[#0E2244] transition-all hover:bg-[#E4CB93] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878] md:inline-flex"
+                className="hidden items-center rounded-full bg-[#EEF5FF] px-5 py-2 text-xs font-semibold text-[#0E2244] transition-all hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD] md:inline-flex"
               >
                 {dict.nav.diagnosticCta}
               </button>
@@ -225,7 +208,7 @@ export function Navbar() {
                 aria-controls="mobile-nav-menu"
                 aria-label={ariaMenuToggle}
                 onClick={() => setMobileMenuOpen((prev) => !prev)}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#D6B878]/35 bg-white/10 text-[#F3EFE6] transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878] md:hidden"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#93C5FD]/35 bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD] md:hidden"
               >
                 {mobileMenuOpen ? (
                   <X className="h-4 w-4" aria-hidden="true" />
@@ -241,34 +224,34 @@ export function Navbar() {
       {!isDemoPage && mobileMenuOpen && (
         <div
           id="mobile-nav-menu"
-          className="mx-auto mt-2 max-w-5xl rounded-3xl border border-[#D6B878]/30 bg-[#0E2244]/95 px-6 py-5 text-[#F3EFE6] shadow-2xl backdrop-blur-xl md:hidden"
+          className="mx-auto mt-2 max-w-5xl rounded-3xl border border-[#93C5FD]/25 bg-[#0E2244]/95 px-6 py-5 text-white shadow-2xl backdrop-blur-xl md:hidden"
         >
           <nav aria-label={ariaMobileNav} className="flex flex-col gap-3 text-sm">
             <a
               href="#how-it-works"
               onClick={() => setMobileMenuOpen(false)}
-              className="rounded-full px-3 py-2 text-[#F3EFE6]/85 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
+              className="rounded-full px-3 py-2 text-white/85 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD]"
             >
               {dict.nav.howItWorks}
             </a>
             <a
               href="#calculator"
               onClick={() => setMobileMenuOpen(false)}
-              className="rounded-full px-3 py-2 text-[#F3EFE6]/85 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
+              className="rounded-full px-3 py-2 text-white/85 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD]"
             >
               {dict.nav.calculator}
             </a>
             <Link
               href={demoHref}
               onClick={() => setMobileMenuOpen(false)}
-              className="rounded-full px-3 py-2 text-[#F3EFE6]/85 transition-colors hover:bg-white/10 hover:text-[#D6B878] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
+              className="rounded-full px-3 py-2 text-white/85 transition-colors hover:bg-white/10 hover:text-[#DBEAFE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD]"
             >
               {dict.nav.demoXray}
             </Link>
             <button
               type="button"
               onClick={handleDiagnosticClick}
-              className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-[#D6B878] px-4 py-2.5 text-sm font-semibold text-[#0E2244] transition-colors hover:bg-[#E4CB93] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
+              className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-[#EEF5FF] px-4 py-2.5 text-sm font-semibold text-[#0E2244] transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD]"
             >
               {dict.nav.diagnosticCta}
             </button>

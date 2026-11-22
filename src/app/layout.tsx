@@ -43,7 +43,7 @@ export default function RootLayout({
       lang={DEFAULT_LOCALE}
       className={`${cormorant.variable} ${inter.variable} ${ibmPlexMono.variable}`}
     >
-      <body className="flex min-h-screen flex-col bg-[#F3EFE6] font-sans text-[#0E2244] antialiased selection:bg-[#D6B878]/35 selection:text-[#0E2244]">
+      <body className="flex min-h-screen flex-col bg-[#F8FAFD] font-sans text-[#0E2244] antialiased selection:bg-[#DBEAFE] selection:text-[#0E2244]">
         <LocaleProvider
           dictionaries={dictionaries}
           initialLocale={DEFAULT_LOCALE}

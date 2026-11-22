@@ -3,16 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import {
-  ArrowRight,
-  Clock,
-  Code2,
-  GitPullRequest,
-  Lock,
-  Plus,
-  ShieldCheck,
-  Sparkles,
-} from 'lucide-react';
+import { ArrowRight, Plus } from 'lucide-react';
 import { HeroCanvasScene } from '@/components/landing/HeroCanvasScene';
 import { SILK_EASE } from '@/components/motion/SilkReveal';
 import { useLocale } from '@/context/LocaleContext';
@@ -21,12 +12,11 @@ import { triggerDiagnosticSelection } from '@/lib/diagnostic-trigger';
 type InspectionMode = 'before' | 'after';
 
 /**
- * Full-viewport cinematic luxury Hero modeled on biologique.es proportions:
- * - Upper stage (58% height): Shaded 3D crystal monolith Canvas + 4 portrait
- *   Polaroid-style artifact cards with mouse parallax + interactive glass hotspot pill.
- * - Lower focal stage (100% above the fold at 1440x900): clean dark gradient backdrop,
- *   1-line monumental Cormorant Garamond headline, subtitle, and dual pill CTAs.
- * - Overlapping pinstripe Parisian-navy Trust Ribbon transitioning onto cream paper.
+ * Full-viewport luminous sapphire-navy Hero:
+ * - Shaded 3D frosted glacier-blue crystal monolith in HTML5 Canvas reacting to pointer.
+ * - Two spacious frosted white-blue architectural exhibits (real RLS SQL diff + live LCP curve)
+ *   replacing generic AI mini-cards.
+ * - Zero decorative stars/sparkles; 1-line Cormorant headline & dual pill CTAs above the fold.
  */
 export function HeroSection() {
   const { locale, dict } = useLocale();
@@ -52,88 +42,54 @@ export function HeroSection() {
     triggerDiagnosticSelection();
   };
 
-  // Highlight after the comma in champagne-gold italic serif (exact biologique.es elegance)
   const commaIndex = hero.title.indexOf(',');
   const leadClause =
     commaIndex !== -1 ? hero.title.slice(0, commaIndex + 1) : hero.title;
   const italicClause =
     commaIndex !== -1 ? hero.title.slice(commaIndex + 1).trim() : '';
 
-  const trustItems =
+  const proofRibbon =
     locale === 'es'
       ? [
-          {
-            icon: Clock,
-            title: 'Diagnóstico en 48h',
-            caption: 'Informe real + veredicto honesto',
-          },
-          {
-            icon: GitPullRequest,
-            title: '1.er PR en preview',
-            caption: 'Fallo crítico cerrado desde el día 2',
-          },
-          {
-            icon: Sparkles,
-            title: '100 % descontable',
-            caption: 'Crédito íntegro en tu rescate',
-          },
-          {
-            icon: Code2,
-            title: 'Código 100 % tuyo',
-            caption: 'Entregas limpias en tu GitHub',
-          },
+          { index: '01', title: 'Diagnóstico en 48h', caption: 'Expediente interactivo y dictamen real' },
+          { index: '02', title: '1.er PR en preview', caption: 'Fallo crítico cerrado desde el día 2' },
+          { index: '03', title: '100 % descontable', caption: 'Crédito íntegro si contratas rescate' },
+          { index: '04', title: 'Código 100 % tuyo', caption: 'Entregas auditables en tu GitHub' },
         ]
       : [
-          {
-            icon: Clock,
-            title: '48h Diagnostic',
-            caption: 'Live dossier + honest verdict',
-          },
-          {
-            icon: GitPullRequest,
-            title: '1st PR on preview',
-            caption: 'Critical fix shipped on day 2',
-          },
-          {
-            icon: Sparkles,
-            title: '100% credited',
-            caption: 'Deducted in full from rescue',
-          },
-          {
-            icon: Code2,
-            title: '100% client-owned',
-            caption: 'Clean PRs inside your GitHub',
-          },
+          { index: '01', title: '48h Diagnostic', caption: 'Interactive dossier and honest verdict' },
+          { index: '02', title: '1st PR on preview', caption: 'Critical fix shipped on day 2' },
+          { index: '03', title: '100% credited', caption: 'Deducted in full from your rescue' },
+          { index: '04', title: '100% client-owned', caption: 'Auditable PRs inside your GitHub' },
         ];
 
   return (
-    <div className="bg-cream-dotted">
-      {/* Full-Viewport Atmospheric Dark Luxury Stage (fits 100% above the fold at 1440x900) */}
+    <div className="bg-porcelain-canvas">
+      {/* Full-Viewport Luminous Sapphire-Navy Hero */}
       <section
         onPointerMove={handlePointerMove}
         onPointerLeave={handlePointerLeave}
-        className="bg-hero-stage relative flex min-h-[760px] flex-col justify-between overflow-hidden pt-20 pb-20 text-[#F3EFE6] lg:h-[min(100svh,880px)] lg:pb-24"
+        className="bg-hero-stage relative flex min-h-[760px] flex-col justify-between overflow-hidden pt-20 pb-20 text-white lg:h-[min(100svh,880px)] lg:pb-24"
       >
-        {/* Interactive 60fps 3D Shaded Crystal Monolith & Rising Champagne Motes */}
         <HeroCanvasScene mode={mode} mouseX={mouse.x} mouseY={mouse.y} />
 
-        {/* Bottom Studio Gradient Backdrop guaranteeing crystal-clear text legibility */}
+        {/* Clean dark-sapphire bottom gradient keeping typography crisp */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(7,18,34,0.35)_0%,transparent_28%,rgba(7,18,34,0.45)_54%,rgba(7,18,34,0.94)_78%,rgba(7,18,34,1)_100%)]"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(11,28,56,0.32)_0%,transparent_28%,rgba(11,28,56,0.42)_54%,rgba(11,28,56,0.92)_78%,rgba(11,28,56,1)_100%)]"
         />
 
-        {/* UPPER STAGE: Heritage Stamp + 4 Portrait Polaroid Luxury Artifact Cards + Hotspot Pill */}
+        {/* UPPER STAGE: Two Architectural Frosted White-Blue Exhibits flanking the 3D crystal */}
         <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-end px-5 pb-6 sm:px-10">
-          {/* Left Heritage Editorial Stamp */}
+          {/* Left Heritage Label */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: SILK_EASE }}
-            className="absolute top-6 left-10 hidden max-w-[180px] xl:block"
+            className="absolute top-4 left-10 hidden max-w-[190px] xl:block"
           >
-            <span className="block h-px w-9 bg-[#D6B878]/70" aria-hidden="true" />
-            <p className="mt-3 font-sans text-[11px] leading-[1.7] font-medium tracking-[0.26em] text-[#F3EFE6]/72 uppercase">
+            <span className="block h-px w-9 bg-[#93C5FD]/65" aria-hidden="true" />
+            <p className="mt-3 font-sans text-[11px] leading-[1.7] font-medium tracking-[0.26em] text-white/70 uppercase">
               {locale === 'es' ? (
                 <>
                   MADRID · UE
@@ -154,162 +110,122 @@ export function HeroSection() {
             </p>
           </motion.div>
 
-          {/* 4 Portrait Polaroid-Style Luxury Artifact Cards flanking the 3D crystal */}
-          <div className="pointer-events-none absolute inset-x-10 top-4 bottom-2 hidden xl:block">
-            {/* Upper-Left Portrait Ivory Polaroid Card (Health Score Dial) */}
+          {/* Two Large Frosted White-Blue Architectural Exhibits (NO AI mini-card clutter) */}
+          <div className="pointer-events-none absolute inset-x-10 top-12 bottom-4 hidden xl:block">
+            {/* Left Exhibit: Live RLS Policy & HTTP Trace Sheet */}
             <div
-              className="pointer-events-auto absolute top-2 left-[18%] w-[166px] transition-transform duration-300 ease-out"
+              className="pointer-events-auto absolute top-16 left-[3.5%] w-[304px] transition-transform duration-300 ease-out"
               style={{
                 transform: `translate3d(${mouse.x * -14}px, ${mouse.y * -10}px, 0)`,
               }}
             >
-              <div className="animate-float-a rounded-[22px] border border-white/70 bg-[#FAF8F3] p-2.5 text-center text-[#0E2244] shadow-luxury-dark">
-                <div className="flex h-[108px] flex-col items-center justify-center rounded-[15px] bg-[#ECECE8] px-3">
-                  <svg viewBox="0 0 80 48" className="h-11 w-20" aria-hidden="true">
-                    <path
-                      d="M 10 42 A 30 30 0 0 1 70 42"
-                      fill="none"
-                      stroke="rgba(14,34,68,0.14)"
-                      strokeWidth="5"
-                      strokeLinecap="round"
-                    />
-                    <path
-                      d={
-                        isHardened
-                          ? 'M 10 42 A 30 30 0 0 1 68 36'
-                          : 'M 10 42 A 30 30 0 0 1 28 16'
-                      }
-                      fill="none"
-                      stroke={isHardened ? '#1A6340' : '#C94A22'}
-                      strokeWidth="5"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <span className="mt-1 font-serif text-2xl leading-none font-semibold tabular-nums">
+              <div className="animate-float-left bg-ice-luxury rounded-[26px] border border-white/80 p-5 text-[#0E2244] shadow-luxury-dark">
+                <div className="flex items-center justify-between gap-2 border-b border-[#0E2244]/10 pb-3">
+                  <span className="whitespace-nowrap font-mono text-[10px] font-semibold tracking-[0.16em] text-[#52607A] uppercase">
+                    {locale === 'es' ? 'INSPECCIÓN HTTP · RLS' : 'HTTP TRACE · RLS'}
+                  </span>
+                  <span
+                    className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-0.5 font-mono text-[10px] font-semibold ${
+                      isHardened
+                        ? 'bg-[#DCFCE7] text-[#146C43]'
+                        : 'bg-[#FEE2E2] text-[#B91C1C]'
+                    }`}
+                  >
+                    {isHardened ? '403 LOCKED' : '200 LEAK'}
+                  </span>
+                </div>
+
+                <div className="mt-3.5 rounded-2xl bg-[#0E2244] p-3.5 font-mono text-[11px] leading-relaxed text-[#E2ECFF]">
+                  <div className="text-[#93C5FD]">GET /rest/v1/customers</div>
+                  <div className="mt-1 text-white/85">
+                    {isHardened
+                      ? 'policy: tenant_uid = auth.uid()'
+                      : 'rls_enabled: false (1,420 rows)'}
+                  </div>
+                </div>
+
+                <div className="mt-3.5 flex items-baseline justify-between text-xs">
+                  <span className="font-serif text-base font-medium text-[#0E2244]">
+                    {locale === 'es' ? 'PR #142 en preview' : 'PR #142 on preview'}
+                  </span>
+                  <span className="font-mono text-[11px] text-[#1D4ED8]">
+                    48h
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Exhibit: Real Latency & Quality Trajectory Curve */}
+            <div
+              className="pointer-events-auto absolute top-14 right-[3.5%] w-[304px] transition-transform duration-300 ease-out"
+              style={{
+                transform: `translate3d(${mouse.x * 16}px, ${mouse.y * -10}px, 0)`,
+              }}
+            >
+              <div className="animate-float-right bg-ice-luxury rounded-[26px] border border-white/80 p-5 text-[#0E2244] shadow-luxury-dark">
+                <div className="flex items-center justify-between gap-2 border-b border-[#0E2244]/10 pb-3">
+                  <span className="whitespace-nowrap font-mono text-[10px] font-semibold tracking-[0.16em] text-[#52607A] uppercase">
+                    {locale === 'es' ? 'PERFILADO · DEVTOOLS' : 'PROFILING · DEVTOOLS'}
+                  </span>
+                  <span className="shrink-0 whitespace-nowrap font-mono text-[11px] font-semibold text-[#1D4ED8] tabular-nums">
                     {isHardened ? '96 / 100' : '34 / 100'}
                   </span>
                 </div>
-                <p className="mt-2.5 font-serif text-base font-medium text-[#0E2244]">
-                  {locale === 'es' ? 'Salud de código' : 'Code health'}
-                </p>
-                <p className="pb-1 font-sans text-[9px] font-semibold tracking-[0.18em] text-[#7F6330] uppercase">
-                  SONARQUBE GATE
-                </p>
-              </div>
-            </div>
 
-            {/* Lower-Left Portrait Deep Navy Polaroid Card */}
-            <div
-              className="pointer-events-auto absolute bottom-4 left-[6%] w-[166px] transition-transform duration-300 ease-out"
-              style={{
-                transform: `translate3d(${mouse.x * -22}px, ${mouse.y * -14}px, 0)`,
-              }}
-            >
-              <div className="animate-float-d rounded-[22px] border border-white/60 bg-[#FAF8F3] p-2.5 text-center text-[#0E2244] shadow-luxury-dark">
-                <div className="bg-navy-pinstripe flex h-[108px] flex-col items-center justify-center rounded-[15px] text-[#D6B878]">
-                  <ShieldCheck className="h-9 w-9 stroke-[1.5]" aria-hidden="true" />
-                  <span className="mt-2 font-mono text-[10px] tracking-[0.2em] text-[#F3EFE6]/85 uppercase">
-                    48 HORAS
-                  </span>
-                </div>
-                <p className="mt-2.5 font-serif text-base font-medium text-[#0E2244]">
-                  {locale === 'es' ? 'Diagnóstico 48h' : '48h Diagnostic'}
-                </p>
-                <p className="pb-1 font-sans text-[9px] font-semibold tracking-[0.18em] text-[#7F6330] uppercase">
-                  {locale === 'es' ? '100 % DESCONTABLE' : '100% CREDITED'}
-                </p>
-              </div>
-            </div>
-
-            {/* Upper-Right Portrait Champagne-Gold Polaroid Card */}
-            <div
-              className="pointer-events-auto absolute top-0 right-[17%] w-[166px] transition-transform duration-300 ease-out"
-              style={{
-                transform: `translate3d(${mouse.x * 16}px, ${mouse.y * -12}px, 0)`,
-              }}
-            >
-              <div className="animate-float-b rounded-[22px] border border-white/70 bg-[#FAF8F3] p-2.5 text-center text-[#0E2244] shadow-luxury-dark">
-                <div className="bg-gold-metallic flex h-[108px] flex-col items-center justify-center rounded-[15px] text-[#0E2244]">
-                  <Lock className="h-8 w-8 stroke-[1.5]" aria-hidden="true" />
-                  <span className="mt-2 font-mono text-xs font-bold tracking-wider">
-                    {isHardened ? 'HTTP 403' : 'HTTP 200'}
-                  </span>
-                </div>
-                <p className="mt-2.5 font-serif text-base font-medium text-[#0E2244]">
-                  {isHardened ? 'PR #142 · RLS' : 'RLS Abierto'}
-                </p>
-                <p className="pb-1 font-sans text-[9px] font-semibold tracking-[0.18em] text-[#7F6330] uppercase">
-                  {isHardened
-                    ? locale === 'es'
-                      ? 'FUGA BLOQUEADA'
-                      : 'LEAK LOCKED'
-                    : locale === 'es'
-                      ? '1.420 EXPUESTOS'
-                      : '1,420 EXPOSED'}
-                </p>
-              </div>
-            </div>
-
-            {/* Lower-Right Portrait Ivory Telemetry Polaroid Card */}
-            <div
-              className="pointer-events-auto absolute right-[6%] bottom-2 w-[166px] transition-transform duration-300 ease-out"
-              style={{
-                transform: `translate3d(${mouse.x * 24}px, ${mouse.y * 12}px, 0)`,
-              }}
-            >
-              <div className="animate-float-c rounded-[22px] border border-white/70 bg-[#FAF8F3] p-2.5 text-center text-[#0E2244] shadow-luxury-dark">
-                <div className="flex h-[108px] flex-col items-center justify-center rounded-[15px] bg-[#ECECE8] px-3">
-                  <svg viewBox="0 0 100 38" className="h-9 w-24" aria-hidden="true">
+                <div className="mt-3.5 rounded-2xl border border-[#BFDBFE]/70 bg-white p-3.5">
+                  <svg viewBox="0 0 220 62" className="h-14 w-full" aria-hidden="true">
+                    <line
+                      x1="0"
+                      y1="52"
+                      x2="220"
+                      y2="52"
+                      stroke="rgba(14,34,68,0.08)"
+                      strokeWidth="1"
+                    />
                     <polyline
                       fill="none"
-                      stroke={isHardened ? '#0E2244' : '#C94A22'}
+                      stroke={isHardened ? '#2563EB' : '#C94A22'}
                       strokeWidth="2.5"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       points={
                         isHardened
-                          ? '6,8 24,11 44,17 66,26 94,32'
-                          : '6,30 28,26 52,18 76,12 94,8'
+                          ? '8,14 52,18 96,26 144,38 212,48'
+                          : '8,46 56,42 108,32 162,20 212,12'
                       }
                     />
                   </svg>
-                  <span className="mt-1 font-serif text-2xl leading-none font-semibold tabular-nums">
-                    {isHardened ? '1.2 s' : '4.8 s'}
+                </div>
+
+                <div className="mt-3.5 flex items-baseline justify-between">
+                  <span className="font-serif text-base font-medium text-[#0E2244]">
+                    {isHardened ? 'LCP 1.2 s · 48/48 tests' : 'LCP 4.8 s · 0 tests'}
+                  </span>
+                  <span className="font-mono text-[11px] text-[#52607A]">
+                    CI
                   </span>
                 </div>
-                <p className="mt-2.5 font-serif text-base font-medium text-[#0E2244]">
-                  LCP &amp; Tests CI
-                </p>
-                <p className="pb-1 font-sans text-[9px] font-semibold tracking-[0.18em] text-[#7F6330] uppercase">
-                  {isHardened ? '48/48 PASS' : '0 TESTS'}
-                </p>
               </div>
             </div>
           </div>
 
-          {/* Interactive Hotspot Pill positioned beside/below the 3D crystal, cleanly ABOVE the H1 */}
+          {/* Interactive Frosted Porcelain Hotspot Pill */}
           <div className="flex justify-center pt-40 sm:pt-48 lg:pt-56">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.85, delay: 0.15, ease: SILK_EASE }}
-              className="inline-flex flex-wrap items-center gap-2.5 rounded-full border border-[#D6B878]/45 bg-[#F3EFE6]/95 py-1.5 pr-2 pl-4 text-[#0E2244] shadow-luxury-dark backdrop-blur-md"
+              className="inline-flex flex-wrap items-center gap-2.5 rounded-full border border-white/75 bg-[#F8FAFD]/95 py-1.5 pr-2 pl-4 text-[#0E2244] shadow-luxury-dark backdrop-blur-md"
             >
               <div className="flex items-center gap-2">
-                <span
-                  className={`inline-block h-2 w-2 rounded-full ${
-                    isHardened ? 'bg-[#1A6340]' : 'bg-[#C94A22]'
-                  }`}
-                  aria-hidden="true"
-                />
-                <span className="font-sans text-[11px] font-semibold tracking-[0.14em] text-[#7F6330] uppercase">
+                <span className="font-sans text-[11px] font-semibold tracking-[0.14em] text-[#52607A] uppercase">
                   {hero.pipelineCard.title}
                 </span>
                 <span
-                  className={`rounded-full px-2 py-0.5 font-mono text-[10px] font-semibold ${
+                  className={`rounded-full px-2.5 py-0.5 font-mono text-[10px] font-semibold ${
                     isHardened
-                      ? 'bg-[#EDF5F0] text-[#1A6340]'
-                      : 'bg-[#FDF3EF] text-[#C94A22]'
+                      ? 'bg-[#DCFCE7] text-[#146C43]'
+                      : 'bg-[#FEE2E2] text-[#B91C1C]'
                   }`}
                 >
                   {isHardened
@@ -327,16 +243,16 @@ export function HeroSection() {
                     ? 'Alternar estado del prototipo'
                     : 'Toggle prototype state'
                 }
-                className="inline-flex rounded-full bg-[#0E2244]/8 p-0.5 font-mono text-[11px]"
+                className="inline-flex rounded-full bg-[#E6EFFC] p-0.5 font-mono text-[11px]"
               >
                 <button
                   type="button"
                   aria-pressed={!isHardened}
                   onClick={() => setMode('before')}
-                  className={`rounded-full px-3 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0E2244] ${
+                  className={`rounded-full px-3 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] ${
                     !isHardened
                       ? 'bg-[#C94A22] text-white'
-                      : 'text-[#5A6378] hover:text-[#0E2244]'
+                      : 'text-[#52607A] hover:text-[#0E2244]'
                   }`}
                 >
                   {locale === 'es' ? 'Prototipo IA' : 'AI Prototype'}
@@ -345,10 +261,10 @@ export function HeroSection() {
                   type="button"
                   aria-pressed={isHardened}
                   onClick={() => setMode('after')}
-                  className={`rounded-full px-3 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0E2244] ${
+                  className={`rounded-full px-3 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] ${
                     isHardened
-                      ? 'bg-[#0E2244] text-[#F3EFE6]'
-                      : 'text-[#5A6378] hover:text-[#0E2244]'
+                      ? 'bg-[#0E2244] text-white'
+                      : 'text-[#52607A] hover:text-[#0E2244]'
                   }`}
                 >
                   {locale === 'es' ? 'Tras Velnea' : 'After Velnea'}
@@ -363,7 +279,7 @@ export function HeroSection() {
                     ? 'Añadir diagnóstico 48h'
                     : 'Add 48h diagnostic'
                 }
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#0E2244] text-[#F3EFE6] transition-transform hover:scale-105 hover:bg-[#1D3A6E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#0E2244] text-white transition-transform hover:scale-105 hover:bg-[#2563EB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F8FAFD]"
               >
                 <Plus className="h-4 w-4" aria-hidden="true" />
               </button>
@@ -371,13 +287,13 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* LOWER FOCAL STACK: Single-Line Sculptural Headline + Subtitle + Both CTAs 100% Above Fold */}
+        {/* LOWER FOCAL STACK: 1-Line Sculptural Headline + Subtitle + Dual Pill CTAs */}
         <div className="relative z-10 mx-auto w-full max-w-4xl px-5 text-center sm:px-8">
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1, ease: SILK_EASE }}
-            className="font-sans text-[11px] font-semibold tracking-[0.3em] text-[#D6B878] uppercase"
+            className="font-sans text-[11px] font-semibold tracking-[0.3em] text-[#93C5FD] uppercase"
           >
             {hero.badge}
           </motion.p>
@@ -386,13 +302,13 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.95, delay: 0.18, ease: SILK_EASE }}
-            className="mx-auto mt-3 font-serif text-4xl leading-[1.02] font-normal tracking-[-0.015em] text-[#F3EFE6] sm:text-6xl lg:text-[68px]"
+            className="mx-auto mt-3 font-serif text-4xl leading-[1.02] font-normal tracking-[-0.015em] text-white sm:text-6xl lg:text-[68px]"
           >
             {leadClause}
             {italicClause && (
               <>
                 {' '}
-                <em className="italic text-[#D6B878]">{italicClause}</em>
+                <em className="italic text-[#BFDBFE]">{italicClause}</em>
               </>
             )}
           </motion.h1>
@@ -401,7 +317,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.25, ease: SILK_EASE }}
-            className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-[#F3EFE6]/82 sm:text-base"
+            className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/80 sm:text-base"
           >
             {hero.subtitle}
           </motion.p>
@@ -410,12 +326,12 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.32, ease: SILK_EASE }}
-            className="mt-6 flex flex-wrap items-center justify-center gap-3.5"
+            className="mt-7 flex flex-wrap items-center justify-center gap-3.5"
           >
             <button
               type="button"
               onClick={handleDiagnosticCtaClick}
-              className="inline-flex items-center gap-2.5 rounded-full bg-[#F3EFE6] px-7 py-3.5 text-sm font-semibold text-[#0E2244] shadow-luxury-dark transition-all hover:bg-[#D6B878] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
+              className="inline-flex items-center gap-2.5 rounded-full bg-[#EEF5FF] px-7 py-3.5 text-sm font-semibold text-[#0E2244] shadow-luxury-dark transition-all hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD]"
             >
               <span>{hero.primaryCta}</span>
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -423,59 +339,41 @@ export function HeroSection() {
 
             <Link
               href={demoHref}
-              className="inline-flex items-center gap-2 rounded-full border border-[#F3EFE6]/35 bg-white/[0.06] px-7 py-3.5 text-sm font-semibold text-[#F3EFE6] backdrop-blur-md transition-all hover:border-[#D6B878] hover:bg-white/12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
+              className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/[0.06] px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition-all hover:border-[#93C5FD] hover:bg-white/12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD]"
             >
               <span>{hero.secondaryCta}</span>
             </Link>
           </motion.div>
 
-          <ul className="mx-auto mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 font-mono text-[10px] text-[#F3EFE6]/58">
+          {/* Clean typographic scope strip — zero diamond or star symbols */}
+          <ul className="mx-auto mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-1.5 font-mono text-[10px] text-white/55">
             {hero.pipelineCard.checks.map((check) => (
-              <li key={check.id} className="inline-flex items-center gap-2">
-                <span
-                  aria-hidden="true"
-                  className="inline-block h-1.5 w-1.5 rotate-45 bg-[#D6B878]"
-                />
-                <span>{check.label}</span>
-              </li>
+              <li key={check.id}>{check.label}</li>
             ))}
           </ul>
         </div>
       </section>
 
-      {/* Overlapping Trust Ribbon (.confianza signature transitioning into warm silk cream) */}
+      {/* Overlapping Trust Ribbon — crisp white-to-ice-blue frosted architectural strip, zero stars */}
       <div className="relative z-20 mx-auto -mt-10 max-w-[1360px] px-5 sm:px-8 lg:px-10">
-        <div className="bg-navy-pinstripe gold-shimmer-top rounded-[26px] border border-[#D6B878]/30 px-6 py-7 text-[#F3EFE6] shadow-luxury-dark sm:px-10">
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {trustItems.map((item, idx) => {
-              const Icon = item.icon;
-              return (
-                <div
-                  key={item.title}
-                  className="relative flex items-center gap-4 lg:pr-4"
-                >
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#D6B878]/45 bg-[#D6B878]/10 text-[#D6B878]">
-                    <Icon className="h-5 w-5" aria-hidden="true" />
-                  </span>
-                  <div>
-                    <p className="font-serif text-xl font-medium text-[#F3EFE6]">
-                      {item.title}
-                    </p>
-                    <p className="mt-0.5 text-xs text-[#F3EFE6]/68">
-                      {item.caption}
-                    </p>
-                  </div>
-                  {idx < trustItems.length - 1 && (
-                    <span
-                      aria-hidden="true"
-                      className="animate-sparkle absolute top-1/2 -right-2 hidden -translate-y-1/2 text-xs text-[#D6B878] lg:inline-block"
-                    >
-                      ✦
-                    </span>
-                  )}
+        <div className="bg-ice-luxury rounded-[26px] border border-[#BFDBFE]/80 px-6 py-7 text-[#0E2244] shadow-luxury sm:px-10">
+          <div className="grid gap-6 divide-y divide-[#0E2244]/10 sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x">
+            {proofRibbon.map((item) => (
+              <div
+                key={item.index}
+                className="flex items-baseline gap-4 pt-4 first:pt-0 sm:pt-0 lg:px-6 lg:first:pl-0 lg:last:pr-0"
+              >
+                <span className="font-mono text-xs font-semibold text-[#1D4ED8]">
+                  {item.index}
+                </span>
+                <div>
+                  <p className="font-serif text-xl font-medium text-[#0E2244]">
+                    {item.title}
+                  </p>
+                  <p className="mt-0.5 text-xs text-[#52607A]">{item.caption}</p>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </div>
       </div>

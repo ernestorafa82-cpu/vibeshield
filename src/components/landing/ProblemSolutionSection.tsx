@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, ShieldCheck } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { SilkReveal } from '@/components/motion/SilkReveal';
 import { useLocale } from '@/context/LocaleContext';
 import { triggerDiagnosticSelection } from '@/lib/diagnostic-trigger';
@@ -15,9 +15,9 @@ const FINDING_TAGS = [
 ] as const;
 
 /**
- * Asymmetric luxury Bento Grid on warm dotted silk cream inspired by biologique.es:
- * Deep Parisian-navy 2-row featured intervention card + elevated pure-white finding cards
- * + signature champagne-gold metallic diagnostic CTA card.
+ * Clean porcelain-and-ice-blue editorial section replacing AI mini-cards with:
+ * - Left deep-navy ruled specification ledger (no nested mini-cards)
+ * - Right continuous white findings sheet + frosted white-blue diagnostic banner
  */
 export function ProblemSolutionSection() {
   const { locale, dict } = useLocale();
@@ -28,25 +28,25 @@ export function ProblemSolutionSection() {
   return (
     <section
       id="how-it-works"
-      className="scroll-mt-24 bg-cream-dotted py-20 text-[#0E2244] sm:py-28"
+      className="scroll-mt-24 bg-porcelain-canvas py-20 text-[#0E2244] sm:py-28"
     >
       <div className="mx-auto max-w-[1360px] px-5 sm:px-8 lg:px-10">
-        {/* 2-Column Editorial Header (biologique.es .p50 header rhythm) */}
+        {/* Editorial 2-Column Header */}
         <SilkReveal className="grid gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
-            <span className="eyebrow-rule text-[#7F6330]">{problem.badge}</span>
-            <h2 className="mt-4 font-serif text-4xl leading-[1.02] font-normal tracking-[-0.015em] text-[#0E2244] sm:text-5xl lg:text-[58px]">
+            <span className="eyebrow-rule text-[#2563EB]">{problem.badge}</span>
+            <h2 className="mt-4 font-serif text-4xl leading-[1.02] font-normal tracking-[-0.015em] text-[#0E2244] sm:text-5xl lg:text-[56px]">
               {sectionTitle}
             </h2>
           </div>
 
           <div className="space-y-5 lg:col-span-5 lg:pb-1">
-            <p className="text-base leading-relaxed text-[#5A6378]">
+            <p className="text-base leading-relaxed text-[#52607A]">
               {sectionSubtitle}
             </p>
             <Link
               href={demoHref}
-              className="inline-flex items-center gap-2 rounded-full border border-[#0E2244]/25 bg-white/70 px-5 py-2.5 text-sm font-semibold text-[#0E2244] transition-all hover:border-[#0E2244] hover:bg-[#0E2244] hover:text-[#F3EFE6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878]"
+              className="inline-flex items-center gap-2 rounded-full border border-[#0E2244]/20 bg-white px-5 py-2.5 text-sm font-semibold text-[#0E2244] transition-all hover:border-[#0E2244] hover:bg-[#0E2244] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
             >
               <span>{dict.hero.secondaryCta}</span>
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -54,122 +54,116 @@ export function ProblemSolutionSection() {
           </div>
         </SilkReveal>
 
-        {/* Asymmetric Luxury Bento Grid */}
-        <div className="mt-14 grid gap-6 lg:grid-cols-12">
-          {/* Left Featured Deep Parisian Navy Card (spans 5 cols, 2 rows) */}
+        {/* Asymmetric Layout: Ruled Navy Column + Continuous White Sheet & Frosted Ice-Blue Banner */}
+        <div className="mt-14 grid gap-7 lg:grid-cols-12">
+          {/* Left Tall Parisian-Navy Panel (Clean Ruled Index — NO nested mini-cards) */}
           <SilkReveal
             direction="left"
-            className="bg-navy-pinstripe gold-shimmer-top flex flex-col justify-between rounded-[28px] border border-[#D6B878]/30 p-8 text-[#F3EFE6] shadow-luxury-dark sm:p-10 lg:col-span-5 lg:row-span-2"
+            className="bg-navy-pinstripe ice-shimmer-top flex flex-col justify-between rounded-[28px] border border-[#93C5FD]/25 p-8 text-white shadow-luxury-dark sm:p-10 lg:col-span-5"
           >
             <div>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#D6B878]/45 bg-[#D6B878]/15 px-3.5 py-1 font-sans text-[11px] font-semibold tracking-[0.2em] text-[#D6B878] uppercase">
-                ✦ {solution.badge}
+              <span className="font-mono text-[11px] font-semibold tracking-[0.22em] text-[#93C5FD] uppercase">
+                {solution.badge}
               </span>
 
-              <h3 className="mt-6 font-serif text-3xl leading-[1.08] font-normal text-[#F3EFE6] sm:text-4xl">
+              <h3 className="mt-5 font-serif text-3xl leading-[1.08] font-normal text-white sm:text-4xl">
                 {solution.title}
               </h3>
 
-              <p className="mt-4 text-sm leading-relaxed text-[#F3EFE6]/76">
+              <p className="mt-4 text-sm leading-relaxed text-white/75">
                 {solution.description}
               </p>
 
-              <ul className="mt-8 space-y-4">
+              <ol className="mt-8 divide-y divide-white/12 border-t border-white/12">
                 {solution.pillars.map((pillar, idx) => (
-                  <li
-                    key={pillar.key}
-                    className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 transition-colors hover:border-[#D6B878]/35"
-                  >
-                    <div className="flex items-start gap-3.5">
-                      <span className="font-serif text-xl font-medium text-[#D6B878]">
-                        0{idx + 1}
-                      </span>
-                      <div>
-                        <h4 className="text-sm font-semibold text-[#F3EFE6]">
-                          {pillar.title}
-                        </h4>
-                        <p className="mt-1 text-xs leading-relaxed text-[#F3EFE6]/70">
-                          {pillar.detail}
-                        </p>
-                      </div>
+                  <li key={pillar.key} className="flex items-start gap-4 py-5">
+                    <span className="pt-0.5 font-mono text-xs font-semibold text-[#93C5FD]">
+                      0{idx + 1}
+                    </span>
+                    <div>
+                      <h4 className="text-sm font-semibold text-white">
+                        {pillar.title}
+                      </h4>
+                      <p className="mt-1 text-xs leading-relaxed text-white/68">
+                        {pillar.detail}
+                      </p>
                     </div>
                   </li>
                 ))}
-              </ul>
+              </ol>
             </div>
 
-            <div className="mt-8 flex items-center justify-between border-t border-[#D6B878]/20 pt-5 text-xs text-[#D6B878]">
-              <span className="inline-flex items-center gap-2 font-mono">
-                <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-                <span>{problem.statHighlight}</span>
-              </span>
-            </div>
+            <p className="mt-6 border-t border-white/12 pt-5 font-mono text-xs text-[#BFDBFE]">
+              {problem.statHighlight}
+            </p>
           </SilkReveal>
 
-          {/* Right Top: 4 Elevated Pure-White Rounded Finding Cards */}
-          <div className="grid gap-5 sm:grid-cols-2 lg:col-span-7">
-            {problem.bullets.map((bullet, idx) => (
-              <SilkReveal
-                key={bullet}
-                delay={0.06 * idx}
-                className="flex flex-col justify-between rounded-[24px] border border-[#0E2244]/10 bg-white p-6 shadow-luxury transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-[#D6B878]/60 sm:p-7"
-              >
+          {/* Right Column: Unified White Findings Sheet + Frosted White-Blue Banner */}
+          <div className="flex flex-col justify-between gap-7 lg:col-span-7">
+            <SilkReveal className="rounded-[28px] border border-[#0E2244]/10 bg-white p-7 shadow-luxury sm:p-9">
+              <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-[#0E2244]/10 pb-5">
                 <div>
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-sans text-[11px] font-semibold tracking-[0.22em] text-[#7F6330] uppercase">
-                      {locale === 'es' ? `HALLAZGO 0${idx + 1}` : `FINDING 0${idx + 1}`}
+                  <span className="font-mono text-[11px] font-semibold tracking-[0.2em] text-[#2563EB] uppercase">
+                    {locale === 'es' ? 'AUDITORÍA DE CÓDIGO REAL' : 'LIVE CODEBASE AUDIT'}
+                  </span>
+                  <h3 className="mt-2 font-serif text-3xl font-normal text-[#0E2244]">
+                    {problem.title}
+                  </h3>
+                </div>
+              </div>
+
+              <ol className="divide-y divide-[#0E2244]/10">
+                {problem.bullets.map((bullet, idx) => (
+                  <li
+                    key={bullet}
+                    className="grid gap-3 py-5 sm:grid-cols-12 sm:items-baseline"
+                  >
+                    <span className="font-mono text-xs font-semibold text-[#2563EB] sm:col-span-1">
+                      0{idx + 1}
                     </span>
-                    <span className="rounded-full bg-[#ECECE8] px-2.5 py-1 font-mono text-[10px] font-medium text-[#0E2244]">
+                    <p className="text-[15px] leading-relaxed text-[#0E2244] sm:col-span-8">
+                      {bullet}
+                    </p>
+                    <span className="font-mono text-[11px] text-[#52607A] sm:col-span-3 sm:text-right">
                       {FINDING_TAGS[idx] ?? 'audit'}
                     </span>
-                  </div>
+                  </li>
+                ))}
+              </ol>
+            </SilkReveal>
 
-                  <p className="mt-5 font-serif text-xl leading-[1.3] text-[#0E2244]">
-                    {bullet}
-                  </p>
-                </div>
-
-                <div className="mt-6 flex items-center justify-between border-t border-[#0E2244]/8 pt-3.5 text-xs text-[#5A6378]">
-                  <span>
-                    {locale === 'es' ? 'Riesgo de producción' : 'Production risk'}
-                  </span>
-                  <span className="font-mono text-[11px] font-semibold text-[#C94A22]">
-                    HIGH
-                  </span>
-                </div>
-              </SilkReveal>
-            ))}
-          </div>
-
-          {/* Right Bottom: Signature Champagne-Gold Metallic Diagnostic Banner Card */}
-          <SilkReveal
-            delay={0.18}
-            direction="scale"
-            className="bg-gold-metallic flex flex-col justify-between gap-6 rounded-[26px] border border-white/50 p-7 text-[#0E2244] shadow-luxury sm:flex-row sm:items-center sm:p-8 lg:col-span-7"
-          >
-            <div className="max-w-lg space-y-2">
-              <p className="font-sans text-[11px] font-semibold tracking-[0.24em] text-[#0E2244]/75 uppercase">
-                {locale === 'es'
-                  ? '¿NO SABES SI RESCATAR O REHACER?'
-                  : 'NOT SURE WHETHER TO RESCUE OR REBUILD?'}
-              </p>
-              <h3 className="font-serif text-3xl leading-tight font-medium text-[#0E2244]">
-                {problem.title}
-              </h3>
-              <p className="text-sm leading-relaxed text-[#0E2244]/80">
-                {problem.description}
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={triggerDiagnosticSelection}
-              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#0E2244] px-6 py-3.5 text-sm font-semibold text-[#F3EFE6] transition-all hover:bg-[#1D3A6E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0E2244]"
+            {/* Frosted White-to-Ice-Blue Banner (replaces burnt yellow card) */}
+            <SilkReveal
+              delay={0.12}
+              direction="scale"
+              className="bg-ice-luxury flex flex-col justify-between gap-6 rounded-[28px] border border-[#BFDBFE] p-7 text-[#0E2244] shadow-luxury sm:flex-row sm:items-center sm:p-9"
             >
-              <span>{dict.nav.diagnosticCta}</span>
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </button>
-          </SilkReveal>
+              <div className="max-w-lg space-y-2">
+                <p className="font-mono text-[11px] font-semibold tracking-[0.22em] text-[#1D4ED8] uppercase">
+                  {locale === 'es'
+                    ? '¿RESCATAR O REHACER EL BACKEND?'
+                    : 'RESCUE OR REBUILD THE BACKEND?'}
+                </p>
+                <p className="font-serif text-3xl leading-tight font-normal text-[#0E2244]">
+                  {locale === 'es'
+                    ? 'Sal de dudas en 48 horas con evidencia real.'
+                    : 'Get a straight answer in 48 hours with real evidence.'}
+                </p>
+                <p className="text-sm leading-relaxed text-[#52607A]">
+                  {problem.description}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={triggerDiagnosticSelection}
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#0E2244] px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-[#2563EB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
+              >
+                <span>{dict.nav.diagnosticCta}</span>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </button>
+            </SilkReveal>
+          </div>
         </div>
       </div>
     </section>

@@ -15,7 +15,7 @@ export interface PrPreviewTabProps {
 }
 
 /**
- * Interactive PR #142 inspection tab with CI checks and deep Parisian-navy diff viewer.
+ * Interactive PR #142 inspection tab with CI checks and deep-navy diff viewer.
  */
 export function PrPreviewTab({ demoCase }: PrPreviewTabProps) {
   const { dict } = useLocale();
@@ -30,12 +30,12 @@ export function PrPreviewTab({ demoCase }: PrPreviewTabProps) {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-[26px] border border-[#0E2244]/10 bg-white p-6 shadow-luxury sm:p-7">
+      <section className="rounded-[26px] border border-[#BFDBFE]/75 bg-white p-6 shadow-luxury sm:p-7">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-[#5A6378]">
+            <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-[#52607A]">
               <GitPullRequest
-                className="h-4 w-4 text-[#1A6340]"
+                className="h-4 w-4 text-[#146C43]"
                 aria-hidden="true"
               />
               <span className="font-semibold text-[#0E2244]">
@@ -49,53 +49,55 @@ export function PrPreviewTab({ demoCase }: PrPreviewTabProps) {
               {dict.demo.prTab.prTitle}
             </h2>
 
-            <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-[#5A6378]">
-              <GitBranch className="h-3.5 w-3.5 text-[#7F6330]" aria-hidden="true" />
+            <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-[#52607A]">
+              <GitBranch className="h-3.5 w-3.5 text-[#2563EB]" aria-hidden="true" />
               <span>{dict.demo.prTab.branchLabel}:</span>
-              <span className="rounded-full bg-[#F3EFE6] px-3 py-0.5 text-[#0E2244]">
+              <span className="rounded-full border border-[#BFDBFE]/70 bg-[#EEF5FF] px-3 py-0.5 text-[#0E2244]">
                 {pullRequest.branch}
               </span>
               <span aria-hidden="true">→</span>
-              <span className="rounded-full bg-[#F3EFE6] px-3 py-0.5 text-[#0E2244]">
+              <span className="rounded-full border border-[#BFDBFE]/70 bg-[#EEF5FF] px-3 py-0.5 text-[#0E2244]">
                 {pullRequest.baseBranch}
               </span>
             </div>
 
-            <p className="max-w-3xl pt-1 text-sm leading-relaxed text-[#5A6378]">
+            <p className="max-w-3xl pt-1 text-sm leading-relaxed text-[#52607A]">
               {pullRequest.summary}
             </p>
           </div>
 
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EDF5F0] px-4 py-1.5 font-mono text-xs font-semibold text-[#1A6340]">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ECFDF5] px-4 py-1.5 font-mono text-xs font-semibold text-[#146C43]">
             <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
             <span>{dict.demo.prTab.allChecksPassedLabel}</span>
           </span>
         </div>
       </section>
 
-      <section className="rounded-[26px] border border-[#0E2244]/10 bg-white p-6 shadow-luxury sm:p-7">
-        <h3 className="mb-4 font-sans text-xs font-semibold tracking-[0.22em] text-[#7F6330] uppercase">
-          {dict.demo.prTab.checksHeading}
-        </h3>
-        <ul className="grid gap-3 md:grid-cols-2">
+      <section className="overflow-hidden rounded-[26px] border border-[#BFDBFE]/75 bg-white shadow-luxury">
+        <div className="bg-ice-luxury border-b border-[#BFDBFE]/65 px-6 py-4 sm:px-7">
+          <h3 className="font-sans text-xs font-semibold tracking-[0.22em] text-[#1D4ED8] uppercase">
+            {dict.demo.prTab.checksHeading}
+          </h3>
+        </div>
+        <ul className="divide-y divide-[#0E2244]/8">
           {pullRequest.checks.map((check) => (
             <li
               key={check.id}
-              className="flex items-start justify-between gap-3 rounded-2xl border border-[#0E2244]/10 bg-[#F3EFE6]/55 p-4"
+              className="flex items-start justify-between gap-4 px-6 py-4 sm:px-7"
             >
-              <div className="flex items-start gap-2.5">
+              <div className="flex items-start gap-3">
                 <CheckCircle2
-                  className="mt-0.5 h-4 w-4 shrink-0 text-[#1A6340]"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-[#146C43]"
                   aria-hidden="true"
                 />
                 <div>
                   <p className="font-mono text-xs font-semibold text-[#0E2244]">
                     {check.name}
                   </p>
-                  <p className="mt-0.5 text-xs text-[#5A6378]">{check.detail}</p>
+                  <p className="mt-0.5 text-xs text-[#52607A]">{check.detail}</p>
                 </div>
               </div>
-              <span className="shrink-0 font-mono text-[11px] text-[#5A6378]">
+              <span className="shrink-0 font-mono text-[11px] text-[#52607A]">
                 {check.duration}
               </span>
             </li>
@@ -103,9 +105,9 @@ export function PrPreviewTab({ demoCase }: PrPreviewTabProps) {
         </ul>
       </section>
 
-      <section className="overflow-hidden rounded-[26px] border border-[#0E2244]/10 bg-white shadow-luxury">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#0E2244]/10 bg-[#F3EFE6]/70 px-6 py-4">
-          <h3 className="font-sans text-xs font-semibold tracking-[0.22em] text-[#7F6330] uppercase">
+      <section className="overflow-hidden rounded-[26px] border border-[#BFDBFE]/75 bg-white shadow-luxury">
+        <div className="bg-ice-luxury flex flex-wrap items-center justify-between gap-3 border-b border-[#BFDBFE]/65 px-6 py-4">
+          <h3 className="font-sans text-xs font-semibold tracking-[0.22em] text-[#1D4ED8] uppercase">
             {dict.demo.prTab.filesHeading}
           </h3>
           <div className="flex flex-wrap gap-2">
@@ -117,17 +119,17 @@ export function PrPreviewTab({ demoCase }: PrPreviewTabProps) {
                   type="button"
                   aria-pressed={isSelected}
                   onClick={() => setSelectedFilePath(file.path)}
-                  className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 font-mono text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B878] ${
+                  className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 font-mono text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] ${
                     isSelected
-                      ? 'border-[#0E2244] bg-[#0E2244] text-[#F3EFE6]'
-                      : 'border-[#0E2244]/15 bg-white text-[#5A6378] hover:border-[#0E2244] hover:text-[#0E2244]'
+                      ? 'border-[#0E2244] bg-[#0E2244] text-white'
+                      : 'border-[#BFDBFE] bg-white text-[#52607A] hover:border-[#2563EB] hover:text-[#0E2244]'
                   }`}
                 >
                   <FileCode2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                   <span>{file.path}</span>
                   <span
                     className={
-                      isSelected ? 'text-[#D6B878]' : 'text-[#1A6340]'
+                      isSelected ? 'text-[#93C5FD]' : 'text-[#146C43]'
                     }
                   >
                     +{file.additions}
@@ -147,7 +149,7 @@ export function PrPreviewTab({ demoCase }: PrPreviewTabProps) {
 
         {activeFile && (
           <div className="overflow-x-auto bg-[#0B1A33] font-mono text-xs">
-            <div className="border-b border-white/10 px-6 py-2.5 text-[11px] text-[#D6B878]/80">
+            <div className="border-b border-white/10 px-6 py-2.5 text-[11px] text-[#93C5FD]">
               {activeFile.path} · {activeFile.language}
             </div>
             <div className="divide-y divide-white/[0.04]">
@@ -157,7 +159,7 @@ export function PrPreviewTab({ demoCase }: PrPreviewTabProps) {
                     ? 'bg-emerald-500/12 text-emerald-200'
                     : line.type === 'remove'
                       ? 'bg-red-500/12 text-red-200'
-                      : 'text-[#F3EFE6]/88';
+                      : 'text-[#E2EFFF]/88';
                 const prefix =
                   line.type === 'add'
                     ? '+'

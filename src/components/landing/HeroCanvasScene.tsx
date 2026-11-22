@@ -1,6 +1,11 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
+import * as THREE from 'three';
+import {
+  VSH_FOUNDRY_GLYPHS,
+  type GlyphContourSpec,
+} from '@/components/landing/vsh-glyph-paths';
 
 export interface HeroCanvasSceneProps {
   mode: 'before' | 'after';
@@ -8,206 +13,141 @@ export interface HeroCanvasSceneProps {
   mouseY: number;
 }
 
-interface Vec2 {
-  x: number;
-  y: number;
-}
-
-interface Vec3 {
-  x: number;
-  y: number;
-  z: number;
-}
-
-interface ExtrudedGlyph {
-  id: string;
-  centerX: number;
-  points: readonly Vec2[];
-  driftPhase: number;
-  driftDir: number;
-}
-
-const HALF_DEPTH = 0.24;
-
-function evalCubicBezier(
-  p0: Vec2,
-  p1: Vec2,
-  p2: Vec2,
-  p3: Vec2,
-  t: number,
-): Vec2 {
-  const u = 1 - t;
-  const tt = t * t;
-  const uu = u * u;
-  const uuu = uu * u;
-  const ttt = tt * t;
-  return {
-    x: uuu * p0.x + 3 * uu * t * p1.x + 3 * u * tt * p2.x + ttt * p3.x,
-    y: uuu * p0.y + 3 * uu * t * p1.y + 3 * u * tt * p2.y + ttt * p3.y,
-  };
-}
-
-function ensureClockwiseYDown(points: Vec2[]): Vec2[] {
-  let area2 = 0;
-  for (let i = 0; i < points.length; i++) {
-    const a = points[i];
-    const b = points[(i + 1) % points.length];
-    area2 += a.x * b.y - b.x * a.y;
-  }
-  return area2 < 0 ? [...points].reverse() : points;
-}
-
 /**
- * Generates a smooth, constant-thickness architectural geometric "S" contour
- * by offsetting a 3-segment C1-continuous cubic Bezier spine.
+ * Converts TrueType quadratic Bezier contour points ([x, y, onCurve]) into a
+ * lossless THREE.Shape ready for smooth beveled 3D extrusion.
  */
-function buildGeometricSContour(): Vec2[] {
-  const segments: readonly [Vec2, Vec2, Vec2, Vec2][] = [
-    // Upper bowl (top-right terminal -> top crest -> upper-left inflection)
-    [
-      { x: 0.34, y: -0.44 },
-      { x: 0.26, y: -0.66 },
-      { x: -0.28, y: -0.66 },
-      { x: -0.32, y: -0.34 },
-    ],
-    // Diagonal waist spine (upper-left -> optical center -> lower-right)
-    [
-      { x: -0.32, y: -0.34 },
-      { x: -0.36, y: -0.04 },
-      { x: 0.36, y: 0.04 },
-      { x: 0.33, y: 0.34 },
-    ],
-    // Lower bowl (lower-right -> bottom crest -> bottom-left terminal)
-    [
-      { x: 0.33, y: 0.34 },
-      { x: 0.29, y: 0.66 },
-      { x: -0.27, y: 0.66 },
-      { x: -0.35, y: 0.43 },
-    ],
-  ];
+function buildShapeFromTrueType(
+  pts: readonly (readonly [number, number, 0 | 1])[],
+): THREE.Shape {
+  const shape = new THREE.Shape();
+  const n = pts.length;
+  if (n < 3) return shape;
 
-  const samplesPerSeg = 12;
-  const spine: Vec2[] = [];
-  for (let s = 0; s < segments.length; s++) {
-    const [p0, p1, p2, p3] = segments[s];
-    const startIdx = s === 0 ? 0 : 1;
-    for (let i = startIdx; i <= samplesPerSeg; i++) {
-      spine.push(evalCubicBezier(p0, p1, p2, p3, i / samplesPerSeg));
+  let startX: number;
+  let startY: number;
+  let startIdx: number;
+
+  if (pts[0][2] === 1) {
+    startX = pts[0][0];
+    startY = pts[0][1];
+    startIdx = 1;
+  } else if (pts[n - 1][2] === 1) {
+    startX = pts[n - 1][0];
+    startY = pts[n - 1][1];
+    startIdx = 0;
+  } else {
+    startX = (pts[n - 1][0] + pts[0][0]) * 0.5;
+    startY = (pts[n - 1][1] + pts[0][1]) * 0.5;
+    startIdx = 0;
+  }
+
+  shape.moveTo(startX, startY);
+
+  let i = startIdx;
+  const endLimit = startIdx === 1 ? n + 1 : n;
+
+  while (i < endLimit) {
+    const curr = pts[i % n];
+    if (curr[2] === 1) {
+      shape.lineTo(curr[0], curr[1]);
+      i += 1;
+    } else {
+      const next = pts[(i + 1) % n];
+      if (next[2] === 1) {
+        shape.quadraticCurveTo(curr[0], curr[1], next[0], next[1]);
+        i += 2;
+      } else {
+        const midX = (curr[0] + next[0]) * 0.5;
+        const midY = (curr[1] + next[1]) * 0.5;
+        shape.quadraticCurveTo(curr[0], curr[1], midX, midY);
+        i += 1;
+      }
     }
   }
 
-  const halfStroke = 0.125;
-  const leftSide: Vec2[] = [];
-  const rightSide: Vec2[] = [];
-
-  for (let i = 0; i < spine.length; i++) {
-    const prev = spine[Math.max(0, i - 1)];
-    const next = spine[Math.min(spine.length - 1, i + 1)];
-    const tx = next.x - prev.x;
-    const ty = next.y - prev.y;
-    const len = Math.hypot(tx, ty) || 1;
-    const nx = -ty / len;
-    const ny = tx / len;
-
-    leftSide.push({
-      x: spine[i].x + nx * halfStroke,
-      y: spine[i].y + ny * halfStroke,
-    });
-    rightSide.push({
-      x: spine[i].x - nx * halfStroke,
-      y: spine[i].y - ny * halfStroke,
-    });
-  }
-
-  return ensureClockwiseYDown([...leftSide, ...rightSide.reverse()]);
-}
-
-const VSH_GLYPHS: readonly ExtrudedGlyph[] = [
-  {
-    id: 'V',
-    centerX: -1.24,
-    driftPhase: 0.0,
-    driftDir: -1,
-    points: ensureClockwiseYDown([
-      { x: -1.78, y: -0.72 },
-      { x: -1.5, y: -0.72 },
-      { x: -1.24, y: 0.26 },
-      { x: -0.98, y: -0.72 },
-      { x: -0.7, y: -0.72 },
-      { x: -1.1, y: 0.72 },
-      { x: -1.38, y: 0.72 },
-    ]),
-  },
-  {
-    id: 'S',
-    centerX: 0.0,
-    driftPhase: 2.1,
-    driftDir: 1,
-    points: buildGeometricSContour(),
-  },
-  {
-    id: 'H',
-    centerX: 1.24,
-    driftPhase: 4.2,
-    driftDir: -1,
-    points: ensureClockwiseYDown([
-      { x: 0.74, y: -0.72 },
-      { x: 1.0, y: -0.72 },
-      { x: 1.0, y: -0.13 },
-      { x: 1.48, y: -0.13 },
-      { x: 1.48, y: -0.72 },
-      { x: 1.74, y: -0.72 },
-      { x: 1.74, y: 0.72 },
-      { x: 1.48, y: 0.72 },
-      { x: 1.48, y: 0.09 },
-      { x: 1.0, y: 0.09 },
-      { x: 1.0, y: 0.72 },
-      { x: 0.74, y: 0.72 },
-    ]),
-  },
-];
-
-function rotatePoint(p: Vec3, rotX: number, rotY: number, rotZ = 0): Vec3 {
-  let x = p.x;
-  let y = p.y;
-  const z = p.z;
-
-  if (rotZ !== 0) {
-    const cosZ = Math.cos(rotZ);
-    const sinZ = Math.sin(rotZ);
-    const xz = x * cosZ - y * sinZ;
-    const yz = x * sinZ + y * cosZ;
-    x = xz;
-    y = yz;
-  }
-
-  const cosY = Math.cos(rotY);
-  const sinY = Math.sin(rotY);
-  const x1 = x * cosY - z * sinY;
-  const z1 = x * sinY + z * cosY;
-
-  const cosX = Math.cos(rotX);
-  const sinX = Math.sin(rotX);
-  const y2 = y * cosX - z1 * sinX;
-  const z2 = y * sinX + z1 * cosX;
-
-  return { x: x1, y: y2, z: z2 };
-}
-
-function normalize(v: Vec3): Vec3 {
-  const len = Math.hypot(v.x, v.y, v.z) || 1;
-  return { x: v.x / len, y: v.y / len, z: v.z / len };
-}
-
-function dot(a: Vec3, b: Vec3): number {
-  return a.x * b.x + a.y * b.y + a.z * b.z;
+  shape.closePath();
+  return shape;
 }
 
 /**
- * Interactive 60fps HTML5 Canvas rendering a solid CNC-sculpted 3D extruded "VSH"
- * (VibeShield) monogram rotating smoothly in front of the fluted studio backdrop.
- * Reacts to pointer parallax and snaps between "Prototipo IA" (drifting alert)
- * and "Tras VibeShield" (aligned sapphire-obsidian & brushed silver-ice lock).
+ * Builds a high-contrast luxury watch/jewelry studio reflection dome (PMREM)
+ * with bright diagonal front-hemisphere softbox bands + deep sapphire dark cards,
+ * giving both the flat serif faces and curved bevels authentic liquid metallic-glass reflections.
+ */
+function buildStudioEnvironment(renderer: THREE.WebGLRenderer): THREE.Texture {
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  pmrem.compileEquirectangularShader();
+
+  const envScene = new THREE.Scene();
+  envScene.background = new THREE.Color('#061126');
+
+  const disposables: { dispose: () => void }[] = [];
+
+  const addSoftbox = (
+    w: number,
+    h: number,
+    colorHex: string,
+    intensity: number,
+    pos: [number, number, number],
+    rotZ = 0,
+  ) => {
+    const geo = new THREE.PlaneGeometry(w, h);
+    const col = new THREE.Color(colorHex).multiplyScalar(intensity);
+    const mat = new THREE.MeshBasicMaterial({
+      color: col,
+      side: THREE.DoubleSide,
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(pos[0], pos[1], pos[2]);
+    mesh.lookAt(0, 0, 0);
+    if (rotZ !== 0) {
+      mesh.rotateZ(rotZ);
+    }
+    envScene.add(mesh);
+    disposables.push(geo, mat);
+  };
+
+  // FRONT-HEMISPHERE diagonal reflection strips (what the flat VSH glass faces reflect directly!)
+  addSoftbox(14, 2.2, '#ffffff', 3.4, [1.8, 3.2, 8.2], -0.42);
+  addSoftbox(12, 1.3, '#bfdbfe', 2.4, [-2.4, -0.6, 8.4], -0.42);
+  addSoftbox(10, 1.1, '#93c5fd', 2.0, [3.2, -3.4, 7.8], -0.42);
+
+  // Dark contrast card right between the front strips for razor-sharp chrome reflection bands
+  addSoftbox(15, 1.5, '#07142b', 0.35, [0.0, 0.9, 7.6], -0.42);
+
+  // Side & overhead platinum rim softboxes for gleaming 3D curved bevels
+  addSoftbox(2.4, 11.0, '#eef5ff', 3.6, [7.6, 1.0, 2.5]);
+  addSoftbox(2.8, 10.5, '#93c5fd', 2.9, [-7.4, 2.0, 1.6]);
+  addSoftbox(11.0, 2.6, '#ffffff', 3.2, [0, 7.4, 1.8]);
+  addSoftbox(11.5, 3.4, '#3b82f6', 1.8, [0, -6.8, 3.0]);
+
+  // Rear reflection strips (visible when VSH spins past 90 deg)
+  addSoftbox(13, 2.4, '#e0f2fe', 3.1, [-1.5, 2.8, -8.0], 0.4);
+  addSoftbox(11, 1.5, '#60a5fa', 2.2, [2.2, -1.8, -8.2], 0.4);
+
+  const rt = pmrem.fromScene(envScene, 0.02);
+  for (const d of disposables) {
+    d.dispose();
+  }
+  pmrem.dispose();
+  return rt.texture;
+}
+
+const COOL_FACE_COLOR = new THREE.Color('#9ec7ff');
+const COOL_BEVEL_COLOR = new THREE.Color('#f0f7ff');
+const COOL_KEY_COLOR = new THREE.Color('#eef5ff');
+const COOL_RIM_COLOR = new THREE.Color('#93c5fd');
+
+const ALERT_FACE_COLOR = new THREE.Color('#d95763');
+const ALERT_BEVEL_COLOR = new THREE.Color('#fee2e2');
+const ALERT_KEY_COLOR = new THREE.Color('#fecaca');
+const ALERT_RIM_COLOR = new THREE.Color('#ef4444');
+
+/**
+ * Interactive 60fps Three.js WebGL PBR scene rendering a sculpted liquid metallic-glass
+ * 3D "VSH" monogram using genuine DM Serif Display foundry curves, dual-surface chrome/crystal
+ * reflections, clearcoat iridescence, pointer parallax, and Prototipo IA / Tras VibeShield state.
  */
 export function HeroCanvasScene({
   mode,
@@ -222,7 +162,7 @@ export function HeroCanvasScene({
     targetMouseY: mouseY,
     currentMouseX: 0,
     currentMouseY: 0,
-    instability: mode === 'after' ? 0 : 1,
+    alertMix: mode === 'after' ? 0 : 1,
   });
 
   useEffect(() => {
@@ -234,17 +174,37 @@ export function HeroCanvasScene({
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) {
-      return;
-    }
+    if (!canvas) return;
 
-    let ctx: CanvasRenderingContext2D | null = null;
+    // Quietly verify WebGL availability before invoking Three.js (avoids noisy stderr in jsdom)
+    let webglContext: RenderingContext | null = null;
     try {
-      ctx = canvas.getContext('2d');
+      webglContext =
+        canvas.getContext('webgl2', {
+          alpha: true,
+          antialias: true,
+          powerPreference: 'high-performance',
+        }) ||
+        canvas.getContext('webgl', {
+          alpha: true,
+          antialias: true,
+          powerPreference: 'high-performance',
+        });
     } catch {
       return;
     }
-    if (!ctx) {
+    if (!webglContext) return;
+
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        context: webglContext as WebGLRenderingContext,
+        antialias: true,
+        alpha: true,
+        powerPreference: 'high-performance',
+      });
+    } catch {
       return;
     }
 
@@ -253,348 +213,226 @@ export function HeroCanvasScene({
       typeof window.matchMedia === 'function' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    let width = 0;
-    let height = 0;
-    let dpr = 1;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.28;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.setClearColor(0x000000, 0);
 
-    const resize = () => {
-      const rect = canvas.getBoundingClientRect();
-      width = Math.max(rect.width, 320);
-      height = Math.max(rect.height, 320);
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.floor(width * dpr);
-      canvas.height = Math.floor(height * dpr);
-      ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
-      renderFrame(false);
-    };
+    const scene = new THREE.Scene();
+    const envTexture = buildStudioEnvironment(renderer);
+    scene.environment = envTexture;
 
-    // Match the upper-right diagonal fluted studio light in hero-backdrop.jpg
-    const keyLight = normalize({ x: 0.45, y: -0.62, z: -0.64 });
-    const rimLight = normalize({ x: -0.68, y: 0.32, z: -0.46 });
-    const viewDir = { x: 0, y: 0, z: -1 };
-    const halfVec = normalize({
-      x: keyLight.x + viewDir.x,
-      y: keyLight.y + viewDir.y,
-      z: keyLight.z + viewDir.z,
+    const camera = new THREE.PerspectiveCamera(30, 16 / 9, 0.1, 100);
+    camera.position.set(0, -0.78, 12.8);
+    camera.lookAt(0, -0.78, 0);
+
+    const keyLight = new THREE.DirectionalLight(COOL_KEY_COLOR.clone(), 2.6);
+    keyLight.position.set(4.8, 6.2, 6.4);
+    scene.add(keyLight);
+
+    const rimLight = new THREE.DirectionalLight(COOL_RIM_COLOR.clone(), 2.2);
+    rimLight.position.set(-6.5, 2.5, -4.0);
+    scene.add(rimLight);
+
+    const fillLight = new THREE.PointLight('#dbeafe', 1.6, 26);
+    fillLight.position.set(-2.5, -3.2, 6.5);
+    scene.add(fillLight);
+
+    // Dual-surface Liquid Metallic Glass ("vidrio metálico"):
+    // [0] Front & Back: luminous translucent liquid-chrome sapphire glass with prism iridescence
+    const faceMaterial = new THREE.MeshPhysicalMaterial({
+      color: COOL_FACE_COLOR.clone(),
+      metalness: 0.86,
+      roughness: 0.055,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.015,
+      reflectivity: 1.0,
+      ior: 1.75,
+      iridescence: 0.82,
+      iridescenceIOR: 1.4,
+      iridescenceThicknessRange: [170, 450],
+      envMapIntensity: 2.5,
+      transparent: true,
+      opacity: 0.84,
     });
 
-    let rafId = 0;
-    let time = 0;
+    // [1] Curved 3D bevels & side walls: blazing mirror platinum-chrome optical glass
+    const bevelMaterial = new THREE.MeshPhysicalMaterial({
+      color: COOL_BEVEL_COLOR.clone(),
+      metalness: 0.96,
+      roughness: 0.04,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.015,
+      reflectivity: 1.0,
+      ior: 1.85,
+      iridescence: 0.6,
+      iridescenceIOR: 1.35,
+      iridescenceThicknessRange: [200, 420],
+      envMapIntensity: 3.2,
+      transparent: true,
+      opacity: 0.96,
+    });
 
-    const renderFrame = (advanceTime: boolean) => {
-      if (!ctx) return;
+    const vshGroup = new THREE.Group();
+    scene.add(vshGroup);
+
+    const geometries: THREE.ExtrudeGeometry[] = [];
+    const glyphEntries: {
+      mesh: THREE.Mesh;
+      spec: GlyphContourSpec;
+      phase: number;
+      dir: number;
+    }[] = [];
+
+    VSH_FOUNDRY_GLYPHS.forEach((spec, idx) => {
+      const shape = buildShapeFromTrueType(spec.pts);
+      const geometry = new THREE.ExtrudeGeometry(shape, {
+        depth: 0.44,
+        curveSegments: 28,
+        bevelEnabled: true,
+        bevelThickness: 0.05,
+        bevelSize: 0.015,
+        bevelOffset: 0,
+        bevelSegments: 8,
+      });
+      geometry.translate(0, 0, -0.22);
+      geometry.computeVertexNormals();
+      geometries.push(geometry);
+
+      const mesh = new THREE.Mesh(geometry, [faceMaterial, bevelMaterial]);
+      mesh.position.set(spec.centerX, 0, 0);
+      vshGroup.add(mesh);
+
+      glyphEntries.push({
+        mesh,
+        spec,
+        phase: idx * 2.1,
+        dir: idx === 1 ? 1 : -1,
+      });
+    });
+
+    const syncViewport = () => {
+      const rect = canvas.getBoundingClientRect();
+      const width = Math.max(rect.width, 320);
+      const height = Math.max(rect.height, 320);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      renderer.setPixelRatio(dpr);
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+
+      // Frame VSH with generous clear margins from Navbar, exhibits, and center pill
+      const isCompact = width < 1024;
+      const responsiveScale = isCompact
+        ? Math.min(0.76, Math.max(0.52, width / 960))
+        : Math.min(0.86, Math.max(0.72, width / 1680));
+
+      vshGroup.scale.setScalar(responsiveScale);
+      // Center monogram cleanly at y ~ 29.5% of hero stage (above hotspot pill, below navbar)
+      camera.position.y = isCompact ? -0.96 : -1.04;
+      camera.lookAt(0, camera.position.y, 0);
+    };
+
+    let rafId = 0;
+    let elapsed = 0;
+    let lastNow = performance.now();
+
+    const renderFrame = (now: number, scheduleNext: boolean) => {
+      const rawDelta = (now - lastNow) / 1000;
+      const dt = Math.min(Math.max(rawDelta, 0), 0.05);
+      lastNow = now;
+
       const s = stateRef.current;
       const isHardened = s.mode === 'after';
+      const targetAlert = isHardened ? 0 : 1;
 
       if (reducedMotion) {
         s.currentMouseX = 0;
         s.currentMouseY = 0;
-        s.instability = isHardened ? 0 : 1;
+        s.alertMix = targetAlert;
       } else {
-        s.currentMouseX += (s.targetMouseX - s.currentMouseX) * 0.065;
-        s.currentMouseY += (s.targetMouseY - s.currentMouseY) * 0.065;
-        const targetInstability = isHardened ? 0 : 1;
-        s.instability += (targetInstability - s.instability) * 0.08;
+        const smoothPointer = 1 - Math.exp(-5.0 * dt);
+        const smoothState = 1 - Math.exp(-5.8 * dt);
+        s.currentMouseX += (s.targetMouseX - s.currentMouseX) * smoothPointer;
+        s.currentMouseY += (s.targetMouseY - s.currentMouseY) * smoothPointer;
+        s.alertMix += (targetAlert - s.alertMix) * smoothState;
+        elapsed += dt;
       }
 
-      ctx.clearRect(0, 0, width, height);
+      faceMaterial.color
+        .copy(COOL_FACE_COLOR)
+        .lerp(ALERT_FACE_COLOR, s.alertMix);
+      bevelMaterial.color
+        .copy(COOL_BEVEL_COLOR)
+        .lerp(ALERT_BEVEL_COLOR, s.alertMix);
+      keyLight.color.copy(COOL_KEY_COLOR).lerp(ALERT_KEY_COLOR, s.alertMix);
+      rimLight.color.copy(COOL_RIM_COLOR).lerp(ALERT_RIM_COLOR, s.alertMix);
 
-      const cx = width * 0.5 + s.currentMouseX * 16;
-      const cy = height * 0.3 + s.currentMouseY * 9;
-      const scale = Math.min(width * 0.088, height * 0.135, 118);
+      vshGroup.rotation.y = reducedMotion
+        ? -0.28
+        : -0.28 + elapsed * 0.34 + s.currentMouseX * 0.45;
+      vshGroup.rotation.x = reducedMotion
+        ? 0.09
+        : 0.08 + Math.sin(elapsed * 0.6) * 0.045 + s.currentMouseY * 0.18;
+      vshGroup.position.x = s.currentMouseX * 0.2;
+      vshGroup.position.y = reducedMotion
+        ? 0
+        : Math.sin(elapsed * 0.9) * 0.05 - s.currentMouseY * 0.1;
 
-      // Subtle grounded shadow underneath the levitating 3D VSH emblem
-      const shadowY = cy + scale * 1.14;
-      const shadowGrad = ctx.createRadialGradient(
-        cx,
-        shadowY,
-        4,
-        cx,
-        shadowY,
-        scale * 2.15,
-      );
-      shadowGrad.addColorStop(
-        0,
-        isHardened ? 'rgba(6, 16, 36, 0.56)' : 'rgba(62, 14, 18, 0.52)',
-      );
-      shadowGrad.addColorStop(0.55, 'rgba(7, 20, 43, 0.24)');
-      shadowGrad.addColorStop(1, 'rgba(7, 20, 43, 0)');
-      ctx.save();
-      ctx.translate(cx, shadowY);
-      ctx.scale(1, 0.18);
-      ctx.beginPath();
-      ctx.arc(0, 0, scale * 2.15, 0, Math.PI * 2);
-      ctx.fillStyle = shadowGrad;
-      ctx.fill();
-      ctx.restore();
+      for (const entry of glyphEntries) {
+        const mix = s.alertMix;
+        const driftY = reducedMotion
+          ? entry.dir * 0.09 * mix
+          : Math.sin(elapsed * 3.1 + entry.phase) * 0.095 * mix;
+        const driftZ = reducedMotion
+          ? entry.dir * 0.14 * mix
+          : Math.cos(elapsed * 2.5 + entry.phase) * 0.16 * mix;
+        const driftRotZ = reducedMotion
+          ? entry.dir * 0.055 * mix
+          : Math.sin(elapsed * 3.6 + entry.phase) * 0.065 * mix;
 
-      const baseRotY = reducedMotion
-        ? -0.32
-        : -0.32 + time * 0.36 + s.currentMouseX * 0.55;
-      const baseRotX = reducedMotion
-        ? 0.14
-        : 0.13 + Math.sin(time * 0.52) * 0.045 + s.currentMouseY * 0.22;
-      const fov = 6.2;
-
-      const project = (world: Vec3) => {
-        const perspective = fov / (fov + world.z);
-        return {
-          world,
-          sx: cx + world.x * scale * perspective,
-          sy: cy + world.y * scale * perspective,
-          z: world.z,
-        };
-      };
-
-      // Sort the 3 letters back-to-front by their rotated center depth
-      const preparedGlyphs = VSH_GLYPHS.map((glyph) => {
-        const driftY =
-          s.instability *
-          (reducedMotion
-            ? glyph.driftDir * 0.08
-            : Math.sin(time * 3.4 + glyph.driftPhase) * 0.09);
-        const driftZ =
-          s.instability *
-          (reducedMotion
-            ? glyph.driftDir * 0.12
-            : Math.cos(time * 2.7 + glyph.driftPhase) * 0.14);
-        const driftTiltZ =
-          s.instability *
-          (reducedMotion
-            ? glyph.driftDir * 0.06
-            : Math.sin(time * 4.1 + glyph.driftPhase) * 0.065);
-
-        const transformLocal = (p: Vec3): Vec3 => {
-          const centered: Vec3 = {
-            x: p.x - glyph.centerX,
-            y: p.y,
-            z: p.z,
-          };
-          const tilted = rotatePoint(centered, 0, 0, driftTiltZ);
-          const assembled: Vec3 = {
-            x: tilted.x + glyph.centerX,
-            y: tilted.y + driftY,
-            z: tilted.z + driftZ,
-          };
-          return rotatePoint(assembled, baseRotX, baseRotY, 0);
-        };
-
-        const centerWorld = transformLocal({
-          x: glyph.centerX,
-          y: 0,
-          z: 0,
-        });
-
-        // Front cap sits at -HALF_DEPTH (outward normal 0, 0, -1 toward camera)
-        const frontNormal = normalize(
-          rotatePoint(
-            rotatePoint({ x: 0, y: 0, z: -1 }, 0, 0, driftTiltZ),
-            baseRotX,
-            baseRotY,
-            0,
-          ),
-        );
-        const frontVisible = frontNormal.z < 0;
-
-        const frontPts = glyph.points.map((pt) =>
-          project(transformLocal({ x: pt.x, y: pt.y, z: -HALF_DEPTH })),
-        );
-        const backPts = glyph.points.map((pt) =>
-          project(transformLocal({ x: pt.x, y: pt.y, z: HALF_DEPTH })),
-        );
-
-        const sideQuads: {
-          pts: ReturnType<typeof project>[];
-          avgZ: number;
-          diffuse: number;
-          rim: number;
-          spec: number;
-        }[] = [];
-
-        const n = glyph.points.length;
-        for (let i = 0; i < n; i++) {
-          const next = (i + 1) % n;
-          const pA = glyph.points[i];
-          const pB = glyph.points[next];
-          const dx = pB.x - pA.x;
-          const dy = pB.y - pA.y;
-          // For CW polygon in Y-down space, outward 2D normal is (dy, -dx)
-          const localNormal = normalize({ x: dy, y: -dx, z: 0 });
-          const worldNormal = normalize(
-            rotatePoint(
-              rotatePoint(localNormal, 0, 0, driftTiltZ),
-              baseRotX,
-              baseRotY,
-              0,
-            ),
-          );
-
-          const quadPts = [
-            frontPts[i],
-            frontPts[next],
-            backPts[next],
-            backPts[i],
-          ];
-          const avgZ =
-            (quadPts[0].z + quadPts[1].z + quadPts[2].z + quadPts[3].z) * 0.25;
-
-          // Keep quads whose outward normal faces toward camera or grazing silhouette
-          if (worldNormal.z < 0.18) {
-            const diffuse = Math.max(0, dot(worldNormal, keyLight));
-            const rim = Math.max(0, dot(worldNormal, rimLight));
-            const spec = Math.pow(Math.max(0, dot(worldNormal, halfVec)), 16);
-            sideQuads.push({ pts: quadPts, avgZ, diffuse, rim, spec });
-          }
-        }
-
-        sideQuads.sort((a, b) => b.avgZ - a.avgZ);
-
-        return {
-          glyph,
-          centerZ: centerWorld.z,
-          frontVisible,
-          frontNormal,
-          frontPts,
-          backPts,
-          sideQuads,
-        };
-      }).sort((a, b) => b.centerZ - a.centerZ);
-
-      for (const item of preparedGlyphs) {
-        const alertMix = s.instability;
-
-        // 1. Extruded brushed silver-ice metallic side bevels (back-to-front)
-        for (const quad of item.sideQuads) {
-          ctx.beginPath();
-          ctx.moveTo(quad.pts[0].sx, quad.pts[0].sy);
-          ctx.lineTo(quad.pts[1].sx, quad.pts[1].sy);
-          ctx.lineTo(quad.pts[2].sx, quad.pts[2].sy);
-          ctx.lineTo(quad.pts[3].sx, quad.pts[3].sy);
-          ctx.closePath();
-
-          const lit = quad.diffuse * 0.72 + quad.rim * 0.22 + quad.spec * 0.65;
-          const clamped = Math.min(1, lit);
-
-          // Cool brushed silver-ice titanium, shifting subtly toward crimson-slate in alert mode
-          const rCool = Math.round(30 + clamped * 212);
-          const gCool = Math.round(64 + clamped * 184);
-          const bCool = Math.round(122 + clamped * 133);
-
-          const rAlert = Math.round(115 + clamped * 135);
-          const gAlert = Math.round(32 + clamped * 76);
-          const bAlert = Math.round(42 + clamped * 68);
-
-          const r = Math.round(rCool * (1 - alertMix) + rAlert * alertMix);
-          const g = Math.round(gCool * (1 - alertMix) + gAlert * alertMix);
-          const b = Math.round(bCool * (1 - alertMix) + bAlert * alertMix);
-
-          ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-          ctx.fill();
-          ctx.strokeStyle = `rgba(${Math.min(255, r + 24)}, ${Math.min(255, g + 22)}, ${Math.min(255, b + 20)}, 0.42)`;
-          ctx.lineWidth = 0.75;
-          ctx.stroke();
-        }
-
-        // 2. Visible primary sculpted face (sapphire-obsidian brushed glass)
-        const capPts = item.frontVisible ? item.frontPts : item.backPts;
-        const capNormal = item.frontVisible
-          ? item.frontNormal
-          : {
-              x: -item.frontNormal.x,
-              y: -item.frontNormal.y,
-              z: -item.frontNormal.z,
-            };
-
-        let minX = Infinity;
-        let maxX = -Infinity;
-        let minY = Infinity;
-        let maxY = -Infinity;
-        for (const p of capPts) {
-          if (p.sx < minX) minX = p.sx;
-          if (p.sx > maxX) maxX = p.sx;
-          if (p.sy < minY) minY = p.sy;
-          if (p.sy > maxY) maxY = p.sy;
-        }
-
-        const capDiffuse = Math.max(0, dot(capNormal, keyLight));
-        const capSpec = Math.pow(Math.max(0, dot(capNormal, halfVec)), 12);
-
-        const faceGrad = ctx.createLinearGradient(minX, minY, maxX, maxY);
-        if (alertMix < 0.5) {
-          const midAlpha = Math.min(0.98, 0.92 + capDiffuse * 0.08);
-          faceGrad.addColorStop(
-            0,
-            `rgba(${Math.round(12 + capDiffuse * 32)}, ${Math.round(31 + capDiffuse * 56)}, ${Math.round(66 + capDiffuse * 82)}, ${midAlpha})`,
-          );
-          faceGrad.addColorStop(
-            0.46,
-            `rgba(${Math.round(24 + capSpec * 120)}, ${Math.round(58 + capSpec * 125)}, ${Math.round(118 + capSpec * 115)}, 0.96)`,
-          );
-          faceGrad.addColorStop(1, 'rgba(7, 19, 41, 0.98)');
-        } else {
-          faceGrad.addColorStop(
-            0,
-            `rgba(${Math.round(88 + capDiffuse * 70)}, ${Math.round(20 + capDiffuse * 28)}, ${Math.round(28 + capDiffuse * 26)}, 0.96)`,
-          );
-          faceGrad.addColorStop(
-            0.5,
-            `rgba(${Math.round(132 + capSpec * 90)}, ${Math.round(34 + capSpec * 52)}, ${Math.round(38 + capSpec * 42)}, 0.95)`,
-          );
-          faceGrad.addColorStop(1, 'rgba(42, 11, 18, 0.98)');
-        }
-
-        ctx.beginPath();
-        capPts.forEach((p, idx) => {
-          if (idx === 0) ctx?.moveTo(p.sx, p.sy);
-          else ctx?.lineTo(p.sx, p.sy);
-        });
-        ctx.closePath();
-
-        ctx.save();
-        ctx.shadowColor =
-          alertMix < 0.5
-            ? 'rgba(147, 197, 253, 0.28)'
-            : 'rgba(248, 113, 113, 0.34)';
-        ctx.shadowBlur = 14;
-        ctx.fillStyle = faceGrad;
-        ctx.fill();
-        ctx.restore();
-
-        // Razor-sharp machined silver-ice chamfer outline
-        ctx.strokeStyle =
-          alertMix < 0.5
-            ? `rgba(226, 240, 255, ${(0.68 + capSpec * 0.3).toFixed(3)})`
-            : `rgba(254, 202, 202, ${(0.66 + capSpec * 0.3).toFixed(3)})`;
-        ctx.lineWidth = 1.35;
-        ctx.lineJoin = 'round';
-        ctx.stroke();
+        entry.mesh.position.set(entry.spec.centerX, driftY, driftZ);
+        entry.mesh.rotation.z = driftRotZ;
       }
 
-      if (advanceTime && !reducedMotion) {
-        time += 0.016;
-        rafId = window.requestAnimationFrame(() => renderFrame(true));
+      renderer.render(scene, camera);
+
+      if (scheduleNext && !reducedMotion) {
+        rafId = window.requestAnimationFrame((nextNow) =>
+          renderFrame(nextNow, true),
+        );
       }
+    };
+
+    const handleResize = () => {
+      syncViewport();
+      renderFrame(performance.now(), false);
     };
 
     renderOnceRef.current = () => {
       if (reducedMotion) {
-        renderFrame(false);
+        renderFrame(performance.now(), false);
       }
     };
 
-    resize();
-    window.addEventListener('resize', resize);
-
-    if (!reducedMotion) {
-      rafId = window.requestAnimationFrame(() => renderFrame(true));
-    }
+    syncViewport();
+    window.addEventListener('resize', handleResize);
+    renderFrame(performance.now(), !reducedMotion);
 
     return () => {
       renderOnceRef.current = null;
-      window.removeEventListener('resize', resize);
+      window.removeEventListener('resize', handleResize);
       if (rafId) {
         window.cancelAnimationFrame(rafId);
       }
+      for (const geo of geometries) {
+        geo.dispose();
+      }
+      faceMaterial.dispose();
+      bevelMaterial.dispose();
+      envTexture.dispose();
+      renderer.dispose();
     };
   }, []);
 

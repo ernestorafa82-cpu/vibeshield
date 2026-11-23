@@ -1,0 +1,182 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-navy: #0e2244;
+  --color-navy-deep: #091833;
+  --color-navy-royal: #1a3b75;
+  --color-cobalt: #2563eb;
+  --color-ice: #eef5ff;
+  --color-ice-strong: #dbeafe;
+  --color-ice-border: #bfdbfe;
+  --color-porcelain: #f8fafd;
+  --color-surface: #ffffff;
+  --color-muted: #52607a;
+  --color-danger: #c94a22;
+  --color-ok: #146c43;
+  --font-sans: var(--font-inter), Arial, ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), "Times New Roman", Georgia, serif;
+  --font-mono: var(--font-ibm-plex-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+:root {
+  --ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: #f8fafd;
+  color: #0e2244;
+}
+
+body {
+  background-color: #f8fafd;
+  color: #0e2244;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Crisp porcelain-white editorial canvas with whisper-subtle cool blue atmospheric glow */
+.bg-porcelain-canvas {
+  background-color: #f8fafd;
+  background-image:
+    radial-gradient(
+      980px 480px at 88% 4%,
+      rgba(191, 219, 254, 0.38) 0%,
+      rgba(219, 234, 254, 0.14) 45%,
+      transparent 72%
+    ),
+    radial-gradient(
+      760px 420px at 8% 30%,
+      rgba(224, 240, 255, 0.32) 0%,
+      transparent 70%
+    );
+}
+
+/* Deep Parisian navy surface with subtle 115deg stationery pinstripes */
+.bg-navy-pinstripe {
+  background-color: #0e2244;
+  background-image:
+    repeating-linear-gradient(
+      115deg,
+      rgba(255, 255, 255, 0.026) 0 1px,
+      transparent 1px 14px
+    ),
+    radial-gradient(
+      110% 90% at 82% 0%,
+      rgba(30, 64, 128, 0.92) 0%,
+      rgba(14, 34, 68, 0.98) 55%,
+      rgba(9, 24, 51, 1) 100%
+    );
+}
+
+/* Luminous cool sapphire-navy Hero stage */
+.bg-hero-stage {
+  background-color: #0b1c38;
+  background-image:
+    radial-gradient(
+      72% 62% at 50% 38%,
+      rgba(37, 99, 235, 0.34) 0%,
+      rgba(20, 48, 96, 0.82) 48%,
+      rgba(10, 25, 52, 1) 100%
+    ),
+    radial-gradient(
+      46% 36% at 50% 34%,
+      rgba(191, 219, 254, 0.22) 0%,
+      transparent 70%
+    );
+}
+
+/* Frosted white-to-ice-blue luxury panel surface (replaces burnt yellow) */
+.bg-ice-luxury {
+  background: linear-gradient(145deg, #ffffff 0%, #f1f7ff 52%, #e1eeff 100%);
+}
+
+/* Subtle cool glacier-blue top shimmer line */
+.ice-shimmer-top {
+  position: relative;
+}
+
+.ice-shimmer-top::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(68%, 420px);
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(147, 197, 253, 0.72),
+    transparent
+  );
+  pointer-events: none;
+}
+
+/* Clean horizontal typographic eyebrow prefix */
+.eyebrow-rule {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+.eyebrow-rule::before {
+  content: "";
+  display: inline-block;
+  width: 2rem;
+  height: 1px;
+  background-color: currentColor;
+  opacity: 0.55;
+}
+
+/* Crisp soft navy-tinted elevation */
+.shadow-luxury {
+  box-shadow:
+    0 2px 6px rgba(14, 34, 68, 0.04),
+    0 24px 54px -28px rgba(14, 34, 68, 0.18);
+}
+
+.shadow-luxury-dark {
+  box-shadow:
+    0 24px 56px -22px rgba(5, 14, 32, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes vsh-float-left {
+  0%, 100% { transform: translateY(0px) rotate(-1.5deg); }
+  50% { transform: translateY(-8px) rotate(-0.5deg); }
+}
+
+@keyframes vsh-float-right {
+  0%, 100% { transform: translateY(0px) rotate(1.5deg); }
+  50% { transform: translateY(-9px) rotate(0.5deg); }
+}
+
+.animate-float-left {
+  animation: vsh-float-left 8s ease-in-out infinite;
+}
+
+.animate-float-right {
+  animation: vsh-float-right 8.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-float-left,
+  .animate-float-right {
+    animation: none;
+  }
+}
